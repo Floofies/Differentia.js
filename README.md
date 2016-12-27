@@ -14,12 +14,6 @@ Differentia can be accessed via the `differentia` object.
 
 ---
 #:closed_book: Documentation
-
-- [Available Methods](#available-methods)
-	- [clone](#clone)
-	- [diffClone](#diffClone)
-	- [isDiff](#isDiff)
-
 Differentia.js provides a basic suite of focused utilities.
 
 - Deep Object Cloning
@@ -28,7 +22,11 @@ Differentia.js provides a basic suite of focused utilities.
 - A very small compliment of miscellaneous functions.
 
 ## Available Methods
-### `clone`
+- [clone](#clone)
+- [diffClone](#diffClone)
+- [isDiff](#isDiff)
+
+###`clone`
 ```JavaScript
 clone( object );
 ```
@@ -49,9 +47,8 @@ var objectToClone = {
  
 var clonedObject = differentia.clone(objectToClone);
 ```
- 
 ---
-### `diffClone`
+###`diffClone`
 ```JavaScript
 diffClone( object1 , object2 , search );
 ```
@@ -131,8 +128,7 @@ Variable `clonedObject` is now this Object:
 */
 ```
 ---
-
-### `isDiff`
+###`isDiff`
 ```JavaScript
 isDiff( object1 , object2 );
 ```
@@ -207,5 +203,6 @@ var doTheyDiffer = differentia.isDiff(object1, searchParameters);
 `doTheyDiffer` is now `false`.
 */
 ```
+
 ---
 WIP For Style Review
