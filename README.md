@@ -143,7 +143,7 @@ Returns `true` if `object2`'s properties differ in any way from `object1`, or `f
   The Object or Array to compare to `object1`.
  
 #### Examples
-**Using `isDiff` to see if an Object's enumerable properties differ from another:**
+##### Example 1: **Using `isDiff` to see if an Object's enumerable properties differ from another:**
 ```JavaScript
 // 
 var object1 = {
@@ -166,6 +166,37 @@ var doTheyDiffer = differentia.isDiff(object1, object2);
 `doTheyDiffer` is now `true`.
 */
 ```
+
+##### Example 2: **Using `isDiff` with the `search` parameter to diff an object's *specific* differing properties:**
+```JavaScript
+var object1 = {
+  string1: "Pretty",
+  array1: [
+    "Little Clouds",
+    "Little Trees"
+  ]
+}
+
+var object2 = {
+  string2: "Pretty",
+  array1: [
+    "Little Clouds",
+    "Autumn Day"
+  ]
+}
+
+// Here, we ignore index `1` of `array1`.
+var searchParameters = {
+  string1: "",
+  array1: [
+    0: ""
+  ] 
+}
  
+var doTheyDiffer = differentia.isDiff(object1, searchParameters);
+/*
+`doTheyDiffer` is now `false`.
+*/
+```
 ---
 WIP For Style Review
