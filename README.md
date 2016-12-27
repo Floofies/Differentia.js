@@ -149,7 +149,7 @@ Returns `true` if `object2`'s properties differ in any way from `object1`, or `f
 var object1 = {
   string1: "Pretty",
   array1: [
-    "Little Clouds,
+    "Little Clouds",
     "Little Trees"
   ]
 }
