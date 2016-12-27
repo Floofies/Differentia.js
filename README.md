@@ -141,6 +141,10 @@ Returns `true` if `object2`'s properties differ in any way from `object1`, or `f
 - **`object2`**
 
   The Object or Array to compare to `object1`.
+  
+- **`search`** *Optional*
+
+  An Object or Array specifying the properties to traverse and diff/clone. All other properties are ignored.
  
 #### Examples
 ##### Example 1: **Using `isDiff` to see if an Object's enumerable properties differ from another:**
