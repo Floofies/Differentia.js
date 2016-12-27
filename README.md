@@ -14,7 +14,7 @@ Differentia can be accessed via the `differentia` object.
 
 ---
 #:closed_book: Documentation
-- [� Documentation](#)
+- [Documentation](#)
 	- [Available Methods](#)
 		- [clone](#)
 		- [diffClone](#)(#)
