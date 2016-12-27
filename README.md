@@ -14,6 +14,11 @@ Differentia can be accessed via the `differentia` object.
 
 ---
 #:closed_book: Documentation
+- [� Documentation](#)
+	- [Available Methods](#)
+		- [clone](#)
+		- [diffClone](#)(#)
+		- [isDiff](#)
 
 Differentia.js provides a basic suite of focused utilities.
 
