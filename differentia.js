@@ -102,13 +102,18 @@ var differentia = (function () {
     },
 
     // Create a deep clone of an Object or Array
-    clone: function (obj) {
+    clone: function (obj, search = false) {
       if (d.isContainer(obj)) {
         // Clone an Object or Array.
         var objClone = d.newContainer(obj);
+        if (!search) {
+          search = obj;
+        }
         // Traverse the Container and clone it's contents.
-        d.forEach(obj, function (loc) {
-          objClone[loc] = d.clone(obj[loc]);
+        d.forEach(search, function (loc) {
+          if (obj.hasOwnProperty(loc)) {
+            objClone[loc] = d.clone(obj[loc], search[loc]);
+          }
         });
         return objClone;
       } else if (d.isPrimitive(obj)) {
@@ -127,13 +132,15 @@ var differentia = (function () {
         }
         var objClone = d.newContainer(objClone);
         d.forEach(search, function (loc) {
-          if (obj1.hasOwnProperty(loc)) {
-            var diffClone = d.diffClone(obj1[loc], obj2[loc], search[loc]);
-          } else {
-            var diffClone = d.clone(obj2[loc]);
-          }
-          if (diffClone !== undefined) {
-            objClone[loc] = diffClone;
+          if (obj2.hasOwnProperty(loc)) {
+            if (obj1.hasOwnProperty(loc)) {
+              var diffClone = d.diffClone(obj1[loc], obj2[loc], search[loc]);
+            } else {
+              var diffClone = d.clone(obj2[loc]);
+            }
+            if (diffClone !== undefined) {
+              objClone[loc] = diffClone;
+            }
           }
         });
         return objClone;
@@ -147,24 +154,26 @@ var differentia = (function () {
     // Returns a `true` if different, or `false` if the same.
     isDiff: function (obj1, obj2, search = false) {
       if (d.isContainer(obj1) && d.isContainer(obj2)) {
+        // If search Object not provided, traverse and diff all of `obj2`.
+        if (!search) {
+          search = obj2;
+        }
         var len1 = d.getLength(obj1);
         var len2 = d.getLength(obj2);
         if (len1 === 0 && len2 === 0) {
           // If both Objects are empty, they are not different.
           return false;
-        } else if (len1 !== len2) {
+        } else if (!search && len1 !== len2) {
           // Object index/property count does not match, they are different.
           return true;
-        } else if (len1 === len2) {
-          // If search Object not provided, traverse and diff all of `obj2`.
-          if (!search) {
-            search = obj2;
-          }
+        } else {
           var traversalResult = d.forEach(search, function(loc) {
-            if (obj1.hasOwnProperty(loc)) {
-              return d.isDiff(obj1[loc], obj2[loc], search[loc]) ? true : false;
-            } else {
-              return true;
+            if (obj2.hasOwnProperty(loc)) {
+              if (obj1.hasOwnProperty(loc)) {
+                return d.isDiff(obj1[loc], obj2[loc], search[loc]) ? true : false;
+              } else {
+                return true;
+              }
             }
           });
           return traversalResult ? true : false;
@@ -183,7 +192,7 @@ var differentia = (function () {
     // Returns a clone of `obj2` if different, or `false` if otherwise.
     cloneIfDiff: function (obj1, obj2, search = false) {
       if (d.isDiff(obj1, obj2, search)) {
-        return d.clone(obj2);
+        return d.clone(obj2, search);
       } else {
         return false;
       }
