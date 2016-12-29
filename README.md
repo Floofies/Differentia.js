@@ -35,8 +35,8 @@ Differentia.js provides a basic suite of focused utilities.
   - [isContainer](#iscontainer)
   - [isObject](#isobject)
   - [isFunction](#isfunction)
-  - [newPrimitive](#newprimitive)
   - [newContainer](#newcontainer)
+  - [clonePrimitive](#cloneprimitive)
 
 ---
 # Main
