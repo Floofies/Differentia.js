@@ -3,6 +3,8 @@ Differentia.js
 Differentia.js is a tiny (2.7kB Minified) object diffing & cloning library for JavaScript.
 >:warning: This project is in early Alpha, and is **not stable.** Infinite loops may occur. Use at your own risk.
 
+>The cloning and diffing functions do not support Functions or Symbols, which are ignored.
+
 ---
 #:package: Install
 
