@@ -241,6 +241,9 @@ var doTheyDiffer = differentia.isDiff(object1, searchParameters);
 forEach( object , callback( index ) );
 ```
 Executes `callback` for each `index` or `property` of `object`.
+If `callback` invokes `return`, `forEach` and all prior recursive invocations of `forEach` will stop. Because of this, `return` is a good way to emulate `break`, as `break` is not available to `callback`.
+
+Any data specified for `return` will be returned to the calling invocation.
 
 #### Parameters
 - **`object`**
@@ -277,6 +280,30 @@ differentia.forEach(object1, function (property) {
 console.log(propertyList);
 /*
 `console.log`'s: "This is the first property, this is the second property, and this is the third property!"
+*/
+```
+</details>
+
+<details><summary>**Example 2:** Using `forEach` to `return` a specific property:</summary>
+```JavaScript
+// The Object to enumerate:
+var object1 = {
+  "This is the first property, ": 123,
+  "this is the second property, ": 456,
+  "and this is the third property!": 789
+}
+
+// Our `forEach` adds `property` to `propertyList` on each iteration:
+var result = differentia.forEach(object1, function (property) {
+  if (object1[property] === 456) {
+    return property;
+  }
+});
+
+// Now we log the result:
+console.log(result);
+/*
+`console.log`'s: "this is the second property,"
 */
 ```
 </details>
