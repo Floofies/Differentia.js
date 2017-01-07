@@ -67,7 +67,7 @@ var differentia = (function () {
       if (d.isObject(obj)) {
         if (Object.keys(obj).length > 0) {
           for (var prop in obj) {
-            var output = callback(prop);
+            var output = callback(prop, obj[prop]);
             if (output) {
               return output;
             }
@@ -77,7 +77,7 @@ var differentia = (function () {
         if (obj.length > 0) {
           var count = obj.length > 0 ? obj.length - 1 : 0;
           for (var i = 0; i <= count; i++) {
-            var output = callback(i);
+            var output = callback(i, obj[i]);
             if (output) {
               return output;
             }
