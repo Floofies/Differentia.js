@@ -238,7 +238,7 @@ var doTheyDiffer = differentia.isDiff(object1, searchParameters);
 ##`forEach`
 ######Function
 ```JavaScript
-forEach( object , callback( index ) );
+forEach( object , callback );
 ```
 Executes `callback` for each `index` or `property` of `object`.
 If `callback` invokes `return`, `forEach` and all prior recursive invocations of `forEach` will stop. Because of this, `return` is a good way to emulate `break`, as `break` is not available to `callback`.
@@ -256,11 +256,17 @@ Any data specified for `return` will be returned to the calling invocation.
 
   - **`index`** *Callback Argument*
 
-    The `index` or `property` of the Object being enumerated.
+    The current `index` or `property` of the Object being enumerated.
+
+  - **`enumeration`** *Callback Argument*
+
+    The reference to the currently enumerated `index` or `property` of the Object being enumerated.
 
 #### Examples
-<details><summary>**Example 1:** Using `forEach` to `console.log` a list of properties:</summary>
+<details><summary>**Example 1:** Using `forEach` to `console.log` a list of properties and Numbers:</summary>
 ```JavaScript
+// The list of enumerated Numbers:
+var numberList = "";
 // The list of enumerated Properties:
 var propertyList = "";
 
@@ -272,14 +278,18 @@ var object1 = {
 }
 
 // Our `forEach` adds `property` to `propertyList` on each iteration:
-differentia.forEach(object1, function (property) {
-  propertyList = String(propertyList + property);
+differentia.forEach(object1, function (property, enumeration) {
+  numberList = numberList + String(enumeration);
+  propertyList = propertyList + property;
 });
 
-// Now we log the result:
+// Now we log the results:
+console.log(numberList);
 console.log(propertyList);
 /*
-`console.log`'s: "This is the first property, this is the second property, and this is the third property!"
+`console.log`'s: "123456789"
+  and
+`console.log`'s: This is the first property, this is the second property, and this is the third property!"
 */
 ```
 </details>
