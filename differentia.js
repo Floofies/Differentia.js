@@ -106,10 +106,8 @@ var differentia = (function () {
       if (d.isContainer(obj)) {
         // Clone an Object or Array.
         var objClone = d.newContainer(obj);
-        if (!search) {
-          search = obj2;
-        } else if (d.isContainer(search) && d.getLength(search) === 0) {
-          search = obj2;
+        if (!search || d.isContainer(search) && d.getLength(search) === 0) {
+          search = obj;
         }
         // Traverse the Container and clone it's contents.
         d.forEach(search, function (loc) {
@@ -129,9 +127,7 @@ var differentia = (function () {
     // Returns cloned `obj2` properties/indexes which differ from `obj1`'s, otherwise an empty Object/Array.
     diffClone: function (obj1, obj2, search = false) {
       if (d.isContainer(obj2)) {
-        if (!search) {
-          search = obj2;
-        } else if (d.isContainer(search) && d.getLength(search) === 0) {
+        if (!search || d.isContainer(search) && d.getLength(search) === 0) {
           search = obj2;
         }
         var objClone = d.newContainer(objClone);
@@ -159,9 +155,7 @@ var differentia = (function () {
     isDiff: function (obj1, obj2, search = false) {
       if (d.isContainer(obj1) && d.isContainer(obj2)) {
         // If search Object not provided, traverse and diff all of `obj2`.
-        if (!search) {
-          search = obj2;
-        } else if (d.isContainer(search) && d.getLength(search) === 0) {
+        if (!search || d.isContainer(search) && d.getLength(search) === 0) {
           search = obj2;
         }
         var len1 = d.getLength(obj1);
