@@ -178,12 +178,8 @@ var differentia = (function () {
           });
           return traversalResult ? true : false;
         }
-      } else if (d.isPrimitive(obj1) && d.isPrimitive(obj2)) {
-        // If both Objects are Primitives, compare them.
-        return obj1 !== obj2;
       } else {
-        // If both Objects are not the same DataType, they are different.
-        return false;
+        return obj1 !== obj2;
       }
     }
 
