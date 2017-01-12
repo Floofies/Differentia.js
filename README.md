@@ -155,7 +155,7 @@ Variable `clonedObject` is now this Object:
 ##`isDiff`
 ######Function
 ```JavaScript
-isDiff( object1 , object2 );
+isDiff( object1 , object2 , search );
 ```
 Returns `true` if `object2`'s properties differ in any way from `object1`, or `false` if otherwsie.
 
