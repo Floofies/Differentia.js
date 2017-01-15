@@ -154,10 +154,6 @@ var differentia = (function () {
     // Returns a `true` if different, or `false` if the same.
     isDiff: function (obj1, obj2, search = false) {
       if (d.isContainer(obj1) && d.isContainer(obj2)) {
-        // If search Object not provided, traverse and diff all of `obj2`.
-        if (!search || d.isContainer(search) && d.getLength(search) === 0) {
-          search = obj2;
-        }
         var len1 = d.getLength(obj1);
         var len2 = d.getLength(obj2);
         if (len1 === 0 && len2 === 0) {
@@ -167,6 +163,10 @@ var differentia = (function () {
           // Object index/property count does not match, they are different.
           return true;
         } else {
+          // If search Object not provided, traverse and diff all of `obj2`.
+          if (!search || d.isContainer(search) && d.getLength(search) === 0) {
+            search = obj2;
+          }
           var traversalResult = d.forEach(search, function(loc) {
             if (obj2.hasOwnProperty(loc)) {
               if (obj1.hasOwnProperty(loc)) {
