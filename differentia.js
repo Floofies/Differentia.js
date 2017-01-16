@@ -159,12 +159,12 @@ var differentia = (function () {
         if (len1 === 0 && len2 === 0) {
           // If both Objects are empty, they are not different.
           return false;
-        } else if (!search && len1 !== len2) {
+        } else if (len1 !== len2) {
           // Object index/property count does not match, they are different.
           return true;
         } else {
           // If search Object not provided, traverse and diff all of `obj2`.
-          if (!search || d.isContainer(search) && d.getLength(search) === 0) {
+          if (!search || (d.isContainer(search) && d.getLength(search) === 0)) {
             search = obj2;
           }
           var traversalResult = d.forEach(search, function(loc) {
