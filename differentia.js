@@ -113,7 +113,7 @@ var differentia = (function () {
 
     // Clones a Blob
     cloneBlob: function (blob) {
-      return blob.slice();
+      return new Blob([blob], {type: blob.type});
     },
 
     // Clones a Regular Expression
