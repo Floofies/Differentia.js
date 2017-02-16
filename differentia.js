@@ -176,7 +176,7 @@ var differentia = (function () {
         return objClone;
       } else if (d.isPrimitive(obj2) && obj1 !== obj2) {
         return d.clonePrimitive(obj2);
-      } else if (d.isRegExp(obj2 && d.isDiff(obj1, obj2))) {
+      } else if (d.isRegExp(obj2) && d.isDiff(obj1, obj2)) {
         return d.cloneRegExp(obj2);
       }
     },
