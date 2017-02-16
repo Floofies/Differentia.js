@@ -130,7 +130,7 @@ var differentia = (function () {
       if (d.isContainer(obj)) {
         // Clone an Object or Array.
         var objClone = d.newContainer(obj);
-        if (!searchOk(search)) {
+        if (!d.searchOk(search)) {
           search = obj;
         }
         // Traverse the Container and clone it's contents.
@@ -157,7 +157,7 @@ var differentia = (function () {
     // Returns cloned `obj2` properties/indexes which differ from `obj1`'s, otherwise an empty Object/Array.
     diffClone: function (obj1, obj2, search = false) {
       if (d.isContainer(obj2)) {
-        if (!searchOk(search)) {
+        if (!d.searchOk(search)) {
           search = obj2;
         }
         var objClone = d.newContainer(objClone);
@@ -196,7 +196,7 @@ var differentia = (function () {
           return true;
         } else {
           // If search Object not provided, traverse and diff all of `obj2`.
-          if (!searchOk(search)) {
+          if (!d.searchOk(search)) {
             search = obj2;
           }
           var traversalResult = d.forEach(search, function(loc) {
