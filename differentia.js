@@ -29,8 +29,18 @@ var differentia = (function () {
       }
     },
 
+    // Returns `true` if `obj` is a Blob, or `false` if otherwise.
+    isBlob: function (obj) {
+      return (obj instanceof Blob);
+    },
+
+    // Returns `true` if `obj` is a Regular Expression, or `false` if otherwise.
+    isRegExp: function (obj) {
+      return (obj instanceof RegExp);
+    },
+
     // Creates a new empty Array/Object matching the type of `obj`.
-    // Returns an empty Array is `obj` is an Array, or an empty Object if `obj` is an Object.
+    // Returns an empty Array if `obj` is an Array, or an empty Object if `obj` is an Object.
     // If `obj` is not a container, returns `false`.
     newContainer: function (obj) {
       return d.isObject(obj) ? new Object() : Array.isArray(obj) ? new Array() : false;
@@ -101,12 +111,26 @@ var differentia = (function () {
       }
     },
 
+    // Clones a Blob
+    cloneBlob: function (blob) {
+      return blob.slice();
+    },
+
+    // Clones a Regular Expression
+    cloneRegExp: function (regex) {
+      return new RegEx(regex.source);
+    },
+
+    searchOk: function (search) {
+      return (search && d.isContainer(search) && d.getLength(search) > 0);
+    },
+
     // Create a deep clone of an Object or Array
     clone: function (obj, search = false) {
       if (d.isContainer(obj)) {
         // Clone an Object or Array.
         var objClone = d.newContainer(obj);
-        if (!search || d.isContainer(search) && d.getLength(search) === 0) {
+        if (!searchOk(search)) {
           search = obj;
         }
         // Traverse the Container and clone it's contents.
@@ -119,6 +143,12 @@ var differentia = (function () {
       } else if (d.isPrimitive(obj)) {
         // Clone a Primitive.
         return d.clonePrimitive(obj);
+      } else if (d.isBlob(obj)) {
+        // Clone a Blob
+        return d.cloneBlob(obj);
+      } else if (d.isRegExp(obj)) {
+        // Clone a Regular Expression
+        return d.cloneRegExp(obj);
       }
     },
 
@@ -127,7 +157,7 @@ var differentia = (function () {
     // Returns cloned `obj2` properties/indexes which differ from `obj1`'s, otherwise an empty Object/Array.
     diffClone: function (obj1, obj2, search = false) {
       if (d.isContainer(obj2)) {
-        if (!search || d.isContainer(search) && d.getLength(search) === 0) {
+        if (!searchOk(search)) {
           search = obj2;
         }
         var objClone = d.newContainer(objClone);
@@ -146,6 +176,8 @@ var differentia = (function () {
         return objClone;
       } else if (d.isPrimitive(obj2) && obj1 !== obj2) {
         return d.clonePrimitive(obj2);
+      } else if (d.isRegExp(obj2 && d.isDiff(obj1, obj2)) {
+        return d.cloneRegExp(obj2);
       }
     },
 
@@ -164,7 +196,7 @@ var differentia = (function () {
           return true;
         } else {
           // If search Object not provided, traverse and diff all of `obj2`.
-          if (!search || (d.isContainer(search) && d.getLength(search) === 0)) {
+          if (!searchOk(search)) {
             search = obj2;
           }
           var traversalResult = d.forEach(search, function(loc) {
@@ -178,6 +210,10 @@ var differentia = (function () {
           });
           return traversalResult ? true : false;
         }
+      } else if (d.isPrimitive(obj1) && d.isPrimitive(obj2)) {
+        return obj1 !== obj2;
+      } else if (d.isRegExp(obj1) && d.isRegExp(obj2)) {
+        return (obj1.source !== obj2.source || obj1.ignoreCase !== obj2.ignoreCase || obj1.global !== obj2.global || obj1.multiline !== obj2.multiline);
       } else {
         return obj1 !== obj2;
       }

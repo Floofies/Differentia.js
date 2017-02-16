@@ -14,6 +14,18 @@ Clone this repository, and include `differentia.js` in your HTML `<head></head>`
 
 Differentia can be accessed via the `differentia` object.
 
+#:page_facing_up: Supported Data Types
+DataType|Clone|Diff
+---|---|---
+Function|:x:|:x:
+Object|:white_check_mark:|:white_check_mark:
+Array|:white_check_mark:|:white_check_mark:
+String|:white_check_mark:|:white_check_mark:
+Number|:white_check_mark:|:white_check_mark:
+Boolean|:white_check_mark:|:white_check_mark:
+Symbol|:x:|:x:
+Blob|:white_check_mark:|:x:
+RegExp|:white_check_mark:|:white_check_mark:
 ---
 #:closed_book: Documentation
 Differentia.js provides a basic suite of focused utilities.
