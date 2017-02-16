@@ -7,7 +7,7 @@ var differentia = (function () {
   var d = {
     // Returns `true` if `obj` is an Array or Object, or `false` if otherwise.
     isContainer: function (obj) {
-      return (d.isObject(obj) || Array.isArray(obj)) ? true : false;
+      return (d.isObject(obj) || Array.isArray(obj)) && !d.isBlob(obj) ? true : false;
     },
 
     // Returns `true` if `obj` is a Function, or `false` if otherwise.
