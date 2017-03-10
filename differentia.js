@@ -22,11 +22,7 @@ var differentia = (function () {
 
     // Returns `true` if `obj` is a Primitive, or `false` if otherwise.
     isPrimitive: function (obj) {
-      if (d.isInArray(typeof(obj), ["string", "boolean", "number", "symbol"])) {
-        return true;
-      } else {
-        return false;
-      }
+      return d.isInArray(typeof(obj), ["string", "boolean", "number", "symbol"]);
     },
 
     // Returns `true` if `obj` is a Blob, or `false` if otherwise.
