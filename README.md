@@ -18,13 +18,13 @@ Differentia can be accessed via the `differentia` object.
 DataType|Clone|Diff
 ---|---|---
 Function|:x:|:x:
+Symbol|:x:|:x:
+Blob|:white_check_mark:|:x:
 Object|:white_check_mark:|:white_check_mark:
 Array|:white_check_mark:|:white_check_mark:
 String|:white_check_mark:|:white_check_mark:
 Number|:white_check_mark:|:white_check_mark:
 Boolean|:white_check_mark:|:white_check_mark:
-Symbol|:x:|:x:
-Blob|:white_check_mark:|:x:
 RegExp|:white_check_mark:|:white_check_mark:
 ---
 #:closed_book: Documentation
@@ -315,7 +315,7 @@ var object1 = {
   "and this is the third property!": 789
 }
 
-// Our `forEach` adds `property` to `propertyList` on each iteration:
+// Our `forEach` returns `property` and stops the loop when it encounters `456`:
 var result = differentia.forEach(object1, function (property) {
   if (object1[property] === 456) {
     return property;
