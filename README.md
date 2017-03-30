@@ -7,7 +7,7 @@ Differentia.js is a tiny (2.7kB Minified) object diffing & cloning library for J
 
 ---
 
-#:package: Install
+# :package: Install
 
 Clone this repository, and include `differentia.js` in your HTML `<head></head>` like so:
 
@@ -15,7 +15,7 @@ Clone this repository, and include `differentia.js` in your HTML `<head></head>`
 
 Differentia can be accessed via the `differentia` object.
 
-#:page_facing_up: Supported Data Types
+# :page_facing_up: Supported Data Types
 DataType|Clone|Diff
 ---|---|---
 Function|:x:|:x:
@@ -29,7 +29,7 @@ Boolean|:white_check_mark:|:white_check_mark:
 RegExp|:white_check_mark:|:white_check_mark:
 ---
 
-#:closed_book: Documentation
+# :closed_book: Documentation
 Differentia.js provides a basic suite of focused utilities.
 
 - Deep Object Cloning
@@ -58,9 +58,9 @@ Differentia.js provides a basic suite of focused utilities.
 
 # Main
 
-##`clone`
+## `clone`
 
-######Function
+###### Function
 ```JavaScript
 clone( object );
 ```
@@ -85,9 +85,9 @@ var clonedObject = differentia.clone(objectToClone);
 
 ---
 
-##`diffClone`
+## `diffClone`
 
-######Function
+###### Function
 ```JavaScript
 diffClone( object1 , object2 , search );
 ```
@@ -171,9 +171,9 @@ Variable `clonedObject` is now this Object:
 
 ---
 
-##`isDiff`
+## `isDiff`
 
-######Function
+###### Function
 ```JavaScript
 isDiff( object1 , object2 , search );
 ```
@@ -256,9 +256,9 @@ var doTheyDiffer = differentia.isDiff(object1, searchParameters);
 
 # Utility
 
-##`forEach`
+## `forEach`
 
-######Function
+###### Function
 ```JavaScript
 forEach( object , callback );
 ```
@@ -342,9 +342,9 @@ console.log(result);
 
 ---
 
-##`isInArray`
+## `isInArray`
 
-######Function
+###### Function
 ```JavaScript
 isInArray( value , array ,  start );
 ```
@@ -382,9 +382,9 @@ var found = differentia.isInArray("Bob Ross", array1);
 
 ---
 
-##`getLength`
+## `getLength`
 
-######Function
+###### Function
 ```JavaScript
 getLength( object );
 ```
@@ -422,9 +422,9 @@ differentia.getLength(object1);
 
 ---
 
-##`isPrimitive`
+## `isPrimitive`
 
-######Function
+###### Function
 ```JavaScript
 isPrimitive( object );
 ```
@@ -437,9 +437,9 @@ Returns `true` if `object` is a Primitive, or `false` if otherwise.
 
 ---
 
-##`isContainer`
+## `isContainer`
 
-######Function
+###### Function
 ```JavaScript
 isContainer( object );
 ```
@@ -452,9 +452,9 @@ Returns `true` if `object` is an Object or Array, or `false` if otherwise.
 
 ---
 
-##`isObject`
+## `isObject`
 
-######Function
+###### Function
 ```JavaScript
 isObject( object );
 ```
@@ -467,9 +467,9 @@ Returns `true` if `object` is an Object, or `false` if otherwise.
 
 ---
 
-##`isFunction`
+## `isFunction`
 
-######Function
+###### Function
 ```JavaScript
 isObject( object );
 ```
@@ -482,9 +482,9 @@ Returns `true` if `object` is a Function, or `false` if otherwise.
 
 ---
 
-##`clonePrimitive`
+## `clonePrimitive`
 
-######Function
+###### Function
 ```JavaScript
 clonePrimitive( object );
 ```
@@ -497,9 +497,9 @@ Returns a clone of `object`.
 
 ---
 
-##`newContainer`
+## `newContainer`
 
-######Function
+###### Function
 ```JavaScript
 newContainer( object );
 ```
