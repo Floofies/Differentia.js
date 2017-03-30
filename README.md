@@ -10,9 +10,9 @@ Differentia.js is a tiny (2.7kB Minified) object diffing & cloning library for J
 # :package: Install
 
 Clone this repository, and include `differentia.js` in your HTML `<head></head>` like so:
-
-    <script type="text/javascript" src="path/to/differentia.js"></script>
-
+```HTML
+<script type="text/javascript" src="path/to/differentia.js"></script>
+```
 Differentia can be accessed via the `differentia` object.
 
 # :page_facing_up: Supported Data Types
@@ -78,9 +78,9 @@ var objectToClone = {
  string1: "Hello",
  string2: "World!"
 }
-
 var clonedObject = differentia.clone(objectToClone);
 ```
+
 </details>
 
 ---
