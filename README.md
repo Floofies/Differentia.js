@@ -6,6 +6,7 @@ Differentia.js is a tiny (2.7kB Minified) object diffing & cloning library for J
 >The cloning and diffing functions do not support Functions or Symbols, which are ignored.
 
 ---
+
 #:package: Install
 
 Clone this repository, and include `differentia.js` in your HTML `<head></head>` like so:
@@ -27,6 +28,7 @@ Number|:white_check_mark:|:white_check_mark:
 Boolean|:white_check_mark:|:white_check_mark:
 RegExp|:white_check_mark:|:white_check_mark:
 ---
+
 #:closed_book: Documentation
 Differentia.js provides a basic suite of focused utilities.
 
@@ -53,9 +55,11 @@ Differentia.js provides a basic suite of focused utilities.
   - [clonePrimitive](#cloneprimitive)
 
 ---
+
 # Main
 
 ##`clone`
+
 ######Function
 ```JavaScript
 clone( object );
@@ -80,7 +84,9 @@ var clonedObject = differentia.clone(objectToClone);
 </details>
 
 ---
+
 ##`diffClone`
+
 ######Function
 ```JavaScript
 diffClone( object1 , object2 , search );
@@ -164,7 +170,9 @@ Variable `clonedObject` is now this Object:
 </details>
 
 ---
+
 ##`isDiff`
+
 ######Function
 ```JavaScript
 isDiff( object1 , object2 , search );
@@ -245,9 +253,11 @@ var doTheyDiffer = differentia.isDiff(object1, searchParameters);
 
 
 ---
+
 # Utility
 
 ##`forEach`
+
 ######Function
 ```JavaScript
 forEach( object , callback );
@@ -331,7 +341,9 @@ console.log(result);
 </details>
 
 ---
+
 ##`isInArray`
+
 ######Function
 ```JavaScript
 isInArray( value , array ,  start );
@@ -369,7 +381,9 @@ var found = differentia.isInArray("Bob Ross", array1);
 </details>
 
 ---
+
 ##`getLength`
+
 ######Function
 ```JavaScript
 getLength( object );
@@ -407,7 +421,9 @@ differentia.getLength(object1);
 </details>
 
 ---
+
 ##`isPrimitive`
+
 ######Function
 ```JavaScript
 isPrimitive( object );
@@ -420,7 +436,9 @@ Returns `true` if `object` is a Primitive, or `false` if otherwise.
   The item to examine.
 
 ---
+
 ##`isContainer`
+
 ######Function
 ```JavaScript
 isContainer( object );
@@ -433,7 +451,9 @@ Returns `true` if `object` is an Object or Array, or `false` if otherwise.
   The item to examine.
 
 ---
+
 ##`isObject`
+
 ######Function
 ```JavaScript
 isObject( object );
@@ -446,7 +466,9 @@ Returns `true` if `object` is an Object, or `false` if otherwise.
   The item to examine.
 
 ---
+
 ##`isFunction`
+
 ######Function
 ```JavaScript
 isObject( object );
@@ -459,7 +481,9 @@ Returns `true` if `object` is a Function, or `false` if otherwise.
   The item to examine.
 
 ---
+
 ##`clonePrimitive`
+
 ######Function
 ```JavaScript
 clonePrimitive( object );
@@ -472,7 +496,9 @@ Returns a clone of `object`.
   The Primitive to clone from.
 
 ---
+
 ##`newContainer`
+
 ######Function
 ```JavaScript
 newContainer( object );
