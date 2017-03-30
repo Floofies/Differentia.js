@@ -73,6 +73,7 @@ Returns a clone of `object`.
 
 #### Examples
 <details><summary>**Example 1:** Using `clone` to clone an object:</summary>
+
 ```JavaScript
 var objectToClone = {
  string1: "Hello",
