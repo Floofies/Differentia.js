@@ -52,7 +52,7 @@ var differentia = (function () {
       } else if (typeof(obj) === "number") {
         return obj.toString().length;
       } else {
-        return false;
+        return 0;
       }
     },
 
@@ -85,83 +85,121 @@ var differentia = (function () {
       return (search && d.isContainer(search) && d.getLength(search) > 0);
     },
 
+    // Iterative deepening depth-first traversal
+    dft: function* (objRoot, searchRoot) {
+      if (d.isContainer(objRoot)) {
+        // Unique Node Map
+        var nodeMap = new Map();
+        // Object Traversal Stack
+        var nodeStack = [];
+        // Add Root Object to Stack
+        nodeStack.push({
+          search: searchRoot,
+          original: objRoot
+        });
+        // Shared State Object
+        var flyweight = null;
+        var existing, isContainer, tuple, nextTuple;
+        // Iterate `nodeStack`
+        __traverse: while (nodeStack.length > 0) {
+          // Pop last item from Stack
+          tuple = nodeStack.pop();
+          // Traverse `search`, iterating through it's properties.
+          __iterate: for (var loc in tuple.search) {
+            if (loc in tuple.original) {
+              // Existing Object in `nodeMap`
+              existing = null;
+              // Indicates if iterated property is a container
+              isContainer = false;
+              if (d.isContainer(tuple.original[loc])) {
+                isContainer = true;
+                if (nodeMap.has(tuple.original[loc])) {
+                  existing = nodeMap.get(tuple.original[loc]);
+                }
+              }
+              try {
+                // Yield the Shared State Object
+                yield {
+                  loc: loc,
+                  tuple: tuple,
+                  existing: existing,
+                  isContainer: isContainer
+                };
+              } catch (exception) {
+                console.group("An error occured while traversing \"" + loc + "\" at node depth " + nodeStack.length + ":");
+                console.error(exception);
+                console.error("Node Traversal Path:");
+                console.error(nodeStack);
+                console.groupEnd();
+              }
+              if (isContainer && existing === null) {
+                // Node has not been seen before, so traverse it
+                nextTuple = {};
+                // Travese the Tuple's properties
+                for (var unit in tuple) {
+                  nextTuple[unit] = tuple[unit][loc];
+                }
+                // Save the Tuple to `nodeMap`
+                nodeMap.set(tuple.original[loc], nextTuple);
+                // Push the next Tuple into the stack
+                nodeStack.push(nextTuple);
+              }
+            }
+          }
+        }
+      } else {
+        throw new TypeError("Invalid Parameter 1. Parameter 1 must be an Object or Array");
+      }
+    },
+
     // Create a deep clone of an Object or Array
-    clone: function (originalRoot, searchRoot = false) {
+    clone: function (originalRoot, searchRoot = null) {
       if (d.isContainer(originalRoot)) {
         // Clone an Object or Array.
         var cloneRoot = d.newContainer(originalRoot);
         // Set Search Object if missing or invalid
         if (!d.searchOk(searchRoot)) {
           searchRoot = originalRoot;
+        } else {
+          throw new TypeError("Invalid Parameter 2. Parameter 2 must be an Object or Array");
         }
-        // Unique Node Map
-        var nodeMap = new Map();
-        // Object Tuple Traversal Stack
-        var nodeStack = {
-          stack: [],
-          // Depth of the Stack
-          depth: 0,
-          // Adds a Triad to the Stack
-          add: function (original, clone, search) {
-            nodeStack.stack.push({
-              original: original,
-              clone: clone,
-              search: search
-            });
-            nodeStack.depth++;
-          },
-          // Removes and returns the last item of the Stack, or `null` if the Stack is empty.
-          pop: function () {
-            if (nodeStack.depth > 0) {
-              nodeStack.depth--;
-              return nodeStack.stack.pop();
+        // Traverse `search`, iterating through it's properties as accessors to `original`, cloning `original`'s properties' into `clone`.
+        var traversal = d.dft(originalRoot, searchRoot);
+        var iteration = traversal.next();
+        // Shared State Object
+        var flyweight = iteration.value;
+        var loc, tuple, existing, isContainer;
+        // Set Clone Object Root
+        flyweight.tuple.clone = cloneRoot;
+        while (!iteration.done) {
+          // Unpack the flyweight
+          loc = flyweight.loc;
+          tuple = flyweight.tuple;
+          existing = flyweight.existing;
+          isContainer = flyweight.isContainer;
+          if (isContainer) {
+            if (existing !== null) {
+              tuple.clone[loc] = existing.clone;
             } else {
-              return null;
+              tuple.clone[loc] = d.newContainer(tuple.original[loc]);
             }
-          },
-          // Returns the last item of the Stack, or `null` if the Stack is empty.
-          last: function () {
-            if (nodeStack.depth > 0) {
-              return nodeStack.stack[nodeStack.depth - 1];
-            } else {
-              return null;
+          } else if (d.isPrimitive(tuple.original[loc])) {
+              // Clone a Primitive.
+              tuple.clone[loc] = d.clonePrimitive(tuple.original[loc]);
+            } else if (d.isBlob(tuple.original[loc])) {
+              // Clone a Blob
+              tuple.clone[loc] = d.cloneBlob(tuple.original[loc]);
+            } else if (d.isRegExp(tuple.original[loc])) {
+              // Clone a Regular Expression
+              tuple.clone[loc] = d.cloneRegExp(tuple.original[loc]);
             }
-          }
-        };
-        // Add Root Objects to Stack
-        nodeStack.add(originalRoot, cloneRoot, searchRoot);
-        // Traverse the Stack
-        var triad = null;
-        __traverse: while (nodeStack.depth > 0) {
-          // Pop last item from Stack
-          triad = nodeStack.pop();
-          // Traverse `search` and clone `original`'s contents.
-          __iterate: for (var loc in triad.search) {
-            if (loc in triad.original) {
-              if (d.isContainer(triad.original[loc])) {
-                if (nodeMap.has(triad.original[loc])) {
-                  triad.clone[loc] = nodeMap.get(triad.original[loc]);
-                } else {
-                  triad.clone[loc] = d.newContainer(triad.original[loc]);
-                  nodeMap.set(triad.original[loc], triad.original[loc]);
-                  nodeStack.add(triad.original[loc], triad.clone[loc], triad.search[loc]);
-                }
-              } else {
-                triad.clone[loc] = d.clone(triad.original[loc]);
-              }
-            }
-          }
+          // Continue traversal
+          iteration = traversal.next();
+          flyweight = iteration.value;
         }
         return cloneRoot;
-      } else if (d.isPrimitive(originalRoot)) {
-        // Clone a Primitive.
-        return d.clonePrimitive(originalRoot);
-      } else if (d.isBlob(originalRoot)) {
-        // Clone a Blob
-        return d.cloneBlob(originalRoot);
-      } else if (d.isRegExp(originalRoot)) {
-        // Clone a Regular Expression
-        return d.cloneRegExp(originalRoot);
+      } else {
+        throw new TypeError("Invalid Parameter 1. Parameter 1 must be an Object or Array");
       }
     },
 
