@@ -74,12 +74,12 @@ describe("isContainer", function () {
   });
 });
 
-describe("getLength", function () {
+describe("getContainerLength", function () {
   var array = [1, 2, 3, 4, 5];
   var object = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 5 };
   it("should count 5 items in each container", function () {
-    expect(differentia.getLength(array)).toBe(5);
-    expect(differentia.getLength(object)).toBe(5);
+    expect(differentia.getContainerLength(array)).toBe(5);
+    expect(differentia.getContainerLength(object)).toBe(5);
   });
 });
 
@@ -142,7 +142,7 @@ describe("Clone", function () {
     clone = differentia.clone(testObjects["Linear Cyclic"]);
     expect(differentia.diff(clone, testObjects["Linear Cyclic"])).toBe(false);
     clone = differentia.clone(testObjects["Multidimensional Cyclic"]);
-    //expect(differentia.diff(clone, testObjects["Multidimensional Cyclic"])).toBe(false);
+    expect(differentia.diff(clone, testObjects["Multidimensional Cyclic"])).toBe(false);
   });
   it("should clone properties using the search index", function () {
     var clone = differentia.clone(testObjects["Linear Acyclic"], { 2: null });

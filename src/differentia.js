@@ -51,16 +51,15 @@ var differentia = module.exports = (function () {
   function isContainer(obj) {
     return (isObject(obj) || Array.isArray(obj));
   }
-  // Returns `true` if `obj` is a Function, or `false` if otherwise.
-  function isFunction(obj) {
-    return (obj instanceof Function);
-  }
   // Returns `true` if `obj` is a plain Object, or `false` if otherwise.
   function isObject(obj) {
     return (obj !== null && typeof (obj) === "object" && !Array.isArray(obj));
   }
   // Returns `true` if `obj` is a Primitive, or `false` if otherwise.
   function isPrimitive(obj) {
+    if (obj === null) {
+      return true;
+    }
     return ["string", "boolean", "number", "symbol"].includes(typeof (obj));
   }
   // Returns `true` if `obj` is a Blob, or `false` if otherwise.
@@ -79,16 +78,17 @@ var differentia = module.exports = (function () {
   }
   // Get the number of Object/Array indexes for `obj`, or Primitive characters.
   // Returns `0` if `obj` is not a valid Object
-  function getLength(obj) {
-    if (isObject(obj)) {
-      return Object.keys(obj).length;
-    } else if (Array.isArray(obj) || typeof (obj) === "string") {
-      return obj.length;
-    } else if (typeof (obj) === "number") {
-      return obj.toString().length;
-    } else {
+  function getContainerLength(obj) {
+    if (obj === null) {
       return 0;
     }
+    if (Array.isArray(obj)) {
+      return obj.length;
+    }
+    if (typeof obj === "object") {
+      return Object.keys(obj).length;
+    }
+    return 0;
   }
 
   function createIterationState() {
@@ -114,7 +114,7 @@ var differentia = module.exports = (function () {
       searchRoot = subjectRoot;
     }
     assertContainer(subjectRoot, 1);
-    assertArgType(isContainer(searchRoot) && getLength(searchRoot) > 0, "a non-empty Object or Array.", 2);
+    assertArgType(isContainer(searchRoot) && getContainerLength(searchRoot) > 0, "a non-empty Object or Array.", 2);
     if (searchRoot === subjectRoot) {
       state.noIndex = true;
     }
@@ -137,7 +137,7 @@ var differentia = module.exports = (function () {
     _traverse: while (nodeStack.length > 0) {
       // Pop last item from Stack
       state.tuple = nodeStack.pop();
-      state.length = getLength(state.tuple.search);
+      state.length = getContainerLength(state.tuple.search);
       if (Array.isArray(state.tuple.search)) {
         state.isArray = true;
       } else {
@@ -262,7 +262,7 @@ var differentia = module.exports = (function () {
   };
   strategies.diff = {
     interface: function (subject, compare, search = null) {
-      if (search === null && getLength(subject) !== getLength(compare)) {
+      if (search === null && getContainerLength(subject) !== getContainerLength(compare)) {
         return true;
       }
       return runStrategy(strategies.diff, {
@@ -290,7 +290,7 @@ var differentia = module.exports = (function () {
         return true;
       }
       if (((state.noIndex && state.isContainer) || (isContainer(subjectProp)) && isContainer(compareProp))) {
-        if (state.noIndex && getLength(compareProp) !== getLength(subjectProp)) {
+        if (state.noIndex && getContainerLength(compareProp) !== getContainerLength(subjectProp)) {
           // Object index/property count does not match, they are different.
           return true;
         }
@@ -422,7 +422,7 @@ var differentia = module.exports = (function () {
   };
   // Reveal Modules
   return {
-    getLength: getLength,
+    getContainerLength: getContainerLength,
     isContainer: isContainer,
     iddfs: iddfs,
     clone: strategies.clone.interface,
