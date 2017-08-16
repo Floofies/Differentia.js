@@ -1,6 +1,6 @@
 /*
 Differentia.js
-Object Diffing & Cloning Tool
+JS Object Algorithm Library
 https://github.com/Floofies/Differentia.js
 */
 if (typeof module === "undefined") {
@@ -8,9 +8,6 @@ if (typeof module === "undefined") {
 }
 var differentia = module.exports = (function () {
   "use strict";
-  // For empty callback parameters
-  const _noOp = () => { };
-  const _identity = argument => argument;
   /**
   * assert - Logs or throws an Error if `boolean` is false,
   *  If `boolean` is `true`, nothing happens.
@@ -21,7 +18,7 @@ var differentia = module.exports = (function () {
   */
   function assert(boolean, message, errorType = null) {
     if (!boolean) {
-      if (errorType !== null && errorType instanceof Error) {
+      if (errorType !== null && Error.isPrototypeOf(errorType)) {
         throw new errorType(message);
       } else {
         console.error(message);
@@ -62,10 +59,6 @@ var differentia = module.exports = (function () {
     }
     return ["string", "boolean", "number", "symbol"].includes(typeof (obj));
   }
-  // Returns `true` if `obj` is a Blob, or `false` if otherwise.
-  /*function isBlob(obj) {
-    return (obj instanceof Blob);
-  }*/
   // Returns `true` if `obj` is a Regular Expression, or `false` if otherwise.
   function isRegExp(obj) {
     return (obj instanceof RegExp);
@@ -90,7 +83,6 @@ var differentia = module.exports = (function () {
     }
     return 0;
   }
-
   function createIterationState() {
     return {
       skipNode: false,
@@ -175,6 +167,7 @@ var differentia = module.exports = (function () {
         } catch (exception) {
           console.group("An error occured while traversing \"" + loc + "\" at node depth " + nodeStack.length + ":");
           console.error(exception);
+          console.log("Node Traversal Stack:");
           console.error(nodeStack);
           console.groupEnd();
         }
@@ -199,7 +192,7 @@ var differentia = module.exports = (function () {
         // Save the Tuple to `nodeMap`
         nodeMap.set(state.tuple.search[state.accessor], nextTuple);
         // Push the next Tuple into the stack
-        nodeStack.push(nextTuple);
+        nodeStack[nodeStack.length] = nextTuple;
       }
     }
   }
@@ -275,14 +268,6 @@ var differentia = module.exports = (function () {
       state.tuple.compare = state.parameters.compareRoot;
     },
     main: function (state) {
-      console.group("Diffing " + state.accessor);
-      console.log(state.isFirst);
-      console.log(state.isLast);
-      console.log(state.skipNode);
-      console.log(state.isContainer);
-      console.log(state.length);
-      console.log(state.iterations);
-      console.groupEnd();
       if ("compare" in state.tuple && state.accessor in state.tuple.compare) {
         var subjectProp = state.tuple.subject[state.accessor];
         var compareProp = state.tuple.compare[state.accessor];
@@ -427,6 +412,12 @@ var differentia = module.exports = (function () {
     iddfs: iddfs,
     clone: strategies.clone.interface,
     diff: strategies.diff.interface,
-    diffClone: strategies.diffClone.interface
+    diffClone: strategies.diffClone.interface,
+    forEach: strategies.forEach.interface,
+    deepFreeze: strategies.deepFreeze.interface,
+    deepSeal: strategies.deepSeal.interface,
+    find: strategies.find.interface,
+    some: strategies.some.interface,
+    every: strategies.every.interface
   };
 })();

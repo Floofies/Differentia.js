@@ -108,10 +108,43 @@ describe("Iterative Deepening Depth-First Search", function () {
       keyCounts[iteration.value.accessor]++;
       iteration = iterator.next();
     }
+    console.group("IDDFS Traversal & Iteration Results:");
     for (var accessor in keyCounts) {
       console.info("Accessor \"" + accessor + "\" was visited " + keyCounts[accessor] + " time(s).");
       expect(keyCounts[accessor] > 0).toBe(true);
     }
+    console.groupEnd();
+  });
+});
+
+describe("forEach", function () {
+  it("should iterate all nodes and properties", function () {
+    var keyCounts = {};
+    var testObject = testObjects["Multidimensional Cyclic"];
+    for (var key in testObject) {
+      keyCounts[key] = 0;
+    }
+    for (var key in testObject[0]) {
+      keyCounts[key] = 0;
+    }
+    for (var key in testObject[0]["address"]) {
+      keyCounts[key] = 0;
+    }
+    for (var key in testObject[0]["address"]["geo"]) {
+      keyCounts[key] = 0;
+    }
+    for (var key in testObject[0]["company"]) {
+      keyCounts[key] = 0;
+    }
+    differentia.forEach(testObject, function (value, accessor, object) {
+      keyCounts[accessor]++;
+    });
+    console.group("forEach Traversal & Iteration Results:");
+    for (var accessor in keyCounts) {
+      console.info("Accessor \"" + accessor + "\" was visited " + keyCounts[accessor] + " time(s).");
+      expect(keyCounts[accessor] > 0).toBe(true);
+    }
+    console.groupEnd();
   });
 });
 
