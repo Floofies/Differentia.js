@@ -147,8 +147,8 @@ var differentia = module.exports = (function () {
       // Traverse `search`, iterating through it's properties.
       _iterate: for (
         state.iterations = 0;
-        state.iterations < state.length,
-        state.accessor = state.isArray ? state.iterations : accessors[state.accessor];
+        state.accessor = state.isArray ? state.iterations : accessors[state.iterations],
+        state.iterations < state.length;
         state.iterations++
       ) {
         if (state.tuple.search[state.accessor] === undefined) {
