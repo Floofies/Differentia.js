@@ -59,6 +59,27 @@ testObjects["Multidimensional Cyclic"] = createTestObject();
 testObjects["Multidimensional Cyclic"][0].otherUser = testObjects["Multidimensional Cyclic"][1];
 testObjects["Multidimensional Cyclic"][1].otherUser = testObjects["Multidimensional Cyclic"][0];
 
+function createKeyCounter() {
+  var testObject = testObjects["Multidimensional Cyclic"];
+  var keyCounts = {};
+  for (var key in testObject) {
+    keyCounts[key] = 0;
+  }
+  for (var key in testObject[0]) {
+    keyCounts[key] = 0;
+  }
+  for (var key in testObject[0]["address"]) {
+    keyCounts[key] = 0;
+  }
+  for (var key in testObject[0]["address"]["geo"]) {
+    keyCounts[key] = 0;
+  }
+  for (var key in testObject[0]["company"]) {
+    keyCounts[key] = 0;
+  }
+  return keyCounts;
+}
+
 describe("isContainer", function () {
   var array = [];
   var object = {};
@@ -84,24 +105,21 @@ describe("getContainerLength", function () {
 });
 
 describe("Iterative Deepening Depth-First Search", function () {
+  it("should throw a TypeError when no arguments are given", function () {
+    expect(() => differentia.iddfs().next()).toThrow(new TypeError("Argument 1 must be an Object or Array"));
+  });
+  it("should throw a TypeError when argument 2 is not given", function () {
+    expect(() => differentia.iddfs({}).next()).toThrow(new TypeError("Argument 2 must be a non-empty Object or Array"));
+  });
+  it("should throw a TypeError when any arguments are the wrong type", function () {
+    expect(() => differentia.iddfs(123).next()).toThrow(new TypeError("Argument 1 must be an Object or Array"));
+    expect(() => differentia.iddfs("test").next()).toThrow(new TypeError("Argument 1 must be an Object or Array"));
+    expect(() => differentia.iddfs({}, 123).next()).toThrow(new TypeError("Argument 2 must be a non-empty Object or Array"));
+    expect(() => differentia.iddfs({}, "test").next()).toThrow(new TypeError("Argument 2 must be a non-empty Object or Array"));
+  });
   it("should iterate all nodes and properties", function () {
-    var keyCounts = {};
+    var keyCounts = createKeyCounter();
     var testObject = testObjects["Multidimensional Cyclic"];
-    for (var key in testObject) {
-      keyCounts[key] = 0;
-    }
-    for (var key in testObject[0]) {
-      keyCounts[key] = 0;
-    }
-    for (var key in testObject[0]["address"]) {
-      keyCounts[key] = 0;
-    }
-    for (var key in testObject[0]["address"]["geo"]) {
-      keyCounts[key] = 0;
-    }
-    for (var key in testObject[0]["company"]) {
-      keyCounts[key] = 0;
-    }
     var iterator = differentia.iddfs(testObject, testObject);
     var iteration = iterator.next();
     while (!iteration.done) {
@@ -119,23 +137,8 @@ describe("Iterative Deepening Depth-First Search", function () {
 
 describe("forEach", function () {
   it("should iterate all nodes and properties", function () {
-    var keyCounts = {};
+    var keyCounts = createKeyCounter();
     var testObject = testObjects["Multidimensional Cyclic"];
-    for (var key in testObject) {
-      keyCounts[key] = 0;
-    }
-    for (var key in testObject[0]) {
-      keyCounts[key] = 0;
-    }
-    for (var key in testObject[0]["address"]) {
-      keyCounts[key] = 0;
-    }
-    for (var key in testObject[0]["address"]["geo"]) {
-      keyCounts[key] = 0;
-    }
-    for (var key in testObject[0]["company"]) {
-      keyCounts[key] = 0;
-    }
     differentia.forEach(testObject, function (value, accessor, object) {
       keyCounts[accessor]++;
     });
@@ -179,7 +182,7 @@ describe("Clone", function () {
   });
   it("should clone properties using the search index", function () {
     var clone = differentia.clone(testObjects["Linear Acyclic"], { 2: null });
-    var search = {2:Number};
+    var search = { 2: Number };
     expect(differentia.diff(clone, testObjects["Linear Acyclic"], search)).toBe(false);
     search = [{
       address: {
@@ -198,10 +201,69 @@ describe("Diff Clone", function () {
   var compare = { "hello": "world", "whats": "up?", "have a": "good night" };
   it("should clone properties that differ", function () {
     var clone = differentia.diffClone(subject, compare);
-    expect(differentia.diff(clone, {"how": "are you?", "have a": "good day"})).toBe(false);
+    expect(differentia.diff(clone, { "how": "are you?", "have a": "good day" })).toBe(false);
   });
   it("should clone properties that differ using the search index", function () {
     var clone = differentia.diffClone(subject, compare, { "how": null });
-    expect(differentia.diff(clone, {"how": "are you?"})).toBe(false);
+    expect(differentia.diff(clone, { "how": "are you?" })).toBe(false);
+  });
+});
+
+describe("find", function () {
+  it("should return a value if it passes the test", function () {
+    expect(differentia.find(testObjects["Multidimensional Cyclic"], function (value, accessor, object) {
+      return value === -37.3159;
+    })).toBe(-37.3159);
+  });
+  it("should return undefined if no values pass the test", function () {
+    expect(differentia.find(testObjects["Multidimensional Cyclic"], function (value, accessor, object) {
+      return value === "This string does not exist in the test object!";
+    })).toBeUndefined();
+  });
+});
+
+describe("every", function () {
+  var testObject = [10, 11, 12, 13, 14, 15];
+  it("should return true if all values pass the test", function () {
+    expect(differentia.every(testObject, function (value, accessor, object) {
+      return typeof value === "number" && value >= 10;
+    })).toBe(true);
+  });
+  it("should return false if one value fails the test", function () {
+    expect(differentia.every(testObject, function (value, accessor, object) {
+      return typeof value === "number" && value < 13;
+    })).toBe(false);
+  });
+});
+
+describe("some", function () {
+  var testObject = [10, 11, 12, 13, 14, 15];
+  it("should return true if one value passes the test", function () {
+    expect(differentia.some(testObject, function (value, accessor, object) {
+      return typeof value === "number" && value === 13;
+    })).toBe(true);
+  });
+  it("should return false if no values pass the test", function () {
+    expect(differentia.some(testObject, function (value, accessor, object) {
+      return typeof value === "number" && value < 10;
+    })).toBe(false);
+  });
+});
+
+describe("deepFreeze", function () {
+  it("should freeze all nodes and properties", function () {
+    var frozenObject = differentia.deepFreeze(differentia.clone(testObjects["Multidimensional Cyclic"]));
+    expect(differentia.every(frozenObject, function (value, accessor, object) {
+      return Object.isFrozen(object) && differentia.isContainer(value) ? Object.isFrozen(value) : true;
+    })).toBe(true);
+  });
+});
+
+describe("deepSeal", function () {
+  it("should seal all nodes and properties", function () {
+    var sealedObject = differentia.deepSeal(differentia.clone(testObjects["Multidimensional Cyclic"]));
+    expect(differentia.every(sealedObject, function (value, accessor, object) {
+      return Object.isSealed(object) && differentia.isContainer(value) ? Object.isSealed(value) : true;
+    })).toBe(true);
   });
 });

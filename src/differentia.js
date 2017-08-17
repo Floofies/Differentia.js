@@ -106,7 +106,7 @@ var differentia = module.exports = (function () {
       searchRoot = subjectRoot;
     }
     assertContainer(subjectRoot, 1);
-    assertArgType(isContainer(searchRoot) && getContainerLength(searchRoot) > 0, "a non-empty Object or Array.", 2);
+    assertArgType(isContainer(searchRoot) && getContainerLength(searchRoot) > 0, "a non-empty Object or Array", 2);
     if (searchRoot === subjectRoot) {
       state.noIndex = true;
     }
@@ -274,7 +274,7 @@ var differentia = module.exports = (function () {
       } else {
         return true;
       }
-      if (((state.noIndex && state.isContainer) || (isContainer(subjectProp)) && isContainer(compareProp))) {
+      if ((state.noIndex && state.isContainer) || (isContainer(subjectProp) && isContainer(compareProp))) {
         if (state.noIndex && getContainerLength(compareProp) !== getContainerLength(subjectProp)) {
           // Object index/property count does not match, they are different.
           return true;
@@ -339,6 +339,9 @@ var differentia = module.exports = (function () {
       if (state.isContainer && state.existing === null) {
         Object.freeze(state.tuple.subject[state.accessor]);
       }
+      if (state.isLast) {
+        return state.subjectRoot;
+      }
     }
   };
   strategies.deepSeal = {
@@ -354,6 +357,9 @@ var differentia = module.exports = (function () {
     main: function (state) {
       if (state.isContainer && state.existing === null) {
         Object.seal(state.tuple.subject[state.accessor]);
+      }
+      if (state.isLast) {
+        return state.subjectRoot;
       }
     }
   };
