@@ -75,6 +75,7 @@ traverse|Boolean|Indicates if the current item of enumeration should be traverse
 tuple|Object|An Object containing all Objects being traversed in parallel.
 
 The `tuple` object contains the following properties:
+
 Property|Datatype|Description
 ---|---|---
 subject|Object/Array|The source of paths/elements for traversal/enumeration.
@@ -385,9 +386,7 @@ var doTheyDiffer = differentia.diff(subject, compared, search);
 ```
 </details>
 
-___
-
-# Higher-Order Functions
+---
 
 ### `deepFreeze`
 
@@ -461,7 +460,9 @@ differentia.deepSeal(subject);
 ```
 </details>
 
----
+___
+
+# Higher-Order Functions
 
 ### `forEach`
 
