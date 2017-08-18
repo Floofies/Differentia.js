@@ -85,7 +85,7 @@ var differentia = module.exports = (function () {
   }
   function createIterationState() {
     return {
-      skipNode: false,
+      traverse: true,
       tuple: {},
       existing: null,
       isContainer: false,
@@ -95,7 +95,8 @@ var differentia = module.exports = (function () {
       iterations: 0,
       isLast: false,
       isFirst: true,
-      accessor: null
+      accessor: null,
+      currentValue: null
     };
   }
   // Iterative deepening depth-first search
@@ -149,18 +150,20 @@ var differentia = module.exports = (function () {
         // Indicates if iterated property is a container
         state.isContainer = isContainer(state.tuple.search[state.accessor]);
         if (state.isContainer) {
+          state.traverse = true;
           if (nodeMap.has(state.tuple.search[state.accessor])) {
             // This object has been seen before, so retrieve the previously saved tuple.
             state.existing = nodeMap.get(state.tuple.search[state.accessor]);
-            state.skipNode = true;
+            state.traverse = false;
           } else {
             state.existing = null;
           }
         }
-        if ((!state.isContainer || state.skipNode) && (state.iterations === state.length - 1 && nodeStack.length === 0)) {
+        if ((!state.isContainer || !state.traverse) && (state.iterations === state.length - 1 && nodeStack.length === 0)) {
           // The nodeStack is empty and we know we will not traverse or iterate again
           state.isLast = true;
         }
+        state.currentValue = state.tuple.subject[state.accessor];
         try {
           // Yield the Shared State Object
           yield state;
@@ -174,11 +177,7 @@ var differentia = module.exports = (function () {
         if (state.isFirst) {
           state.isFirst = false;
         }
-        if (state.skipNode) {
-          state.skipNode = false;
-          continue _iterate;
-        }
-        if (!state.isContainer || (!state.noIndex && !(state.accessor in state.tuple.subject))) {
+        if (!state.isContainer || !state.traverse || (!state.noIndex && !(state.accessor in state.tuple.subject))) {
           continue _iterate;
         }
         // Node has not been seen before, so traverse it
@@ -239,14 +238,14 @@ var differentia = module.exports = (function () {
         if (state.existing !== null) {
           state.tuple.clone[state.accessor] = state.existing.clone;
         } else {
-          state.tuple.clone[state.accessor] = newContainer(state.tuple.subject[state.accessor]);
+          state.tuple.clone[state.accessor] = newContainer(state.currentValue);
         }
       } else if (isPrimitive(state.tuple.subject[state.accessor])) {
         // Clone a Primitive.
-        state.tuple.clone[state.accessor] = state.tuple.subject[state.accessor];
+        state.tuple.clone[state.accessor] = state.currentValue;
       } else if (isRegExp(state.tuple.subject)) {
         // Clone a Regular Expression
-        state.tuple.clone[state.accessor] = new RegEx(state.tuple.subject[state.accessor].source);
+        state.tuple.clone[state.accessor] = new RegEx(state.currentValue.source);
       }
       if (state.isLast) {
         return state.cloneRoot;
@@ -269,7 +268,7 @@ var differentia = module.exports = (function () {
     },
     main: function (state) {
       if ("compare" in state.tuple && state.accessor in state.tuple.compare) {
-        var subjectProp = state.tuple.subject[state.accessor];
+        var subjectProp = state.currentValue;
         var compareProp = state.tuple.compare[state.accessor];
       } else {
         return true;
@@ -313,18 +312,6 @@ var differentia = module.exports = (function () {
       }
     }
   };
-  strategies.forEach = {
-    interface: function (subject, callback, search = null) {
-      return runStrategy(strategies.forEach, {
-        subjectRoot: subject,
-        searchRoot: search,
-        callback: callback
-      });
-    },
-    main: function (state) {
-      return state.parameters.callback(state.tuple.subject[state.accessor], state.accessor, state.tuple.subject);
-    }
-  };
   strategies.deepFreeze = {
     interface: function (subject, search = null) {
       return runStrategy(strategies.deepFreeze, {
@@ -337,7 +324,7 @@ var differentia = module.exports = (function () {
     },
     main: function (state) {
       if (state.isContainer && state.existing === null) {
-        Object.freeze(state.tuple.subject[state.accessor]);
+        Object.freeze(state.currentValue);
       }
       if (state.isLast) {
         return state.subjectRoot;
@@ -356,11 +343,23 @@ var differentia = module.exports = (function () {
     },
     main: function (state) {
       if (state.isContainer && state.existing === null) {
-        Object.seal(state.tuple.subject[state.accessor]);
+        Object.seal(state.currentValue);
       }
       if (state.isLast) {
         return state.subjectRoot;
       }
+    }
+  };
+  strategies.forEach = {
+    interface: function (subject, callback, search = null) {
+      return runStrategy(strategies.forEach, {
+        subjectRoot: subject,
+        searchRoot: search,
+        callback: callback
+      });
+    },
+    main: function (state) {
+      return state.parameters.callback(state.currentValue, state.accessor, state.tuple.subject);
     }
   };
   strategies.find = {
@@ -373,7 +372,7 @@ var differentia = module.exports = (function () {
     },
     main: function (state) {
       if (strategies.forEach.main(state)) {
-        return state.tuple.subject[state.accessor];
+        return state.currentValue;
       }
     }
   };
