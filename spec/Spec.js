@@ -80,6 +80,53 @@ function createKeyCounter() {
   return keyCounts;
 }
 
+function testLength(obj) {
+  if (Array.isArray(obj)) {
+    return obj.legth;
+  }
+  if (typeof obj === "object") {
+    return Object.keys(obj).length;
+  }
+  throw new TypeError("The given parameter must be an Object or Array");
+}
+
+function diff(subject, compare) {
+  var map = new Map();
+  for (var accessor in subject) {
+    if (testDiff(subject, compare, accessor, map)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function testDiff(subject, compare, accessor, map) {
+  if (!(accessor in compare)) {
+    return true;
+  }
+  if (map.has(subject[accessor])) {
+    return;
+  }
+  var subjectProp = subject[accessor];
+  var compareProp = compare[accessor];
+  if (typeof subjectProp === "object") {
+    map.set(subjectProp, compareProp);
+  }
+  if ((Array.isArray(subjectProp) && Array.isArray(compareProp))
+    || (typeof subjectProp === "object" && typeof subjectProp === "object")) {
+    // Object type does not match.
+    if (testLength(subjectProp) !== testLength(subjectProp)) {
+      // Object index/property count does not match, they are different.
+      return true;
+    }
+    for (var accessor in subjectProp) {
+      return testDiff(subjectProp, compareProp, accessor, map);
+    }
+  } else if (subjectProp !== compareProp) {
+    return true;
+  }
+}
+
 describe("isContainer", function () {
   var array = [];
   var object = {};
@@ -174,16 +221,16 @@ describe("Diff", function () {
 describe("Clone", function () {
   it("should make an exact copy of the subject", function () {
     var clone = differentia.clone(testObjects["Linear Acyclic"]);
-    expect(differentia.diff(clone, testObjects["Linear Acyclic"])).toBe(false);
+    expect(diff(clone, testObjects["Linear Acyclic"])).toBe(false);
     clone = differentia.clone(testObjects["Linear Cyclic"]);
-    expect(differentia.diff(clone, testObjects["Linear Cyclic"])).toBe(false);
+    expect(diff(clone, testObjects["Linear Cyclic"])).toBe(false);
     clone = differentia.clone(testObjects["Multidimensional Cyclic"]);
-    expect(differentia.diff(clone, testObjects["Multidimensional Cyclic"])).toBe(false);
+    expect(diff(clone, testObjects["Multidimensional Cyclic"])).toBe(false);
   });
   it("should clone properties using the search index", function () {
     var clone = differentia.clone(testObjects["Linear Acyclic"], { 2: null });
     var search = { 2: Number };
-    expect(differentia.diff(clone, testObjects["Linear Acyclic"], search)).toBe(false);
+    expect(diff(clone, testObjects["Linear Acyclic"], search)).toBe(false);
     search = [{
       address: {
         geo: {
@@ -192,7 +239,7 @@ describe("Clone", function () {
       }
     }];
     clone = differentia.clone(testObjects["Multidimensional Cyclic"], search);
-    expect(differentia.diff(clone, testObjects["Multidimensional Cyclic"], search)).toBe(false);
+    expect(diff(clone, testObjects["Multidimensional Cyclic"], search)).toBe(false);
   });
 });
 
@@ -201,11 +248,11 @@ describe("Diff Clone", function () {
   var compare = { "hello": "world", "whats": "up?", "have a": "good night" };
   it("should clone properties that differ", function () {
     var clone = differentia.diffClone(subject, compare);
-    expect(differentia.diff(clone, { "how": "are you?", "have a": "good day" })).toBe(false);
+    expect(diff(clone, { "how": "are you?", "have a": "good day" })).toBe(false);
   });
   it("should clone properties that differ using the search index", function () {
     var clone = differentia.diffClone(subject, compare, { "how": null });
-    expect(differentia.diff(clone, { "how": "are you?" })).toBe(false);
+    expect(diff(clone, { "how": "are you?" })).toBe(false);
   });
 });
 
