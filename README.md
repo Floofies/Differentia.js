@@ -51,7 +51,7 @@ Differentia.js provides a basic suite of Object/Array focused utilities. They ar
 
 *Iterator Function*
 ```JavaScript
-iddfs( subject , search );
+iddfs( subject [, search = null ] );
 ```
 An implementation of [Iterative Deepening Depth-First Search](https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search). Enumerates properties/elements in `subject`, traversing into any Objects/Arrays, using `search` as a search index. Any properties/nodes present in `search` will be used to enumerate, traverse, and access the properties/nodes of `subject`. If a property/node exists in `search` that does not exist in `subject`, or vice versa, it will be skipped.
 
