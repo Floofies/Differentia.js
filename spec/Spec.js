@@ -1,9 +1,22 @@
-describe("Global 'differentia' Namespace", function () {
+describe("differentia", function () {
   it("should be an Object", function () {
     expect(differentia).not.toBeUndefined();
     expect(typeof differentia).toBe("object");
   });
-  var modules = ['isContainer', 'getContainerLength', 'iddfs', 'forEach', 'diff', 'clone', 'diffClone', 'find', 'every', 'some', 'deepFreeze', 'deepSeal'];
+  var modules = [
+    'isContainer',
+    'getContainerLength',
+    'iddfs',
+    'forEach',
+    'diff',
+    'clone',
+    'diffClone',
+    'find',
+    'every',
+    'some',
+    'deepFreeze',
+    'deepSeal'
+  ];
   it("should contain \"" + modules.join("\", \"") + "\"", function () {
     modules.forEach(function (moduleName) {
       expect(moduleName in differentia).toBe(true);
@@ -20,6 +33,7 @@ function createTestObject() {
       "name": "Leanne Graham",
       "username": "Bret",
       "email": "Sincere@april.biz",
+      "regex": new RegExp("^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$"),
       "address": {
         "street": "Kulas Light",
         "suite": "Apt. 556",
@@ -43,6 +57,7 @@ function createTestObject() {
       "name": "Ervin Howell",
       "username": "Antonette",
       "email": "Shanna@melissa.tv",
+      "regex": new RegExp("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$"),
       "address": {
         "street": "Victor Plains",
         "suite": "Suite 879",
@@ -106,12 +121,11 @@ function testLength(obj) {
 }
 
 function diff(subject, compare, search = null) {
-  var noIndex = false;
-  if (search === null && testLength(subject) !== testLength(compare)) {
+  var noIndex = search === null;
+  if (noIndex && testLength(subject) !== testLength(compare)) {
     return true;
   }
-  if (search === null) {
-    noIndex = true;
+  if (noIndex) {
     search = subject;
   }
   var tuple = { subject, search, compare };
@@ -122,6 +136,13 @@ function diff(subject, compare, search = null) {
   }
   return false;
 }
+
+// Checks for which "newer" RegExp properties are supported.
+var supportedRegExpProps = {
+  sticky: "sticky" in RegExp.prototype,
+  unicode: "unicode" in RegExp.prototype,
+  flags: "flags" in RegExp.prototype
+};
 
 diff.test = function (tuple, map, noIndex) {
   for (var accessor in tuple.search) {
@@ -136,22 +157,34 @@ diff.test = function (tuple, map, noIndex) {
     var searchProp = tuple.search[accessor];
     if ((Array.isArray(subjectProp) && Array.isArray(compareProp))
       || (typeof subjectProp === "object" && typeof compareProp === "object")) {
-      if (noIndex && testLength(subjectProp) !== testLength(compareProp)) {
+      if (subjectProp instanceof RegExp && compareProp instanceof RegExp) {
+        if (
+          subjectProp.source !== compareProp.source
+          || subjectProp.ignoreCase !== compareProp.ignoreCase
+          || subjectProp.global !== compareProp.global
+          || subjectProp.multiline !== compareProp.multiline
+          || (supportedRegExpProps.sticky && subjectProp.sticky !== compareProp.sticky)
+          || (supportedRegExpProps.unicode && subjectProp.unicode !== compareProp.unicode)
+          || (supportedRegExpProps.flags && subjectProp.flags !== compareProp.flags)
+        ) {
+          return true;
+        }
+      } else if (noIndex && testLength(subjectProp) !== testLength(compareProp)) {
         return true;
       }
       if (map.has(tuple.search[accessor])) {
         continue;
       }
-        // Node has not been seen before, so traverse it
-        var nextTuple = {};
-        // Travese the Tuple's properties
-        for (var unit in tuple) {
-          if (unit === "search" || unit === "subject" || accessor in tuple[unit]) {
-            nextTuple[unit] = tuple[unit][accessor];
-          }
+      // Node has not been seen before, so traverse it
+      var nextTuple = {};
+      // Travese the Tuple's properties
+      for (var unit in tuple) {
+        if (unit === "search" || unit === "subject" || accessor in tuple[unit]) {
+          nextTuple[unit] = tuple[unit][accessor];
         }
-        map.set(searchProp, nextTuple);
-        return this(nextTuple, map, noIndex);
+      }
+      map.set(searchProp, nextTuple);
+      return diff.test(nextTuple, map, noIndex);
     } else if (subjectProp !== compareProp) {
       return true;
     }
@@ -205,7 +238,7 @@ describe("getContainerLength", function () {
   });
 });
 
-describe("Iterative Deepening Depth-First Search", function () {
+describe("iddfs", function () {
   it("should throw a TypeError when no arguments are given", function () {
     expect(() => d.iddfs().next()).toThrow(new TypeError("Argument 1 must be an Object or Array"));
   });
@@ -249,7 +282,7 @@ describe("forEach", function () {
   });
 });
 
-describe("Diff", function () {
+describe("diff", function () {
   it("should return true when two objects differ", function () {
     expect(d.diff(testObjects["Linear Acyclic"], testObjects["Linear Cyclic"])).toBe(true);
     expect(d.diff(testObjects["Multidimensional Cyclic"], testObjects["Multidimensional Acyclic"])).toBe(true);
@@ -269,7 +302,7 @@ describe("Diff", function () {
   });
 });
 
-describe("Clone", function () {
+describe("clone", function () {
   it("should make an exact copy of the subject", function () {
     var clone = d.clone(testObjects["Linear Acyclic"]);
     expect(diff(clone, testObjects["Linear Acyclic"])).toBe(false);
@@ -294,7 +327,7 @@ describe("Clone", function () {
   });
 });
 
-describe("Diff Clone", function () {
+describe("diffClone", function () {
   var subject = { "hello": "world", "how": "are you?", "have a": "good day" };
   var compare = { "hello": "world", "whats": "up?", "have a": "good night" };
   it("should clone properties that differ", function () {
