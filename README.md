@@ -68,10 +68,10 @@ isArray|Boolean|Indicates if the Object being traversed/enumerated is an Array.
 isContainer|Boolean|Indicates if the current item of the enumeration is an Object or Array.
 isFirst|Boolean|Indicates if the current item of the enumeration is the first item to be enumerated.
 isLast|Boolean|Indicates if the current item of the enumeration is the last item to be enumerated.
-iterations|Number|A number indicating how many items have been enumerated in the current Object/Array. Gets reset to `0` upon each traversal.
+iterations|Number|A number indicating how many items have been enumerated in the current Object/Array. Gets reset to `0` on each traversal.
 length|Number|The total number of enumerable properties/elements of the current Object/Array being enumerated.
-noIndex|Boolean|Indicates if a search index was not given. If `true`, then `search` is set to `subject`.
-traverse|Boolean|Indicates if the current item of enumeration should be traversed later.
+noIndex|Boolean|Indicates if a search index was not given. If `true`, then `search` is equal/assigned to `subject`.
+traverse|Boolean|Indicates if the current item of enumeration should be traversed.
 tuple|Object|An Object containing all Objects being traversed in parallel.
 
 The `tuple` object contains the following properties:
