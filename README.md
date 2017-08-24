@@ -21,7 +21,7 @@ RegExp|:white_check_mark:|:white_check_mark:
 ---
 
 # :closed_book: Documentation
-Differentia.js provides a basic suite of Object/Array focused utilities. They are all "deep" algorithms, and fully traverse all child Objects/Arrays/properties unlss given a search index object with specifies otherwise.
+Differentia.js provides a basic suite of Object/Array focused utilities. They are all "deep" algorithms, and fully traverse all child Objects/Arrays/properties unless given a search index object with specifies otherwise.
 
 - Deep Object Cloning
 - Deep Object Diffing
