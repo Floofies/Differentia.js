@@ -3,11 +3,11 @@ Differentia.js
 JS Object Algorithm Library
 https://github.com/Floofies/Differentia.js
 */
-if (typeof module === "undefined") {
-  var module = { exports: null };
-}
-var differentia = module.exports = (function () {
+var differentia = (function () {
   "use strict";
+  if (typeof module === "undefined") {
+    var module = { exports: null };
+  }
   /**
   * assert - Logs or throws an Error if `boolean` is false,
   *  If `boolean` is `true`, nothing happens.
@@ -18,7 +18,7 @@ var differentia = module.exports = (function () {
   */
   function assert(boolean, message, errorType = null) {
     if (!boolean) {
-      if (errorType !== null && Error.isPrototypeOf(errorType)) {
+      if (errorType !== null && (errorType === Error || Error.isPrototypeOf(errorType))) {
         throw new errorType(message);
       } else {
         console.error(message);
@@ -26,65 +26,78 @@ var differentia = module.exports = (function () {
     }
   }
   // Thunks to `assert` for method argument type checking.
-  function assertArgType(boolean, typeString, argName) {
-    assert(boolean, "Argument " + argName + " must be " + typeString, TypeError);
+  assert.argType = (boolean, typeString, argName) => assert(boolean, "Argument " + argName + " must be " + typeString, TypeError);
+  assert.string = (input, argName) => assert.argType(typeof input === "string", "a String", argName);
+  assert.function = (input, argName) => assert.argType(typeof input === "function", "a Function", argName);
+  assert.object = (input, argName) => assert.argType(isObject(input), "an Object", argName);
+  assert.array = (input, argName) => assert.argType(Array.isArray(input), "an Array", argName);
+  assert.container = (input, argName) => assert.argType(isContainer(input), "an Object or Array", argName);
+  /**
+   * isContainer - Returns `true` if `input` is an Object or Array, otherwise returns `false`.
+   * @param {any} input
+   * @returns {Boolean}
+   */
+  function isContainer(input) {
+    return input !== null && (Array.isArray(input) || typeof input === "object");
   }
-  function assertString(input, argName) {
-    assertArgType(typeof input === "string", "a String", argName);
+  /**
+   * isObject - Returns `true` if `input` is an Object and not an Array, or `false` if otherwise.
+   * @param {any} input
+   * @returns {Boolean}
+   */
+  function isObject(input) {
+    return input !== null && (typeof (input) === "object" && !Array.isArray(input));
   }
-  function assertFunction(input, argName) {
-    assertArgType(typeof input === "function", "a Function", argName);
+  /**
+   * isObject - Returns `true` if `input` is a Primitive, or `false` if otherwise.
+   * @param {any} input
+   * @returns {Boolean}
+   */
+  var primitives = ["string", "boolean", "number", "symbol"];
+  function isPrimitive(input) {
+    return input === null || primitives.includes(typeof input);
   }
-  function assertObject(input, argName) {
-    assertArgType(typeof input === "object" && !Array.isArray(input), "an Object", argName);
-  }
-  function assertArray(input, argName) {
-    assertArgType(Array.isArray(input), "an Array", argName);
-  }
-  function assertContainer(input, argName) {
-    assertArgType(Array.isArray(input) || typeof input === "object", "an Object or Array", argName);
-  }
-  // Returns `true` if `obj` is an Array or Object, or `false` if otherwise.
-  function isContainer(obj) {
-    return (isObject(obj) || Array.isArray(obj));
-  }
-  // Returns `true` if `obj` is a plain Object, or `false` if otherwise.
-  function isObject(obj) {
-    return (obj !== null && typeof (obj) === "object" && !Array.isArray(obj));
-  }
-  // Returns `true` if `obj` is a Primitive, or `false` if otherwise.
-  function isPrimitive(obj) {
-    if (obj === null) {
-      return true;
+  /**
+   * createContainer - Returns a new empty Array/Object matching the type of `input`.
+   *  If `input` is not an Object or Array, `null` is returned.
+   * @param {Object|Array} input   An Object or Array.
+   * @returns {Object|Array|null}
+   */
+  function createContainer(input) {
+    if (Array.isArray(input)) {
+      return new Array();
     }
-    return ["string", "boolean", "number", "symbol"].includes(typeof (obj));
-  }
-  // Returns `true` if `obj` is a Regular Expression, or `false` if otherwise.
-  function isRegExp(obj) {
-    return (obj instanceof RegExp);
-  }
-  // Creates a new empty Array/Object matching the type of `obj`.
-  // Returns an empty Array if `obj` is an Array, or an empty Object if `obj` is an Object.
-  // If `obj` is not a container, returns `false`.
-  function newContainer(obj) {
-    return isObject(obj) ? new Object() : Array.isArray(obj) ? new Array() : null;
-  }
-  // Get the number of Object/Array indexes for `obj`, or Primitive characters.
-  // Returns `0` if `obj` is not a valid Object
-  function getContainerLength(obj) {
-    if (obj === null) {
-      return 0;
+    if (input !== null && typeof input === "object") {
+      return new Object();
     }
-    if (Array.isArray(obj)) {
-      return obj.length;
-    }
-    if (typeof obj === "object") {
-      return Object.keys(obj).length;
-    }
-    return 0;
+    throw new TypeError("The given parameter must be an Object or Array");
   }
-  function createIterationState() {
-    return {
+  /**
+   * getContainerLength - Returns the number of enumerable indexes/properties of `input`.
+   *  If `input` is not an Object or Array, a TypeError is thrown.
+   * @param {Object|Array} input
+   * @returns {Number}            The number of enumerable properties/indexes in `input`.
+   */
+  function getContainerLength(input) {
+    if (Array.isArray(input)) {
+      return input.length;
+    }
+    if (input !== null && typeof input === "object") {
+      return Object.keys(input).length;
+    }
+    throw new TypeError("The given parameter must be an Object or Array");
+  }
+  /**
+   * iddfs - An iterator implementation of Iterative Deepening Depth-First Search
+   *  Returns an Iterator usable with `next()`.
+   * @param {Object|Array} subjectRoot             The Object/Array to access.
+   * @param {Object|Array|null} [searchRoot=null]  The Object/Array used to target accessors in `subject`
+   * @returns {Iterator}
+   */
+  function* iddfs(subject, search = null) {
+    assert.container(subject, 1);
+    assert.argType(search === null || (isContainer(search) && getContainerLength(search) > 0), "a non-empty Object or Array", 2);
+    var state = {
       traverse: true,
       tuple: {},
       existing: null,
@@ -98,44 +111,32 @@ var differentia = module.exports = (function () {
       accessor: null,
       currentValue: null
     };
-  }
-  // Iterative deepening depth-first search
-  function* iddfs(subjectRoot, searchRoot = null) {
-    // State
-    var state = createIterationState();
-    if (searchRoot === null) {
-      searchRoot = subjectRoot;
-    }
-    assertContainer(subjectRoot, 1);
-    assertArgType(isContainer(searchRoot) && getContainerLength(searchRoot) > 0, "a non-empty Object or Array", 2);
-    if (searchRoot === subjectRoot) {
+    if (search === null) {
+      search = subject;
       state.noIndex = true;
     }
-    state.subjectRoot = subjectRoot;
-    state.searchRoot = searchRoot;
+    state.subjectRoot = subject;
+    state.searchRoot = search;
     // Unique Node Map
     var nodeMap = new Map();
     // Object Traversal Stack
     var nodeStack = [];
     // Add Root Tuple to Stack
     nodeStack[0] = {
-      search: searchRoot,
-      subject: subjectRoot
+      search: search,
+      subject: subject
     };
     nodeMap.set(state.searchRoot, nodeStack[0]);
-    if (subjectRoot === searchRoot) {
-      state.noIndex = true;
-    }
     // Iterate `nodeStack`
     _traverse: while (nodeStack.length > 0) {
       // Pop last item from Stack
       state.tuple = nodeStack.pop();
-      state.length = getContainerLength(state.tuple.search);
-      if (Array.isArray(state.tuple.search)) {
-        state.isArray = true;
-      } else {
-        state.isArray = false;
+      state.isArray = Array.isArray(state.tuple.search);
+      if (!state.isArray) {
         var accessors = Object.keys(state.tuple.search);
+        state.length = accessors.length;
+      } else {
+        state.length = state.tuple.search.length;
       }
       // Traverse `search`, iterating through it's properties.
       _iterate: for (
@@ -149,20 +150,15 @@ var differentia = module.exports = (function () {
         }
         // Indicates if iterated property is a container
         state.isContainer = isContainer(state.tuple.search[state.accessor]);
-        if (state.isContainer) {
-          state.traverse = true;
-          if (nodeMap.has(state.tuple.search[state.accessor])) {
-            // This object has been seen before, so retrieve the previously saved tuple.
-            state.existing = nodeMap.get(state.tuple.search[state.accessor]);
-            state.traverse = false;
-          } else {
-            state.existing = null;
-          }
+        state.existing = state.isContainer ? nodeMap.get(state.tuple.search[state.accessor]) : null;
+        if (state.existing === undefined) {
+          state.existing = null;
         }
-        if ((!state.isContainer || !state.traverse) && (state.iterations === state.length - 1 && nodeStack.length === 0)) {
-          // The nodeStack is empty and we know we will not traverse or iterate again
-          state.isLast = true;
-        }
+        // If the value is a container, hasn't been seen before, and has enumerables, then we can traverse it.
+        state.traverse = state.isContainer && state.existing === null && getContainerLength(state.tuple.search[state.accessor]) > 0;
+        // If the value can't be traversed, nodeStack is empty, and we are on the last enumerable, we know we're on the last iteration.
+        // I call this "Terminating Tail-Edge Preemption" since the generator will terminate after this last yield.
+        state.isLast = (!state.isContainer || !state.traverse) && (state.iterations === state.length - 1 && nodeStack.length === 0);
         state.currentValue = state.tuple.subject[state.accessor];
         try {
           // Yield the Shared State Object
@@ -195,23 +191,30 @@ var differentia = module.exports = (function () {
       }
     }
   }
+  /**
+   * runStrategy - Calls `strategy.entry` and `strategy.main` with the state of the iddfs iterator.
+   *  `strategy.entry` is optional. It is only executed once, for the first value the iterator yields.
+   * @param {Object} strategy    An Object containing an optional `entry` property and a required `main` property.
+   * @param {Object} parameters  An Object containing required `subjectRoot` and `searchRoot` properties.
+   * @returns {Mixed}            Returns anything `strategy.main` returns.
+   */
   function runStrategy(strategy, parameters) {
-    assertObject(strategy, 1);
+    assert.object(strategy, 1);
     assert("main" in strategy, "Parameter 1 must have a \"main\" property.", TypeError);
-    assertObject(parameters, 2);
+    assert.object(parameters, 2);
     assert("subjectRoot" in parameters, "Parameter 2 must have a \"subjectRoot\" property.", TypeError);
     // Initialize search algorithm.
     var iterator = iddfs(parameters.subjectRoot, parameters.searchRoot);
     var iteration = iterator.next();
     var state = iteration.value;
-    // Save parameters in a place the strategy can use them.
+    // Save parameters in a prop the strategy can see
     state.parameters = parameters;
-    // Run preparatory steps
+    // Run preparatory function
     if ("entry" in strategy) {
       strategy.entry(state);
     }
     var returnValue;
-    // Run the strategy, return if the strategy returns.
+    // Run the strategy, return what the strategy returns.
     while (!iteration.done) {
       returnValue = strategy.main(state);
       if (returnValue !== undefined) {
@@ -230,27 +233,35 @@ var differentia = module.exports = (function () {
       });
     },
     entry: function (state) {
-      state.cloneRoot = newContainer(state.tuple.subject);
+      state.cloneRoot = createContainer(state.tuple.subject);
       state.tuple.clone = state.cloneRoot;
     },
     main: function (state) {
       if (state.isContainer) {
-        if (state.existing !== null) {
-          state.tuple.clone[state.accessor] = state.existing.clone;
+        if (state.currentValue instanceof RegExp) {
+          // Clone a Regular Expression
+          state.tuple.clone[state.accessor] = new RegExp(state.currentValue.source);
         } else {
-          state.tuple.clone[state.accessor] = newContainer(state.currentValue);
+          if (state.existing !== null) {
+            state.tuple.clone[state.accessor] = state.existing.clone;
+          } else {
+            state.tuple.clone[state.accessor] = createContainer(state.currentValue);
+          }
         }
-      } else if (isPrimitive(state.tuple.subject[state.accessor])) {
+      } else if (isPrimitive(state.currentValue)) {
         // Clone a Primitive.
         state.tuple.clone[state.accessor] = state.currentValue;
-      } else if (isRegExp(state.tuple.subject)) {
-        // Clone a Regular Expression
-        state.tuple.clone[state.accessor] = new RegEx(state.currentValue.source);
       }
       if (state.isLast) {
         return state.cloneRoot;
       }
     }
+  };
+  // Checks for which "newer" RegExp properties are supported.
+  var supportedRegExpProps = {
+    sticky: "sticky" in RegExp.prototype,
+    unicode: "unicode" in RegExp.prototype,
+    flags: "flags" in RegExp.prototype
   };
   strategies.diff = {
     interface: function (subject, compare, search = null) {
@@ -267,25 +278,28 @@ var differentia = module.exports = (function () {
       state.tuple.compare = state.parameters.compareRoot;
     },
     main: function (state) {
-      if ("compare" in state.tuple && state.accessor in state.tuple.compare) {
-        var subjectProp = state.currentValue;
-        var compareProp = state.tuple.compare[state.accessor];
-      } else {
+      if (!("compare" in state.tuple) && !(state.accessor in state.tuple.compare)) {
         return true;
       }
-      if ((state.noIndex && state.isContainer) || (isContainer(subjectProp) && isContainer(compareProp))) {
-        if (state.noIndex && getContainerLength(compareProp) !== getContainerLength(subjectProp)) {
+      var subjectProp = state.currentValue;
+      var compareProp = state.tuple.compare[state.accessor];
+      if (((state.noIndex && state.isContainer) || isContainer(subjectProp)) && isContainer(compareProp)) {
+        if (subjectProp instanceof RegExp && compareProp instanceof RegExp) {
+          if (
+            subjectProp.source !== compareProp.source
+            || subjectProp.ignoreCase !== compareProp.ignoreCase
+            || subjectProp.global !== compareProp.global
+            || subjectProp.multiline !== compareProp.multiline
+            || (supportedRegExpProps.sticky && subjectProp.sticky !== compareProp.sticky)
+            || (supportedRegExpProps.unicode && subjectProp.unicode !== compareProp.unicode)
+            || (supportedRegExpProps.flags && subjectProp.flags !== compareProp.flags)
+          ) {
+            return true;
+          }
+        } else if (state.noIndex && getContainerLength(compareProp) !== getContainerLength(subjectProp)) {
           // Object index/property count does not match, they are different.
           return true;
         }
-      } else if ((isPrimitive(subjectProp) && isPrimitive(compareProp)) && subjectProp !== compareProp) {
-        return true;
-      } else if ((isRegExp(subjectProp) && isRegExp(compareProp))
-        && (subjectProp.source !== compareProp.source
-          || subjectProp.ignoreCase !== compareProp.ignoreCase
-          || subjectProp.global !== compareProp.global
-          || subjectProp.multiline !== compareProp.multiline)) {
-        return true;
       } else if (subjectProp !== compareProp) {
         return true;
       }
@@ -411,7 +425,7 @@ var differentia = module.exports = (function () {
     }
   };
   // Reveal Modules
-  return {
+  module.exports = {
     getContainerLength: getContainerLength,
     isContainer: isContainer,
     iddfs: iddfs,
@@ -425,4 +439,5 @@ var differentia = module.exports = (function () {
     some: strategies.some.interface,
     every: strategies.every.interface
   };
+  return module.exports;
 })();
