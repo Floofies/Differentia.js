@@ -8,6 +8,12 @@ var differentia = (function () {
   if (typeof module === "undefined") {
     var module = { exports: null };
   }
+  // Checks if certain RegExp props are supported.
+  var supportedRegExpProps = {
+    sticky: "sticky" in RegExp.prototype,
+    unicode: "unicode" in RegExp.prototype,
+    flags: "flags" in RegExp.prototype
+  };
   /**
   * assert - Logs or throws an Error if `boolean` is false,
   *  If `boolean` is `true`, nothing happens.
@@ -240,7 +246,17 @@ var differentia = (function () {
       if (state.isContainer) {
         if (state.currentValue instanceof RegExp) {
           // Clone a Regular Expression
-          state.tuple.clone[state.accessor] = new RegExp(state.currentValue.source);
+          var flags = "";
+          if (supportedRegExpProps.flags) {
+            flags = state.currentValue.flags;
+          } else {
+            if (state.currentValue.global) flags += "g";
+            if (state.currentValue.ignorecase) flags += "i";
+            if (state.currentValue.multiline) flags += "m";
+            if (supportedRegExpProps.sticky && state.currentValue.sticky) flags += "y";
+            if (supportedRegExpProps.unicode && state.currentValue.unicode) flags += "u";
+          }
+          state.tuple.clone[state.accessor] = new RegExp(state.currentValue.source, flags);
         } else {
           if (state.existing !== null) {
             state.tuple.clone[state.accessor] = state.existing.clone;
@@ -256,12 +272,6 @@ var differentia = (function () {
         return state.cloneRoot;
       }
     }
-  };
-  // Checks for which "newer" RegExp properties are supported.
-  var supportedRegExpProps = {
-    sticky: "sticky" in RegExp.prototype,
-    unicode: "unicode" in RegExp.prototype,
-    flags: "flags" in RegExp.prototype
   };
   strategies.diff = {
     interface: function (subject, compare, search = null) {
