@@ -5,9 +5,6 @@ https://github.com/Floofies/Differentia.js
 */
 var differentia = (function () {
   "use strict";
-  if (typeof module === "undefined") {
-    var module = { exports: null };
-  }
   // Checks if certain RegExp props are supported.
   var supportedRegExpProps = {
     sticky: "sticky" in RegExp.prototype,
@@ -170,11 +167,10 @@ var differentia = (function () {
           // Yield the Shared State Object
           yield state;
         } catch (exception) {
-          console.group("An error occured while traversing \"" + loc + "\" at node depth " + nodeStack.length + ":");
+          console.error("An error occured while traversing \"" + loc + "\" at node depth " + nodeStack.length + ":");
           console.error(exception);
-          console.log("Node Traversal Stack:");
-          console.error(nodeStack);
-          console.groupEnd();
+          console.info("Node Traversal Stack:");
+          console.info(nodeStack);
         }
         if (state.isFirst) {
           state.isFirst = false;
@@ -435,7 +431,7 @@ var differentia = (function () {
     }
   };
   // Reveal Modules
-  module.exports = {
+  return {
     getContainerLength: getContainerLength,
     isContainer: isContainer,
     iddfs: iddfs,
@@ -449,5 +445,7 @@ var differentia = (function () {
     some: strategies.some.interface,
     every: strategies.every.interface
   };
-  return module.exports;
 })();
+if (typeof module !== "undefined") {
+  module.exports = differentia;
+}

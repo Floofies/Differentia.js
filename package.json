@@ -1,0 +1,19 @@
+{
+  "name": "Differentia.js",
+  "version": "1.0.2",
+  "description": "An Object Algorithm library for JavaScript",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Floofies/Differentia.js.git"
+  },
+  "devDependencies": {
+    "jasmine": "^2.8.0",
+    "uglify-es": "github:mishoo/UglifyJS2#harmony"
+  },
+  "main": "src/differentia.js",
+  "scripts": {
+    "test": "./maketmp/node_modules/.bin/jasmine-node spec"
+  },
+  "author": "Dani Glore",
+  "license": "MIT"
+}

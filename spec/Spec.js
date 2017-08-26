@@ -1,3 +1,7 @@
+if (typeof require !== "undefined") {
+  var differentia = require('../src/differentia.js');
+}
+
 describe("differentia", function () {
   it("should be an Object", function () {
     expect(differentia).not.toBeUndefined();
@@ -257,12 +261,11 @@ describe("iddfs", function () {
       keyCounts[iteration.value.accessor]++;
       iteration = iterator.next();
     }
-    console.group("IDDFS Traversal & Iteration Results:");
+    //console.info("IDDFS Traversal & Iteration Results:");
     for (var accessor in keyCounts) {
-      console.info("Accessor \"" + accessor + "\" was visited " + keyCounts[accessor] + " time(s).");
+      //console.info("Accessor \"" + accessor + "\" was visited " + keyCounts[accessor] + " time(s).");
       expect(keyCounts[accessor] > 0).toBe(true);
     }
-    console.groupEnd();
   });
 });
 
@@ -273,12 +276,11 @@ describe("forEach", function () {
     d.forEach(testObject, function (value, accessor, object) {
       keyCounts[accessor]++;
     });
-    console.group("forEach Traversal & Iteration Results:");
+    //console.info("forEach Traversal & Iteration Results:");
     for (var accessor in keyCounts) {
-      console.info("Accessor \"" + accessor + "\" was visited " + keyCounts[accessor] + " time(s).");
+      //console.info("Accessor \"" + accessor + "\" was visited " + keyCounts[accessor] + " time(s).");
       expect(keyCounts[accessor] > 0).toBe(true);
     }
-    console.groupEnd();
   });
 });
 
