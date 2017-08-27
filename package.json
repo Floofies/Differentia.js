@@ -33,7 +33,7 @@
   },
   "main": "src/differentia.js",
   "scripts": {
-    "test": "./maketmp/node_modules/.bin/jasmine-node spec"
+    "test": "jasmine-node spec/Spec.js"
   },
   "author": "Dani Glore",
   "license": "MIT"
