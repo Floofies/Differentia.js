@@ -1,4 +1,4 @@
-Differentia.js
+# Differentia.js
 
 [![NPM](https://www.nodei.co/npm/differentia.png)](https://www.npmjs.com/package/differentia)
 ===
