@@ -1,27 +1,6 @@
 Differentia.js
 ===
-An Object Algorithm Library for JavaScript.
-
-
-
----
-
-# :page_facing_up: Supported Data Types
-DataType|Clone|Diff
----|---|---
-Function|:x:|:x:
-Symbol|:x:|:x:
-Blob|:x:|:x:
-Object|:white_check_mark:|:white_check_mark:
-Array|:white_check_mark:|:white_check_mark:
-String|:white_check_mark:|:white_check_mark:
-Number|:white_check_mark:|:white_check_mark:
-Boolean|:white_check_mark:|:white_check_mark:
-RegExp|:white_check_mark:|:white_check_mark:
----
-
-# :closed_book: Documentation
-Differentia.js provides a basic suite of Object/Array focused utilities. They are all "deep" algorithms, and fully traverse all child Objects/Arrays/properties unless given a search index object with specifies otherwise.
+This library provides a basic suite of Object/Array focused functions. They are all "deep" algorithms, and fully traverse all child Objects/Arrays/properties unless given a search index object with specifies otherwise.
 
 - Deep Object Cloning
 - Deep Object Diffing
@@ -29,6 +8,9 @@ Differentia.js provides a basic suite of Object/Array focused utilities. They ar
 - Differential Deep Object Cloning
 - A small compliment of higher-order functions.
 
+---
+
+# :closed_book: Documentation
 ## Functions
 - [Main Functions](#main-functions)
   - [iddfs](#iddfs)
@@ -42,6 +24,19 @@ Differentia.js provides a basic suite of Object/Array focused utilities. They ar
   - [find](#find)
   - [some](#some)
   - [every](#every)
+
+# :page_facing_up: Supported Data Types
+DataType|Clone|Diff
+---|---|---
+Function|:x:|:x:
+Symbol|:x:|:x:
+Blob|:x:|:x:
+Object|:white_check_mark:|:white_check_mark:
+Array|:white_check_mark:|:white_check_mark:
+String|:white_check_mark:|:white_check_mark:
+Number|:white_check_mark:|:white_check_mark:
+Boolean|:white_check_mark:|:white_check_mark:
+RegExp|:white_check_mark:|:white_check_mark:
 
 ---
 
