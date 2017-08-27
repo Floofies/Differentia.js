@@ -16,6 +16,7 @@ prod : node_modules/uglify-es/bin/uglifyjs prod-build
 	@printf "Building Production version in prod-build...\n"
 	@node_modules/uglify-es/bin/uglifyjs -b -o prod-build/differentia.js src/differentia.js
 	@node_modules/uglify-es/bin/uglifyjs -o prod-build/differentia.min.js src/differentia.js
+	@cp package.json prod-build/package.json
 	@printf "Done! ･ω･\n"
 clean :
 	@printf "Cleaning up...\n"
