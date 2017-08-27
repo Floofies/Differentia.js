@@ -16,7 +16,7 @@ dist : prod-build
 	@mkdir prod-build/dist
 src : prod-build
 	@mkdir prod-build/src
-prod : node_modules/uglify-es/bin/uglifyjs prod-build dist
+prod : node_modules/uglify-es/bin/uglifyjs prod-build src dist
 	@printf "Building Production version in prod-build...\n"
 	@node_modules/uglify-es/bin/uglifyjs -b -o prod-build/dist/differentia.js src/differentia.js
 	@node_modules/uglify-es/bin/uglifyjs -o prod-build/dist/differentia.min.js src/differentia.js
