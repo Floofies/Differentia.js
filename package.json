@@ -1,10 +1,31 @@
 {
-  "name": "Differentia.js",
+  "name": "differentia",
   "version": "1.0.2",
-  "description": "An Object Algorithm library for JavaScript",
+	"description": "An Object Algorithm library for JavaScript",
+	"keywords": [
+		"objects",
+		"diff",
+		"deep",
+		"library",
+		"higher-order-functions",
+		"iterator",
+		"graph-algorithms",
+		"clone",
+		"iddfs",
+		"traverse",
+		"search-algorithm",
+		"deepfreeze",
+		"deep-search",
+		"graph-theory",
+		"graph-search"
+	],
+	"homepage": "https://github.com/Floofies/Differentia.js#readme",
   "repository": {
     "type": "git",
     "url": "https://github.com/Floofies/Differentia.js.git"
+  },
+	"bugs": {
+    "url": "https://github.com/Floofies/Differentia.js/issues"
   },
   "devDependencies": {
     "jasmine": "^2.8.0",
