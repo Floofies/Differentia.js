@@ -7,6 +7,7 @@
 > The makefile installs a local copy of `jasmine` to run tests.
 
 **Node Tests**: `make test`
+
 **Browser Tests**: Open `SpecRunner.html` in a web browser.
 
 ### Building
