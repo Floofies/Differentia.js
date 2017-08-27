@@ -1,6 +1,6 @@
 {
   "name": "differentia",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "An Object Algorithm library for JavaScript",
   "keywords": [
     "objects",
@@ -33,7 +33,7 @@
   },
   "main": "src/differentia.js",
   "scripts": {
-    "test": "jasmine-node spec/Spec.js"
+    "test": "jasmine spec/Spec.js"
   },
   "author": "Dani Glore",
   "license": "MIT"
