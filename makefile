@@ -1,5 +1,5 @@
 noargs :
-	@printf "+------------------------------+\n| Differentia.js Build Options |\n+------------------------------+\-> Run Tests: 'make test'\n-> Production: 'make prod'\n-> Clean Build: 'make prod clean'\n"
+	@printf "+------------------------------+\n| Differentia.js Build Options |\n+------------------------------+\n-> Run Tests: 'make test'\n-> Production Build: 'make prod'\n-> Clean Build: 'make prod clean'\n"
 
 node_modules/uglify-es/bin/uglifyjs :
 	@printf "Downloading uglifyjs from GitHub...\n"
