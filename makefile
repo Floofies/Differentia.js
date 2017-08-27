@@ -12,18 +12,16 @@ test : node_modules/jasmine/bin/jasmine.js
 	@node node_modules/jasmine/bin/jasmine.js spec/Spec.js
 prod-build :
 	@mkdir prod-build
-dist : prod-build
+prod-build/dist : prod-build
 	@mkdir prod-build/dist
-src : prod-build
-	@mkdir prod-build/src
-prod : node_modules/uglify-es/bin/uglifyjs prod-build src dist
+prod : node_modules/uglify-es/bin/uglifyjs prod-build prod-build/dist
 	@printf "Building Production version in prod-build...\n"
 	@node_modules/uglify-es/bin/uglifyjs -b -o prod-build/dist/differentia.js src/differentia.js
 	@node_modules/uglify-es/bin/uglifyjs -o prod-build/dist/differentia.min.js src/differentia.js
-	@cp src/differentia.js prod-build/src/differentia.js
 	@cp package.json prod-build/package.json
 	@cp README.md prod-build/README.md
-	@cp spec prod-build/spec
+	@cp -r src prod-build/src
+	@cp -r spec prod-build/spec
 	@printf "Done! ･ω･\n"
 clean :
 	@printf "Cleaning up...\n"
