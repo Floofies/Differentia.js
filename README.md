@@ -81,11 +81,11 @@ search|Object/Array|The source of target paths/elements for traversal/enumeratio
 Traversal is performed upon this tuple of objects equally, providing they have overlapping/equal paths. If any node exists in `search` that does not exist in any one object of the tuple, then traversal is aborted for that specific object and it is dropped from the tuple; except if the object lacking the node is `subject`, in which case traversal is aborted completely across all objects of the tuple, and nothing is dropped from the tuple.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The root Object or Array to enumerate & traverse.
 
-- **`search`**
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
@@ -169,11 +169,11 @@ clone( subject [, search = null ] );
 Returns a clone of `subject`. If `search` is provided, the clone will only contain properties/paths that are present in `search`.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object or Array to clone from.
 
-- **`search`** (*Optional*)
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
@@ -222,15 +222,15 @@ Returns a clone of `subject`, containing only the properties which differ from t
 
 #### Parameters
 
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object or Array to clone from.
 
-- **`compared`**
+- **`compared`** Object/Array
 
   The Object or Array to compare `subject` to.
 
-- **`search`** (*Optional*)
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
@@ -309,15 +309,15 @@ diff( subject , compared [, search = null ] );
 Returns `true` if any of `compared`'s properties differ in any way from `subject`, or `false` if otherwsie.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object or Array to compare `compared` to.
 
-- **`compared`**
+- **`compared`** Object/Array
 
   The Object or Array to compare to `subject`.
 
-- **`search`** (*Optional*)
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
@@ -394,11 +394,11 @@ deepFreeze( subject [, search = null ] );
 Traverses and enumerates `subject`, freezing it and it's children. Uses `Object.freeze()`. Returns the frozen Object/Array. The method directly mutates the Object/Array.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object or Array to freeze.
 
-- **`search`** (*Optional*)
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
@@ -431,11 +431,11 @@ deepFreeze( subject [, search = null ] );
 Traverses and enumerates `subject`, sealing it and and it's children. Uses `Object.seal()`. Returns the sealed Object/Array. The method directly mutates the Object/Array.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object or Array to seal.
 
-- **`search`** (*Optional*)
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
@@ -470,15 +470,15 @@ forEach( subject , callback [, search = null ] );
 A simple IOC wrapper to the [iddfs](#iddfs) iterator. `callback` is executed for each element. Unlike `Array.prototype.forEach`, this implementation allows a return value of any type, which will be returned to the caller.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The root Object or Array to enumerate & traverse.
 
-- **`callback`**
+- **`callback`** Function
 
   The callback function to execute for each element.
 
-- **`search`**
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
@@ -540,28 +540,28 @@ find( subject , callback [, search = null ] );
 A simple IOC wrapper to the [iddfs](#iddfs) iterator. `callback` is executed for each element. If `callback` returns `true` at any time, then `currentValue` is immediately returned. If `callback` never returns `true`, then `undefined` is returned.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The root Object or Array to enumerate & traverse.
 
-- **`callback`**
+- **`callback`** Function
 
   The callback function to execute for each element.
 
-- **`search`**
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
 #### Callback Parameters
-- **`currentValue`**
+- **`currentValue`** Mixed
 
   The value of the element of enumeration. Equal to `subject[accessor]`.
 
-- **`accessor`**
+- **`accessor`** Mixed
 
   The accessor being used to retrieve `currentValue` from the Object/Array being enumerated.
 
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object/Array being enumerated.
 
@@ -604,28 +604,28 @@ some( subject , callback [, search = null ] );
 A simple IOC wrapper to the [iddfs](#iddfs) iterator. `callback` is executed for each element. If `callback` returns `true` at any time, then `true` is immediately returned. If `callback` never returns `true`, then `false` is returned. You can use this function to test if a least one element of the Object tree passes a test.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The root Object or Array to enumerate & traverse.
 
-- **`callback`**
+- **`callback`** Function
 
   The callback function to execute for each element.
 
-- **`search`**
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
 #### Callback Parameters
-- **`currentValue`**
+- **`currentValue`** Mixed
 
   The value of the element of enumeration. Equal to `subject[accessor]`.
 
-- **`accessor`**
+- **`accessor`** Mixed
 
   The accessor being used to retrieve `currentValue` from the Object/Array being enumerated.
 
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object/Array being enumerated.
 
@@ -661,28 +661,28 @@ every( subject , callback [, search = null ] );
 A simple IOC wrapper to the [iddfs](#iddfs) iterator. `callback` is executed for each element. If `callback` returns `false` (or a non-truthy value) at any time, then `false` is immediately returned. If `callback` returns `true` for every element, then `true` is returned. You can use this function to test if all elements of the Object tree pass a test.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The root Object or Array to enumerate & traverse.
 
-- **`callback`**
+- **`callback`** Function
 
   The callback function to execute for each element.
 
-- **`search`**
+- **`search`** (*Optional*)  Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
 #### Callback Parameters
-- **`currentValue`**
+- **`currentValue`** Mixed
 
   The value of the element of enumeration. Equal to `subject[accessor]`.
 
-- **`accessor`**
+- **`accessor`** Mixed
 
   The accessor being used to retrieve `currentValue` from the Object/Array being enumerated.
 
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object/Array being enumerated.
 
