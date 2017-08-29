@@ -53,6 +53,7 @@ An IOC wrapper to the `iddfs` iterator. (See documentation for `iddfs` in `READM
   The strategy Object, containing properties `interface`, `main`, and optionally `entry`.
 
 This Object consists of the following properties:
+
 Property|Data Type|Description
 ---|---|---
 `interface`|Function|The interface revealed by `module.exports` and the global `differentia` namespace.
