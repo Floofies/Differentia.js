@@ -23,7 +23,21 @@ Creates a `prod-build` directory to build the production release into. Saves `sr
 Add `clean` at the end to remove `node_modules`.
 
 # Adding Algorithms
-To add an algorithm to the library, you must use the Strategy Pattern together with `runStrategy`:
+To add an algorithm to the library, you must use the Strategy Pattern together with `runStrategy`, which is the primary gateway for your algorithms to interact with and use the `iddfs` iterator. All strategies added to the `strategies` object will be revealed to the end-user via their `interface` properties. Once you add a strategy, you should also include it's name in `spec/Spec.js` in the first unit test, as part of the `modules` array; the test will verify that your strategy is accessible.
+
+You should also write a unit test for your algorithm at the bottom of the file, using `describe`, `it`, and `expect` in nested order. There is a generic `diff` function available specifically for unit tests, in case you need to check one object against another. (Do not use the `diff` function provided by `differentia`, or any other function in the module, to do this verification).
+
+Here is a basic example of a `jasmine` unit test:
+
+```JavaScript
+describe("two plus two", function () {
+	it("should equal four", function () {
+		expect(2+2).toBe(4);
+	});
+});
+```
+
+---
 
 ### `runStrategy`
 
@@ -45,7 +59,7 @@ Property|Data Type|Description
 `entry`|Function|(*Optional*) A Call-With-Current-State callback to run with the first iterator state, only once.
 `main`|Function|A Call-With-Current-State callback to run on every element.
 
-`entry` and `main` recieve a single `state` argument, the iterator state flyweight Object, which is a single object the iterator actively mutates per-iteration. See documentation for `iddfs` in `README.md` for more information.
+`interface` is exposed to and directly run by the end-user; the function must contain a call to `runStrategy`. `entry` and `main` recieve a single `state` argument, the iterator state flyweight Object, which is a single object the iterator actively mutates per-iteration. See documentation for `iddfs` in `README.md` for more information.
 
 - **`parameters`** Object
 
