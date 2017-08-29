@@ -431,21 +431,24 @@ var differentia = (function () {
     }
   };
   // Reveal Modules
-  return {
-    getContainerLength: getContainerLength,
-    isContainer: isContainer,
-    iddfs: iddfs,
-    clone: strategies.clone.interface,
-    diff: strategies.diff.interface,
-    diffClone: strategies.diffClone.interface,
-    forEach: strategies.forEach.interface,
-    deepFreeze: strategies.deepFreeze.interface,
-    deepSeal: strategies.deepSeal.interface,
-    find: strategies.find.interface,
-    some: strategies.some.interface,
-    every: strategies.every.interface
-  };
+  var publicModules = {};
+  // Add some extra functions which are not iddfs strategies
+  publicModules.iddfs = iddfs;
+  publicModules.getContainerLength = getContainerLength;
+  publicModules.isContainer = isContainer;
+  // Automatically Reveal Strategy Interfaces
+  for (var strategy in strategies) {
+    if (!("interface" in strategies[strategy])) {
+      throw new TypeError("Strategy \"" + strategy + "\" must have an \"interface\" property.");
+    }
+    if (!("main" in strategies[strategy])) {
+      throw new TypeError("Strategy \"" + strategy + "\" must have a \"main\" property.");
+    }
+    publicModules[strategy] = strategies[strategy].interface;
+  }
+  return publicModules;
 })();
+// NodeJS `require` compatibility
 if (typeof module !== "undefined") {
   module.exports = differentia;
 }
