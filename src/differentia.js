@@ -93,8 +93,8 @@ var differentia = (function () {
   /**
    * iddfs - An iterator implementation of Iterative Deepening Depth-First Search
    *  Returns an Iterator usable with `next()`.
-   * @param {Object|Array} subjectRoot             The Object/Array to access.
-   * @param {Object|Array|null} [searchRoot=null]  The Object/Array used to target accessors in `subject`
+   * @param {Object|Array} subject             The Object/Array to access.
+   * @param {Object|Array|null} [search = null]  The Object/Array used to target accessors in `subject`
    * @returns {Iterator}
    */
   function* iddfs(subject, search = null) {
@@ -116,6 +116,8 @@ var differentia = (function () {
     };
     if (search === null) {
       search = subject;
+    }
+    if (search === subject) {
       state.noIndex = true;
     }
     state.subjectRoot = subject;
@@ -197,16 +199,16 @@ var differentia = (function () {
    * runStrategy - Calls `strategy.entry` and `strategy.main` with the state of the iddfs iterator.
    *  `strategy.entry` is optional. It is only executed once, for the first value the iterator yields.
    * @param {Object} strategy    An Object containing an optional `entry` property and a required `main` property.
-   * @param {Object} parameters  An Object containing required `subjectRoot` and `searchRoot` properties.
+   * @param {Object} parameters  An Object containing a required `subject` property, and an optional `search` property.
    * @returns {Mixed}            Returns anything `strategy.main` returns.
    */
   function runStrategy(strategy, parameters) {
     assert.object(strategy, 1);
     assert("main" in strategy, "Parameter 1 must have a \"main\" property.", TypeError);
     assert.object(parameters, 2);
-    assert("subjectRoot" in parameters, "Parameter 2 must have a \"subjectRoot\" property.", TypeError);
+    assert("subject" in parameters, "Parameter 2 must have a \"subject\" property.", TypeError);
     // Initialize search algorithm.
-    var iterator = iddfs(parameters.subjectRoot, parameters.searchRoot);
+    var iterator = iddfs(parameters.subject, parameters.search);
     var iteration = iterator.next();
     var state = iteration.value;
     // Save parameters in a prop the strategy can see
@@ -230,8 +232,8 @@ var differentia = (function () {
   strategies.clone = {
     interface: function (subject, search = null) {
       return runStrategy(strategies.clone, {
-        subjectRoot: subject,
-        searchRoot: search
+        subject: subject,
+        search: search
       });
     },
     entry: function (state) {
@@ -275,13 +277,13 @@ var differentia = (function () {
         return true;
       }
       return runStrategy(strategies.diff, {
-        subjectRoot: subject,
-        compareRoot: compare,
-        searchRoot: search
+        subject: subject,
+        compare: compare,
+        search: search
       });
     },
     entry: function (state) {
-      state.tuple.compare = state.parameters.compareRoot;
+      state.tuple.compare = state.parameters.compare;
     },
     main: function (state) {
       if (!("compare" in state.tuple) && !(state.accessor in state.tuple.compare)) {
@@ -317,9 +319,9 @@ var differentia = (function () {
   strategies.diffClone = {
     interface: function (subject, compare, search = null) {
       return runStrategy(strategies.diffClone, {
-        subjectRoot: subject,
-        compareRoot: compare,
-        searchRoot: search
+        subject: subject,
+        compare: compare,
+        search: search
       });
     },
     entry: function (state) {
@@ -335,8 +337,8 @@ var differentia = (function () {
   strategies.deepFreeze = {
     interface: function (subject, search = null) {
       return runStrategy(strategies.deepFreeze, {
-        subjectRoot: subject,
-        searchRoot: search
+        subject: subject,
+        search: search
       });
     },
     entry: function (state) {
@@ -354,8 +356,8 @@ var differentia = (function () {
   strategies.deepSeal = {
     interface: function (subject, search = null) {
       return runStrategy(strategies.deepSeal, {
-        subjectRoot: subject,
-        searchRoot: search
+        subject: subject,
+        search: search
       });
     },
     entry: function (state) {
@@ -373,8 +375,8 @@ var differentia = (function () {
   strategies.forEach = {
     interface: function (subject, callback, search = null) {
       return runStrategy(strategies.forEach, {
-        subjectRoot: subject,
-        searchRoot: search,
+        subject: subject,
+        search: search,
         callback: callback
       });
     },
@@ -385,8 +387,8 @@ var differentia = (function () {
   strategies.find = {
     interface: function (subject, callback, search = null) {
       return runStrategy(strategies.find, {
-        subjectRoot: subject,
-        searchRoot: search,
+        subject: subject,
+        search: search,
         callback: callback
       });
     },
@@ -399,8 +401,8 @@ var differentia = (function () {
   strategies.some = {
     interface: function (subject, callback, search = null) {
       return runStrategy(strategies.some, {
-        subjectRoot: subject,
-        searchRoot: search,
+        subject: subject,
+        search: search,
         callback: callback
       });
     },
@@ -416,8 +418,8 @@ var differentia = (function () {
   strategies.every = {
     interface: function (subject, callback, search = null) {
       return runStrategy(strategies.every, {
-        subjectRoot: subject,
-        searchRoot: search,
+        subject: subject,
+        search: search,
         callback: callback
       });
     },

@@ -52,9 +52,7 @@ An IOC wrapper to the `iddfs` iterator. (See documentation for `iddfs` in `READM
 #### Parameters
 - **`strategy`** Object
 
-  The strategy Object, containing properties `interface`, `main`, and optionally `entry`.
-
-This Object consists of the following properties:
+  The strategy Object. It consists of the following properties:
 
 Property|Data Type|Description
 ---|---|---
@@ -70,8 +68,8 @@ Property|Data Type|Description
 
 Property|Data Type|Description
 ---|---|---
-`subjectRoot`|Object/Array|The Object or Array to traverse/iterate.
-`searchRoot`|Object/Array|(*Optional*) A search index specifying the paths to traverse, and property accessors to enumerate. All other properties are ignored.
+`subject`|Object/Array|The Object or Array to traverse/iterate.
+`search`|Object/Array|(*Optional*) A search index specifying the paths to traverse, and property accessors to enumerate. All other properties are ignored.
 
 ---
 
@@ -94,7 +92,7 @@ var subject = {
 strategies.myStrategy = {
 	interface: function (object) {
 		runStrategy(strategies.myStrategy, {
-			subjectRoot: object
+			subject: object
 		});
 	},
 	main: function (state) {
