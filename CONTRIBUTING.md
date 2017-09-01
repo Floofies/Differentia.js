@@ -1,5 +1,5 @@
 # :pencil2: Contributing
-Contributing to the project is very easy. Additions to the library are handled via a standard Strategy Pattern.
+Contributing to the project is very easy. Additions to the library are handled via a standard Strategy Pattern. Unit testing is handled with `jasmine`.
 
 # Testing & Building
 ### Pre-requisites
@@ -39,7 +39,20 @@ describe("two plus two", function () {
 });
 ```
 
+## Creating a Strategy Object
+A Strategy is an object with the following properties:
+
+Property|Data Type|Description
+---|---|---
+`interface`|Function|The interface function revealed by `module.exports` and the global `differentia` namespace, to be exposed to and directly run by the end-user. The function must contain a call to `runStrategy`, supplying it's parent object as the first parameter.
+`entry`|Function|(*Optional*) A Call-With-Current-State callback to run with the first iterator state, only once. This function cannot return values.
+`main`|Function|A Call-With-Current-State callback to run on every iteraton. If this function returns something other than `undefined`, it will be returned to the user's caller.
+
+`entry` and `main` recieve a single `state` argument, the iterator state flyweight Object, which is a single object the iterator actively mutates per-iteration. See documentation for `iddfs` in `README.md` for more information.
+
 ---
+
+Your Strategy's `interface` function must call `runStrategy` to use the `iddfs` iterator:
 
 ### `runStrategy`
 
@@ -52,15 +65,7 @@ An IOC wrapper to the `iddfs` iterator. (See documentation for `iddfs` in `READM
 #### Parameters
 - **`strategy`** Object
 
-  The strategy Object. It consists of the following properties:
-
-Property|Data Type|Description
----|---|---
-`interface`|Function|The interface revealed by `module.exports` and the global `differentia` namespace.
-`entry`|Function|(*Optional*) A Call-With-Current-State callback to run with the first iterator state, only once.
-`main`|Function|A Call-With-Current-State callback to run on every element.
-
-`interface` is exposed to and directly run by the end-user; the function must contain a call to `runStrategy`. `entry` and `main` recieve a single `state` argument, the iterator state flyweight Object, which is a single object the iterator actively mutates per-iteration. See documentation for `iddfs` in `README.md` for more information.
+  The strategy Object.
 
 - **`parameters`** Object
 
@@ -73,7 +78,7 @@ Property|Data Type|Description
 
 ---
 
-## Example Algorithm
+## Example Strategy
 
 This example is an algorithm that overwrites every Primitive of an Object tree with "Hello World".
 
@@ -88,16 +93,19 @@ var subject = {
   ]
 };
 
-// Define your Strategy. "main" and "interface" properties are required.
+// Define your Strategy, adding it to the "strategies" object. "main" and "interface" properties are required.
 strategies.myStrategy = {
 	interface: function (object) {
+		// Here we call "runStrategy" and include our Strategy as parameter 1
 		runStrategy(strategies.myStrategy, {
 			subject: object
 		});
 	},
 	main: function (state) {
-		// Only overwrite Primitives
+		// This function will be executed for every iteration
+		// Only overwrite what is not an Object/Array
 		if (!state.isContainer) {
+			// This assignment is equal to 'object.greetingsN[0] = "Hello World"'
 			state.tuple.subject[state.accessor] = "Hello World";
 		}
 	}
