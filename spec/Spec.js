@@ -400,3 +400,11 @@ describe("deepSeal", function () {
 		})).toBe(true);
 	});
 });
+
+describe("map", function () {
+	it("should map all elements", function () {
+		var start = [2,4,6,8,10,12];
+		var mapped = [3,5,7,9,11,13]
+		expect(diff(d.map(start, value => value + 1), mapped)).toBe(false);
+	});
+});

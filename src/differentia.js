@@ -101,6 +101,7 @@ var differentia = (function () {
 		assert.container(subject, 1);
 		assert.argType(search === null || (isContainer(search) && getContainerLength(search) > 0), "a non-empty Object or Array", 2);
 		var state = {
+			accessors: null,
 			traverse: true,
 			tuple: {},
 			existing: null,
@@ -134,25 +135,18 @@ var differentia = (function () {
 		nodeMap.set(state.searchRoot, nodeStack[0]);
 		// Iterate `nodeStack`
 		_traverse: while (nodeStack.length > 0) {
-			// Pop last item from Stack
-			state.tuple = nodeStack.pop();
-			state.isArray = Array.isArray(state.tuple.search);
-			if (!state.isArray) {
-				var accessors = Object.keys(state.tuple.search);
-				state.length = accessors.length;
-			} else {
-				state.length = state.tuple.search.length;
-			}
 			// Traverse `search`, iterating through it's properties.
 			_iterate: for (
-				state.iterations = 0;
-				state.accessor = state.isArray ? state.iterations : accessors[state.iterations],
+				// Pop last item from Stack
+				state.tuple = nodeStack.pop(),
+				state.iterations = 0,
+				state.isArray = Array.isArray(state.tuple.search),
+				state.accessors = Object.keys(state.tuple.search),
+				state.length = state.accessors.length;
+				state.accessor = state.accessors[state.iterations],
 				state.iterations < state.length;
 				state.iterations++
 			) {
-				if (state.tuple.search[state.accessor] === undefined) {
-					continue _iterate;
-				}
 				// Indicates if iterated property is a container
 				state.isContainer = isContainer(state.tuple.search[state.accessor]);
 				state.existing = state.isContainer ? nodeMap.get(state.tuple.search[state.accessor]) : null;
@@ -429,6 +423,29 @@ var differentia = (function () {
 			}
 			if (state.isLast) {
 				return true;
+			}
+		}
+	};
+	strategies.map = {
+		interface: function (subject, callback, search = null) {
+			return runStrategy(strategies.map, {
+				subject: subject,
+				search: search,
+				callback: callback
+			});
+		},
+		entry: strategies.clone.entry,
+		main: function (state) {
+			if (state.isContainer) {
+				strategies.clone.main(state);
+			} else {
+				const returnValue = strategies.forEach.main(state);
+				if (returnValue !== undefined) {
+					state.tuple.clone[state.accessor] = returnValue;
+				}
+			}
+			if (state.isLast) {
+				return state.cloneRoot;
 			}
 		}
 	};
