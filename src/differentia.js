@@ -439,10 +439,7 @@ var differentia = (function () {
 			if (state.isContainer) {
 				strategies.clone.main(state);
 			} else {
-				const returnValue = strategies.forEach.main(state);
-				if (returnValue !== undefined) {
-					state.tuple.clone[state.accessor] = returnValue;
-				}
+				state.tuple.clone[state.accessor] = strategies.forEach.main(state);
 			}
 			if (state.isLast) {
 				return state.cloneRoot;
