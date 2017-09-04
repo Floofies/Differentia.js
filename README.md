@@ -19,13 +19,14 @@ This library provides a basic suite of Object/Array focused functions. They are 
   - [clone](#clone)
   - [diffClone](#diffclone)
   - [diff](#diff)
-  - [deepFreeze](#deepFreeze)
-  - [deepSeal](#deepSeal)
+  - [deepFreeze](#deepfreeze)
+  - [deepSeal](#deepseal)
 - [Higher-Order Functions](#higher-order-functions)
-  - [forEach](#forEach)
+  - [forEach](#foreach)
   - [find](#find)
   - [some](#some)
   - [every](#every)
+  - [map](#map)
 
 # :page_facing_up: Supported Data Types
 DataType|Clone|Diff
@@ -58,7 +59,8 @@ The `value` object contains the following properties:
 
 Property|Datatype|Description
 ---|---|---
-accessor|Mixed|The accessor being used to access `value.tuple.subject` during property/element enumerations.
+accessor|Mixed|The accessor being used to access `value.tuple.subject` during property/element enumerations. Equal to `state.accessors[state.iteration]`.
+accessors|Array|An Array of enumerable acessors found in `value.tuple.search`.
 currentValue|Mixed|The value of the element of enumeration. Equal to `value.tuple.subject[value.accessor]`.
 existing|`null` or Object|If `iddfs` encounters an Object/Array it has been before during the same search, this property will be set to the equivalent tuple; otherwise it will be `null`. Objects added to that tuple previously will show up again here.
 isArray|Boolean|Indicates if the Object being traversed/enumerated is an Array.
@@ -81,11 +83,11 @@ search|Object/Array|The source of target paths/elements for traversal/enumeratio
 Traversal is performed upon this tuple of objects equally, providing they have overlapping/equal paths. If any node exists in `search` that does not exist in any one object of the tuple, then traversal is aborted for that specific object and it is dropped from the tuple; except if the object lacking the node is `subject`, in which case traversal is aborted completely across all objects of the tuple, and nothing is dropped from the tuple.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The root Object or Array to enumerate & traverse.
 
-- **`search`**
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
@@ -169,11 +171,11 @@ clone( subject [, search = null ] );
 Returns a clone of `subject`. If `search` is provided, the clone will only contain properties/paths that are present in `search`.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object or Array to clone from.
 
-- **`search`** (*Optional*)
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
@@ -222,15 +224,15 @@ Returns a clone of `subject`, containing only the properties which differ from t
 
 #### Parameters
 
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object or Array to clone from.
 
-- **`compared`**
+- **`compared`** Object/Array
 
   The Object or Array to compare `subject` to.
 
-- **`search`** (*Optional*)
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
@@ -309,15 +311,15 @@ diff( subject , compared [, search = null ] );
 Returns `true` if any of `compared`'s properties differ in any way from `subject`, or `false` if otherwsie.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object or Array to compare `compared` to.
 
-- **`compared`**
+- **`compared`** Object/Array
 
   The Object or Array to compare to `subject`.
 
-- **`search`** (*Optional*)
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
@@ -394,11 +396,11 @@ deepFreeze( subject [, search = null ] );
 Traverses and enumerates `subject`, freezing it and it's children. Uses `Object.freeze()`. Returns the frozen Object/Array. The method directly mutates the Object/Array.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object or Array to freeze.
 
-- **`search`** (*Optional*)
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
@@ -431,11 +433,11 @@ deepFreeze( subject [, search = null ] );
 Traverses and enumerates `subject`, sealing it and and it's children. Uses `Object.seal()`. Returns the sealed Object/Array. The method directly mutates the Object/Array.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object or Array to seal.
 
-- **`search`** (*Optional*)
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
@@ -443,7 +445,6 @@ Traverses and enumerates `subject`, sealing it and and it's children. Uses `Obje
 <details><summary>Example 1: Using `deepSeal` to seal all Objects/Arrays:</summary>
 
 ```JavaScript
-//
 var subject = {
   string1: "Pretty",
   array1: [
@@ -470,15 +471,15 @@ forEach( subject , callback [, search = null ] );
 A simple IOC wrapper to the [iddfs](#iddfs) iterator. `callback` is executed for each element. Unlike `Array.prototype.forEach`, this implementation allows a return value of any type, which will be returned to the caller.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The root Object or Array to enumerate & traverse.
 
-- **`callback`**
+- **`callback`** Function
 
   The callback function to execute for each element.
 
-- **`search`**
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
@@ -489,7 +490,7 @@ A simple IOC wrapper to the [iddfs](#iddfs) iterator. `callback` is executed for
 
 - **`accessor`**
 
-  The accessor being used to retrieve `value` from the Object/Array being enumerated.
+  The accessor being used to retrieve `currentValue` from the Object/Array being enumerated.
 
 - **`subject`**
 
@@ -540,28 +541,28 @@ find( subject , callback [, search = null ] );
 A simple IOC wrapper to the [iddfs](#iddfs) iterator. `callback` is executed for each element. If `callback` returns `true` at any time, then `currentValue` is immediately returned. If `callback` never returns `true`, then `undefined` is returned.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The root Object or Array to enumerate & traverse.
 
-- **`callback`**
+- **`callback`** Function
 
   The callback function to execute for each element.
 
-- **`search`**
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
 #### Callback Parameters
-- **`currentValue`**
+- **`currentValue`** Mixed
 
   The value of the element of enumeration. Equal to `subject[accessor]`.
 
-- **`accessor`**
+- **`accessor`** Mixed
 
   The accessor being used to retrieve `currentValue` from the Object/Array being enumerated.
 
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object/Array being enumerated.
 
@@ -604,28 +605,28 @@ some( subject , callback [, search = null ] );
 A simple IOC wrapper to the [iddfs](#iddfs) iterator. `callback` is executed for each element. If `callback` returns `true` at any time, then `true` is immediately returned. If `callback` never returns `true`, then `false` is returned. You can use this function to test if a least one element of the Object tree passes a test.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The root Object or Array to enumerate & traverse.
 
-- **`callback`**
+- **`callback`** Function
 
   The callback function to execute for each element.
 
-- **`search`**
+- **`search`** (*Optional*) Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
 #### Callback Parameters
-- **`currentValue`**
+- **`currentValue`** Mixed
 
   The value of the element of enumeration. Equal to `subject[accessor]`.
 
-- **`accessor`**
+- **`accessor`** Mixed
 
   The accessor being used to retrieve `currentValue` from the Object/Array being enumerated.
 
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object/Array being enumerated.
 
@@ -661,28 +662,28 @@ every( subject , callback [, search = null ] );
 A simple IOC wrapper to the [iddfs](#iddfs) iterator. `callback` is executed for each element. If `callback` returns `false` (or a non-truthy value) at any time, then `false` is immediately returned. If `callback` returns `true` for every element, then `true` is returned. You can use this function to test if all elements of the Object tree pass a test.
 
 #### Parameters
-- **`subject`**
+- **`subject`** Object/Array
 
   The root Object or Array to enumerate & traverse.
 
-- **`callback`**
+- **`callback`** Function
 
   The callback function to execute for each element.
 
-- **`search`**
+- **`search`** (*Optional*)  Object/Array
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
 #### Callback Parameters
-- **`currentValue`**
+- **`currentValue`** Mixed
 
   The value of the element of enumeration. Equal to `subject[accessor]`.
 
-- **`accessor`**
+- **`accessor`** Mixed
 
   The accessor being used to retrieve `currentValue` from the Object/Array being enumerated.
 
-- **`subject`**
+- **`subject`** Object/Array
 
   The Object/Array being enumerated.
 
@@ -703,6 +704,72 @@ passed = differentia.every(subject, function (currentValue, accessor, subject) {
   return currentValue === 9000;
 });
 console.log(passed); // Logs false, at least one test failed.
+```
+
+</details>
+
+---
+
+### `map`
+
+*Higher-Order Function*
+```JavaScript
+map( subject , callback [, search = null ] );
+```
+A simple IOC wrapper to the [iddfs](#iddfs) iterator. Constructs a structural copy of `subject` using the return values of `callback`, which is executed once for each primitive element.
+
+#### Parameters
+- **`subject`** Object/Array
+
+  The root Object or Array to enumerate & traverse.
+
+- **`callback`** Function
+
+  The callback function to execute for each primitive element. Any return value (including `undefined`) will overwrite any primitives in the copy.
+
+- **`search`** (*Optional*) Object/Array
+
+  An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
+
+#### Callback Parameters
+- **`currentValue`**
+
+  The value of the element of enumeration. Equal to `subject[accessor]`.
+
+- **`accessor`**
+
+  The accessor being used to retrieve `currentValue` from the Object/Array being enumerated.
+
+- **`subject`**
+
+  The Object/Array being enumerated.
+
+#### Examples
+<details><summary>Example 1: Using `map` to increment all numbers:</summary>
+
+```JavaScript
+var subject = {
+  two: [2,4,6,8,10,12],
+  thirteen: [13,15,17,19,21]
+};
+
+// Will increment all numbers and save them to a copy
+var copy = differentia.map(subject, function (currentValue, accessor, subject) {
+  if (typeof currentValue === "number") {
+    return currentValue + 1;
+  } else {
+    return currentValue;
+  }
+});
+
+console.log(copy);
+// Logs:
+/*
+{
+  two: [3,5,7,9,11,13],
+  thirteen: [14,16,18,20,22]
+};
+*/
 ```
 
 </details>
