@@ -18,6 +18,7 @@ describe("differentia", function () {
 		'find',
 		'every',
 		'some',
+		'map',
 		'deepFreeze',
 		'deepSeal'
 	];
