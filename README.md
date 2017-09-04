@@ -58,7 +58,8 @@ The `value` object contains the following properties:
 
 Property|Datatype|Description
 ---|---|---
-accessor|Mixed|The accessor being used to access `value.tuple.subject` during property/element enumerations.
+accessor|Mixed|The accessor being used to access `value.tuple.subject` during property/element enumerations. Equal to `state.accessors[state.iteration]`.
+accessors|Array|An Array of enumerable acessors found in `value.tuple.search`.
 currentValue|Mixed|The value of the element of enumeration. Equal to `value.tuple.subject[value.accessor]`.
 existing|`null` or Object|If `iddfs` encounters an Object/Array it has been before during the same search, this property will be set to the equivalent tuple; otherwise it will be `null`. Objects added to that tuple previously will show up again here.
 isArray|Boolean|Indicates if the Object being traversed/enumerated is an Array.
@@ -443,7 +444,6 @@ Traverses and enumerates `subject`, sealing it and and it's children. Uses `Obje
 <details><summary>Example 1: Using `deepSeal` to seal all Objects/Arrays:</summary>
 
 ```JavaScript
-//
 var subject = {
   string1: "Pretty",
   array1: [
@@ -703,6 +703,72 @@ passed = differentia.every(subject, function (currentValue, accessor, subject) {
   return currentValue === 9000;
 });
 console.log(passed); // Logs false, at least one test failed.
+```
+
+</details>
+
+---
+
+### `map`
+
+*Higher-Order Function*
+```JavaScript
+map( subject , callback [, search = null ] );
+```
+A simple IOC wrapper to the [iddfs](#iddfs) iterator. Constructs a structural copy of `subject` using the return values of `callback`, which is executed once for each primitive element.
+
+#### Parameters
+- **`subject`** Object/Array
+
+  The root Object or Array to enumerate & traverse.
+
+- **`callback`** Function
+
+  The callback function to execute for each element. Any return value (including `undefined`) will overwrite any primitives in the copy.
+
+- **`search`** (*Optional*) Object/Array
+
+  An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
+
+#### Callback Parameters
+- **`currentValue`**
+
+  The value of the element of enumeration. Equal to `subject[accessor]`.
+
+- **`accessor`**
+
+  The accessor being used to retrieve `value` from the Object/Array being enumerated.
+
+- **`subject`**
+
+  The Object/Array being enumerated.
+
+#### Examples
+<details><summary>Example 1: Using `map` to increment all numbers:</summary>
+
+```JavaScript
+var subject = {
+  two: [2,4,6,8,10,12],
+  thirteen: [13,15,17,19,21]
+};
+
+// Will increment all numbers and save them to a copy
+var copy = differentia.map(subject, function (currentValue, accessor, subject) {
+  if (typeof currentValue === "number") {
+    return currentValue + 1;
+  } else {
+    return currentValue;
+  }
+});
+
+console.log(copy);
+// Logs:
+/*
+{
+  two: [3,5,7,9,11,13],
+  thirteen: [14,16,18,20,22]
+};
+*/
 ```
 
 </details>
