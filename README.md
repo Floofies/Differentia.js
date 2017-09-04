@@ -26,6 +26,7 @@ This library provides a basic suite of Object/Array focused functions. They are 
   - [find](#find)
   - [some](#some)
   - [every](#every)
+  - [map](#map)
 
 # :page_facing_up: Supported Data Types
 DataType|Clone|Diff
@@ -489,7 +490,7 @@ A simple IOC wrapper to the [iddfs](#iddfs) iterator. `callback` is executed for
 
 - **`accessor`**
 
-  The accessor being used to retrieve `value` from the Object/Array being enumerated.
+  The accessor being used to retrieve `currentValue` from the Object/Array being enumerated.
 
 - **`subject`**
 
@@ -724,7 +725,7 @@ A simple IOC wrapper to the [iddfs](#iddfs) iterator. Constructs a structural co
 
 - **`callback`** Function
 
-  The callback function to execute for each element. Any return value (including `undefined`) will overwrite any primitives in the copy.
+  The callback function to execute for each primitive element. Any return value (including `undefined`) will overwrite any primitives in the copy.
 
 - **`search`** (*Optional*) Object/Array
 
@@ -737,7 +738,7 @@ A simple IOC wrapper to the [iddfs](#iddfs) iterator. Constructs a structural co
 
 - **`accessor`**
 
-  The accessor being used to retrieve `value` from the Object/Array being enumerated.
+  The accessor being used to retrieve `currentValue` from the Object/Array being enumerated.
 
 - **`subject`**
 
