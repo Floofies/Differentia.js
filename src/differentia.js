@@ -74,7 +74,7 @@ var differentia = (function () {
 		this.array[newIndex] = value;
 	};
 	/**
-	* OffsetArray.prototype.shift - Removes and returns the first element.
+	* OffsetArray.prototype.shift - Returns the first element and excludes it from the view.
 	* @returns {any}
 	*/
 	OffsetArray.prototype.shift = function () {
@@ -86,7 +86,7 @@ var differentia = (function () {
 		return undefined;
 	};
 	/**
-	* OffsetArray.prototype.pop - Removes and returns the last element.
+	* OffsetArray.prototype.pop - Returns the last element and excludes it from the view.
 	* @returns {any}
 	*/
 	OffsetArray.prototype.pop = function () {
@@ -97,7 +97,7 @@ var differentia = (function () {
 		return undefined;
 	};
 	/**
-	* OffsetArray.prototype.push - Adds a value to the end of the Array.
+	* OffsetArray.prototype.push - Adds a value to the end of the view.
 	* @param {any} value
 	*/
 	OffsetArray.prototype.push = function (value) {
