@@ -60,7 +60,7 @@ Your Strategy's `interface` function must call `runStrategy` to use the `iddfs` 
 ```JavaScript
 runStrategy( strategy, searchAlg, parameters );
 ```
-An IOC wrapper to `searchIterator`. (See documentation for `searchIterator` in `README.md` for more information.). `runStrategy` advances the iterator returned by `searchIterator` and executes Call-With-Current-State functions supplied in `strategy`. The state flyweight object is passed to `strategy.main`, which is executed for each element, and `strategy.entry`, which is only executed for the first element. If `strategy.main` returns something other than `undefined`, it will be returned to the caller.
+An IOC wrapper for Generators/Iterators. `runStrategy` advances the iterator returned by `searchIterator` and executes Call-With-Current-State functions supplied in `strategy`. The state flyweight object is passed to `strategy.main`, which is executed for each element, and `strategy.entry`, which is only executed for the first element. If `strategy.main` returns something other than `undefined`, it will be returned to the caller.
 
 `searchAlg` is the search algorithm Generator to use; it can be `dfs` or `bfs`, or any Generator.
 
@@ -71,7 +71,7 @@ An IOC wrapper to `searchIterator`. (See documentation for `searchIterator` in `
 
 - **`searchAlg`** Generator
 
-  A Generator to use as the search algorthm.
+  A Generator to use as the search algorthm; it can be `dfs` or `bfs`, or any Generator.
 
 - **`parameters`** Object
 
@@ -122,7 +122,7 @@ strategies.myStrategy.interface(subject);
 
 // We can now see the Primitives were overwritten with "Hello World".
 console.log(subject);
-/*
+/* Logs:
 "{
 	greetings1: [
 		"Hello World"
