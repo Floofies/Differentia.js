@@ -23,7 +23,8 @@ describe("differentia", function () {
 		'deepFreeze',
 		'deepSeal',
 		'paths',
-		'pathfind',
+		'pathFind',
+		'diffPaths',
 		'filter'
 	];
 	it("should contain \"" + modules.join("\", \"") + "\"", function () {
@@ -459,16 +460,66 @@ describe("paths", function () {
 	});
 });
 
-describe("pathfind", function () {
+describe("pathFind", function () {
 	it("should return the path of the input if found", function () {
 		var expectedPath = ["searchRoot", "0", "address", "geo", "lng"];
-		expect(diff(d.pathfind(testObjects["Multidimensional Acyclic"], 81.1496), expectedPath)).toBe(false);
+		expect(diff(d.pathFind(testObjects["Multidimensional Acyclic"], 81.1496), expectedPath)).toBe(false);
 		expectedPath = ["searchRoot", "1", "company", "name"];
-		expect(diff(d.pathfind(testObjects["Multidimensional Acyclic"], "Deckow-Crist"), expectedPath)).toBe(false);
+		expect(diff(d.pathFind(testObjects["Multidimensional Acyclic"], "Deckow-Crist"), expectedPath)).toBe(false);
 	});
 	it("should return null if input is not found", function () {
-		expect(d.pathfind(testObjects["Multidimensional Acyclic"], "This value does not exist!")).toBe(null);
+		expect(d.pathFind(testObjects["Multidimensional Acyclic"], "This value does not exist!")).toBe(null);
 	})
+});
+
+describe("diffPaths", function () {
+	it("should return an array of paths that differ", function () {
+		var expectedPaths = [
+			["searchRoot","0"],
+			["searchRoot","1"],
+			["searchRoot","0","id"],
+			["searchRoot","0","name"],
+			["searchRoot","0","username"],
+			["searchRoot","0","email"],
+			["searchRoot","0","regex"],
+			["searchRoot","0","address"],
+			["searchRoot","0","website"],
+			["searchRoot","0","company"],
+			["searchRoot","0","otherUser"],
+			["searchRoot","1","id"],
+			["searchRoot","1","name"],
+			["searchRoot","1","username"],
+			["searchRoot","1","email"],
+			["searchRoot","1","regex"],
+			["searchRoot","1","address"],
+			["searchRoot","1","website"],
+			["searchRoot","1","company"],
+			["searchRoot","1","otherUser"],
+			["searchRoot","0","address","street"],
+			["searchRoot","0","address","suite"],
+			["searchRoot","0","address","city"],
+			["searchRoot","0","address","zipcode"],
+			["searchRoot","0","address","geo"],
+			["searchRoot","0","company","active"],
+			["searchRoot","0","company","name"],
+			["searchRoot","0","company","catchPhrase"],
+			["searchRoot","0","company","bs"],
+			["searchRoot","1","address","street"],
+			["searchRoot","1","address","suite"],
+			["searchRoot","1","address","city"],
+			["searchRoot","1","address","zipcode"],
+			["searchRoot","1","address","geo"],
+			["searchRoot","1","company","active"],
+			["searchRoot","1","company","name"],
+			["searchRoot","1","company","catchPhrase"],
+			["searchRoot","1","company","bs"],
+			["searchRoot","0","address","geo","lat"],
+			["searchRoot","0","address","geo","lng"],
+			["searchRoot","1","address","geo","lat"],
+			["searchRoot","1","address","geo","lng"]
+		];
+		expect(diff(differentia.diffPaths(testObjects["Multidimensional Cyclic"], testObjects["Linear Acyclic"]), expectedPaths)).toBe(false);
+	});
 });
 
 describe("filter", function () {
@@ -497,7 +548,7 @@ describe("filter", function () {
 			];
 		expect(diff(d.filter(testObjects["Multidimensional Acyclic"], value => typeof value === "number"), expectedObject)).toBe(false);
 	});
-	it("should return an empty array is no values pass the test", function () {
+	it("should return an empty array if no values pass the test", function () {
 		var clone = d.filter(testObjects["Multidimensional Acyclic"], value => value === "This value does not exist!");
 		expect(Array.isArray(clone) && clone.length === 0).toBe(true);
 	});
