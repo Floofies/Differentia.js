@@ -177,6 +177,10 @@ var differentia = (function () {
 		}
 		throw new TypeError("The given parameter must be an Object or Array");
 	}
+	/**
+	* createIterationState - Creates the state object for searchIterator.
+	* @returns {Object}  A new iteration state object with sane defaults.
+	*/
 	function createIterationState() {
 		return {
 			accessors: null,
@@ -266,7 +270,14 @@ var differentia = (function () {
 				var nextTuple = {};
 				// Travese the Tuple's properties
 				for (var unit in state.tuple) {
-					if (unit === "search" || unit === "subject" || state.accessor in state.tuple[unit]) {
+					if (
+						(
+							unit === "search"
+							|| unit === "subject"
+							|| isContainer(state.tuple[unit][state.accessor])
+						)
+						&& state.accessor in state.tuple[unit]
+					) {
 						nextTuple[unit] = state.tuple[unit][state.accessor];
 					}
 				}
@@ -389,7 +400,7 @@ var differentia = (function () {
 			state.tuple.compare = state.parameters.compare;
 		},
 		main: function (state) {
-			if (!("compare" in state.tuple) && !(state.accessor in state.tuple.compare)) {
+			if (!("compare" in state.tuple) && !isContainer(state.tuple.compare) || !(state.accessor in state.tuple.compare)) {
 				return true;
 			}
 			var subjectProp = state.currentValue;
@@ -579,9 +590,9 @@ var differentia = (function () {
 			}
 		}
 	};
-	strategies.pathfind = {
+	strategies.pathFind = {
 		interface: function (subject, findValue, search = null) {
-			return runStrategy(strategies.pathfind, bfs, {
+			return runStrategy(strategies.pathFind, bfs, {
 				subject: subject,
 				search: search,
 				findValue: findValue
@@ -599,6 +610,30 @@ var differentia = (function () {
 			}
 		}
 	};
+	strategies.diffPaths = {
+		interface: function (subject, compare, search = null) {
+			return runStrategy(strategies.diffPaths, bfs, {
+				subject: subject,
+				compare: compare,
+				search: search
+			});
+		},
+		entry: function (state) {
+			strategies.diff.entry(state);
+			strategies.paths.entry(state);
+			state.diffPaths = [];
+		},
+		main: function (state) {
+			strategies.paths.main(state);
+			if (strategies.diff.main(state)) {
+				state.diffPaths[state.diffPaths.length] = Array.from(state.currentPath);
+				state.diffPaths[state.diffPaths.length - 1].push(state.accessor);
+			}
+			if (state.isLast) {
+				return state.diffPaths;
+			}
+		}
+	},
 	strategies.filter = {
 		interface: function (subject, callback, search = null) {
 			return runStrategy(strategies.filter, bfs, {
@@ -621,10 +656,11 @@ var differentia = (function () {
 			if (state.isLast) {
 				while (state.pendingPaths.length > 0) {
 					var path = state.pendingPaths.shift();
-					var nodeQueue = [{
+					var nodeQueue = new Queue();
+					nodeQueue.push({
 						subject: state.subjectRoot,
 						clone: state.cloneRoot
-					}];
+					});
 					while (path.length > 0 && nodeQueue.length > 0) {
 						var accessor = path.shift();
 						if (accessor === "searchRoot") {
@@ -645,7 +681,7 @@ var differentia = (function () {
 						for (var unit in tuple) {
 							nextTuple[unit] = tuple[unit][accessor];
 						}
-						nodeQueue[nodeQueue.length] = nextTuple;
+						nodeQueue.push(nextTuple);
 					}
 				}
 				return state.cloneRoot;
