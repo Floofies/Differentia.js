@@ -10,7 +10,8 @@ describe("differentia", function () {
 	var modules = [
 		'isContainer',
 		'getContainerLength',
-		'iddfs',
+		'bfs',
+		'dfs',
 		'forEach',
 		'diff',
 		'clone',
@@ -20,7 +21,11 @@ describe("differentia", function () {
 		'some',
 		'map',
 		'deepFreeze',
-		'deepSeal'
+		'deepSeal',
+		'paths',
+		'pathFind',
+		'diffPaths',
+		'filter'
 	];
 	it("should contain \"" + modules.join("\", \"") + "\"", function () {
 		modules.forEach(function (moduleName) {
@@ -243,26 +248,53 @@ describe("getContainerLength", function () {
 	});
 });
 
-describe("iddfs", function () {
+describe("bfs", function () {
 	it("should throw a TypeError when no arguments are given", function () {
-		expect(() => d.iddfs().next()).toThrow(new TypeError("Argument 1 must be an Object or Array"));
+		expect(() => d.bfs().next()).toThrow(new TypeError("Argument 1 must be an Object or Array"));
 	});
 	it("should throw a TypeError when any arguments are the wrong type", function () {
-		expect(() => d.iddfs(123).next()).toThrow(new TypeError("Argument 1 must be an Object or Array"));
-		expect(() => d.iddfs("test").next()).toThrow(new TypeError("Argument 1 must be an Object or Array"));
-		expect(() => d.iddfs({}, 123).next()).toThrow(new TypeError("Argument 2 must be a non-empty Object or Array"));
-		expect(() => d.iddfs({}, "test").next()).toThrow(new TypeError("Argument 2 must be a non-empty Object or Array"));
+		expect(() => d.bfs(123).next()).toThrow(new TypeError("Argument 1 must be an Object or Array"));
+		expect(() => d.bfs("test").next()).toThrow(new TypeError("Argument 1 must be an Object or Array"));
+		expect(() => d.bfs({}, 123).next()).toThrow(new TypeError("Argument 2 must be a non-empty Object or Array"));
+		expect(() => d.bfs({}, "test").next()).toThrow(new TypeError("Argument 2 must be a non-empty Object or Array"));
 	});
 	it("should iterate all nodes and properties", function () {
 		var keyCounts = createKeyCounter();
 		var testObject = testObjects["Multidimensional Cyclic"];
-		var iterator = d.iddfs(testObject, testObject);
+		var iterator = d.bfs(testObject, testObject);
 		var iteration = iterator.next();
 		while (!iteration.done) {
 			keyCounts[iteration.value.accessor]++;
 			iteration = iterator.next();
 		}
-		//console.info("IDDFS Traversal & Iteration Results:");
+		//console.info("bfs Traversal & Iteration Results:");
+		for (var accessor in keyCounts) {
+			//console.info("Accessor \"" + accessor + "\" was visited " + keyCounts[accessor] + " time(s).");
+			expect(keyCounts[accessor] > 0).toBe(true);
+		}
+	});
+});
+
+describe("dfs", function () {
+	it("should throw a TypeError when no arguments are given", function () {
+		expect(() => d.dfs().next()).toThrow(new TypeError("Argument 1 must be an Object or Array"));
+	});
+	it("should throw a TypeError when any arguments are the wrong type", function () {
+		expect(() => d.dfs(123).next()).toThrow(new TypeError("Argument 1 must be an Object or Array"));
+		expect(() => d.dfs("test").next()).toThrow(new TypeError("Argument 1 must be an Object or Array"));
+		expect(() => d.dfs({}, 123).next()).toThrow(new TypeError("Argument 2 must be a non-empty Object or Array"));
+		expect(() => d.dfs({}, "test").next()).toThrow(new TypeError("Argument 2 must be a non-empty Object or Array"));
+	});
+	it("should iterate all nodes and properties", function () {
+		var keyCounts = createKeyCounter();
+		var testObject = testObjects["Multidimensional Cyclic"];
+		var iterator = d.dfs(testObject, testObject);
+		var iteration = iterator.next();
+		while (!iteration.done) {
+			keyCounts[iteration.value.accessor]++;
+			iteration = iterator.next();
+		}
+		//console.info("bfs Traversal & Iteration Results:");
 		for (var accessor in keyCounts) {
 			//console.info("Accessor \"" + accessor + "\" was visited " + keyCounts[accessor] + " time(s).");
 			expect(keyCounts[accessor] > 0).toBe(true);
@@ -407,5 +439,117 @@ describe("map", function () {
 		var start = [2,4,6,8,10,12];
 		var mapped = [3,5,7,9,11,13];
 		expect(diff(d.map(start, value => value + 1), mapped)).toBe(false);
+	});
+});
+
+describe("paths", function () {
+	const expectedPaths = [
+		["searchRoot"],
+		["searchRoot","0"],
+		["searchRoot","1"],
+		["searchRoot","0","address"],
+		["searchRoot","0","company"],
+		["searchRoot","1","address"],
+		["searchRoot","1","company"],
+		["searchRoot","0","address","geo"],
+		["searchRoot","1","address","geo"]
+	];
+	it("should return an array of all paths", function () {
+		expect(diff(d.paths(testObjects["Multidimensional Acyclic"]), expectedPaths)).toBe(false);
+		expect(diff(d.paths(testObjects["Multidimensional Cyclic"]), expectedPaths)).toBe(false);
+	});
+});
+
+describe("pathFind", function () {
+	it("should return the path of the input if found", function () {
+		var expectedPath = ["searchRoot", "0", "address", "geo", "lng"];
+		expect(diff(d.pathFind(testObjects["Multidimensional Acyclic"], 81.1496), expectedPath)).toBe(false);
+		expectedPath = ["searchRoot", "1", "company", "name"];
+		expect(diff(d.pathFind(testObjects["Multidimensional Acyclic"], "Deckow-Crist"), expectedPath)).toBe(false);
+	});
+	it("should return null if input is not found", function () {
+		expect(d.pathFind(testObjects["Multidimensional Acyclic"], "This value does not exist!")).toBe(null);
+	})
+});
+
+describe("diffPaths", function () {
+	it("should return an array of paths that differ", function () {
+		var expectedPaths = [
+			["searchRoot","0"],
+			["searchRoot","1"],
+			["searchRoot","0","id"],
+			["searchRoot","0","name"],
+			["searchRoot","0","username"],
+			["searchRoot","0","email"],
+			["searchRoot","0","regex"],
+			["searchRoot","0","address"],
+			["searchRoot","0","website"],
+			["searchRoot","0","company"],
+			["searchRoot","0","otherUser"],
+			["searchRoot","1","id"],
+			["searchRoot","1","name"],
+			["searchRoot","1","username"],
+			["searchRoot","1","email"],
+			["searchRoot","1","regex"],
+			["searchRoot","1","address"],
+			["searchRoot","1","website"],
+			["searchRoot","1","company"],
+			["searchRoot","1","otherUser"],
+			["searchRoot","0","address","street"],
+			["searchRoot","0","address","suite"],
+			["searchRoot","0","address","city"],
+			["searchRoot","0","address","zipcode"],
+			["searchRoot","0","address","geo"],
+			["searchRoot","0","company","active"],
+			["searchRoot","0","company","name"],
+			["searchRoot","0","company","catchPhrase"],
+			["searchRoot","0","company","bs"],
+			["searchRoot","1","address","street"],
+			["searchRoot","1","address","suite"],
+			["searchRoot","1","address","city"],
+			["searchRoot","1","address","zipcode"],
+			["searchRoot","1","address","geo"],
+			["searchRoot","1","company","active"],
+			["searchRoot","1","company","name"],
+			["searchRoot","1","company","catchPhrase"],
+			["searchRoot","1","company","bs"],
+			["searchRoot","0","address","geo","lat"],
+			["searchRoot","0","address","geo","lng"],
+			["searchRoot","1","address","geo","lat"],
+			["searchRoot","1","address","geo","lng"]
+		];
+		expect(diff(differentia.diffPaths(testObjects["Multidimensional Cyclic"], testObjects["Linear Acyclic"]), expectedPaths)).toBe(false);
+	});
+});
+
+describe("filter", function () {
+	it("should clone values which pass the test", function () {
+		var expectedObject = [
+			{
+				"id": 1,
+				"address": {
+					"zipcode": 92998,
+					"geo": {
+						"lat": -37.3159,
+						"lng": 81.1496
+					}
+				}
+			},
+			{
+				"id": 2,
+				"address": {
+					"zipcode": 90566,
+					"geo": 
+					{
+						"lat": -43.9509,
+						"lng": -34.4618}
+					}
+				}
+			];
+		expect(diff(d.filter(testObjects["Multidimensional Acyclic"], value => typeof value === "number"), expectedObject)).toBe(false);
+	});
+	it("should return an empty array if no values pass the test", function () {
+		var clone = d.filter(testObjects["Multidimensional Acyclic"], value => value === "This value does not exist!");
+		expect(Array.isArray(clone) && clone.length === 0).toBe(true);
 	});
 });

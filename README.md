@@ -4,31 +4,31 @@
 ===
 This library provides a basic suite of Object/Array focused functions. They are all "deep" algorithms, and fully traverse all child Objects/Arrays/properties unless given a search index object with specifies otherwise.
 
-- Deep Object Cloning
-- Deep Object Diffing
-- Deep Freezing/Sealing
-- Differential Deep Object Cloning
-- A small compliment of higher-order functions.
-
----
-
 # :closed_book: Documentation
-## Functions
+
+- [Search Algorithm Iterators](#search-algorithm-iterators)
+  - [dfs](#dfs)
+  - [bfs](#bfs)
 - [Main Functions](#main-functions)
-  - [iddfs](#iddfs)
   - [clone](#clone)
   - [diffClone](#diffclone)
   - [diff](#diff)
   - [deepFreeze](#deepfreeze)
   - [deepSeal](#deepseal)
+  - [paths](#paths)
+  - [pathfind](#pathfind)
+  - [diffpaths](#diffpaths)
 - [Higher-Order Functions](#higher-order-functions)
   - [forEach](#foreach)
   - [find](#find)
   - [some](#some)
   - [every](#every)
   - [map](#map)
+  - [filter](#filter)
 
-# :page_facing_up: Supported Data Types
+---
+
+## :page_facing_up: Supported Data Types
 DataType|Clone|Diff
 ---|---|---
 Function|:x:|:x:
@@ -43,26 +43,18 @@ RegExp|:white_check_mark:|:white_check_mark:
 
 ---
 
-# Main Functions
+## Search Algorithm Iterators
 
-### `iddfs`
+The search iterators, `bfs` and `dfs`, are actually both the same `searchIterator` algorithm (See CONTRIBUTING.md for more details about `searchIterator`) with differing traversal scheduling data structures (Queue VS Stack).
 
-*Iterator Function*
-```JavaScript
-iddfs( subject [, search = null ] );
-```
-An implementation of [Iterative Deepening Depth-First Search](https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search). Enumerates properties/elements in `subject`, traversing into any Objects/Arrays, using `search` as a search index. Any properties/nodes present in `search` will be used to enumerate, traverse, and access the properties/nodes of `subject`. If a property/node exists in `search` that does not exist in `subject`, or vice versa, it will be skipped.
-
-Upon calling `next()`, the `iddfs` iterator exposes a single `value` object which encapsulates the state of iteration/traversal at the time of being returned. The object is a flyweight and is thus mutated between every iteration/traversal; because of this, do not attempt to store or otherwise rely on values contained within it.
-
-The `value` object contains the following properties:
+Upon calling `next()`, the search iterators expose a single state object in `value` which encapsulates the current state of iteration/traversal. The object is a flyweight and is thus mutated between every iteration/traversal; because of this, do not attempt to store or otherwise rely on values contained within it for more than one step in the iteration.
 
 Property|Datatype|Description
 ---|---|---
 accessor|Mixed|The accessor being used to access `value.tuple.subject` during property/element enumerations. Equal to `state.accessors[state.iteration]`.
 accessors|Array|An Array of enumerable acessors found in `value.tuple.search`.
 currentValue|Mixed|The value of the element of enumeration. Equal to `value.tuple.subject[value.accessor]`.
-existing|`null` or Object|If `iddfs` encounters an Object/Array it has been before during the same search, this property will be set to the equivalent tuple; otherwise it will be `null`. Objects added to that tuple previously will show up again here.
+existing|`null` or Object|If `dfs` encounters an Object/Array it has been before during the same search, this property will be set to the equivalent tuple; otherwise it will be `null`. Objects added to that tuple previously will show up again here.
 isArray|Boolean|Indicates if the Object being traversed/enumerated is an Array.
 isContainer|Boolean|Indicates if the current item of the enumeration is an Object or Array.
 isFirst|Boolean|Indicates if the current item of the enumeration is the first item to be enumerated.
@@ -70,6 +62,7 @@ isLast|Boolean|Indicates if the current item of the enumeration is the last item
 iterations|Number|A number indicating how many items have been enumerated in the current Object/Array. Gets reset to `0` on each traversal.
 length|Number|The total number of enumerable properties/elements of the current Object/Array being enumerated.
 noIndex|Boolean|Indicates if a search index was not given. If `true`, then `search` is equal/assigned to `subject`.
+targetTuples|Array|A list of tuples to be targeted for traversal. Tuples are removed from the bottom-up.
 traverse|Boolean|Indicates if the current item of enumeration should be traversed.
 tuple|Object|An Object containing all Objects being traversed in parallel.
 
@@ -82,6 +75,16 @@ search|Object/Array|The source of target paths/elements for traversal/enumeratio
 
 Traversal is performed upon this tuple of objects equally, providing they have overlapping/equal paths. If any node exists in `search` that does not exist in any one object of the tuple, then traversal is aborted for that specific object and it is dropped from the tuple; except if the object lacking the node is `subject`, in which case traversal is aborted completely across all objects of the tuple, and nothing is dropped from the tuple.
 
+### `dfs`
+
+*Generator*
+```JavaScript
+dfs( subject, search = null ] );
+```
+An implementation of Depth-First Search. Enumerates properties/elements in `subject`, traversing into any Objects/Arrays, using `search` as a search index. Any properties/nodes present in `search` will be used to enumerate, traverse, and access the properties/nodes of `subject`. If a property/node exists in `search` that does not exist in `subject`, or vice versa, it will be skipped.
+
+Upon calling `next()`, the `dfs` iterator exposes a single `value` object which encapsulates the state of iteration/traversal at the time of being returned. The object is a flyweight and is thus mutated between every iteration/traversal; because of this, do not attempt to store or otherwise rely on values contained within it.
+
 #### Parameters
 - **`subject`** Object/Array
 
@@ -92,7 +95,7 @@ Traversal is performed upon this tuple of objects equally, providing they have o
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
 #### Examples
-<details><summary>Example 1: Using `iddfs` to traverse and enumerate an Object:</summary>
+<details><summary>Example 1: Using `dfs` to traverse and enumerate an Object:</summary>
 
 ```JavaScript
 var subject = {
@@ -104,7 +107,7 @@ var subject = {
   ]
 };
 
-var search = differentia.iddfs(subject, subject);
+var search = differentia.dfs(subject, subject);
 
 // Starts on the top layer of the root of subject:
 var iteration = search.next();
@@ -115,7 +118,7 @@ console.log(iteration.value.accessor); // Logs "greetings2"
 console.log(iteration.value.currentValue); // Logs ["Good Morning!"]
 
 // Finished enumerating root Object...
-// Now it will traverse and enumerate Objects/Arrays it saw:
+// Now it will traverse and enumerate Objects/Arrays it saw in reverse order:
 iteration = search.next();
 console.log(iteration.value.accessor); // Logs 0
 console.log(iteration.value.currentValue); // Logs "Good Morning!"
@@ -126,7 +129,7 @@ console.log(iteration.value.currentValue); // Logs "Hello World!"
 
 </details>
 
-<details><summary>Example 2: Using `iddfs` with a search index to traverse and enumerate an Object's *specific* properties:</summary>
+<details><summary>Example 2: Using `dfs` with a search index to traverse and enumerate an Object's *specific* properties:</summary>
 
 ```JavaScript
 var subject = {
@@ -144,7 +147,7 @@ var search = {
   }
 };
 
-var search = differentia.iddfs(subject, search);
+var search = differentia.dfs(subject, search);
 
 // Starts on the top layer of the root of subject:
 var iteration = search.next();
@@ -161,6 +164,96 @@ console.log(iteration.value.currentValue); // Logs "Good Morning!"
 </details>
 
 ---
+
+### `bfs`
+
+*Generator*
+```JavaScript
+bfs( subject [, search = null ] );
+```
+An implementation of Breadth-First Search. Enumerates properties/elements in `subject`, traversing into any Objects/Arrays, using `search` as a search index. Any properties/nodes present in `search` will be used to enumerate, traverse, and access the properties/nodes of `subject`. If a property/node exists in `search` that does not exist in `subject`, or vice versa, it will be skipped.
+
+#### Parameters
+- **`subject`** Object/Array
+
+  The root Object or Array to enumerate & traverse.
+
+- **`search`** (*Optional*) Object/Array
+
+  An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
+
+#### Examples
+<details><summary>Example 1: Using `bfs` to traverse and enumerate an Object:</summary>
+
+```JavaScript
+var subject = {
+  greetings1: [
+    "Hello World!"
+  ],
+  greetings2: [
+    "Good Morning!"
+  ]
+};
+
+var search = differentia.bfs(subject, subject);
+
+// Starts on the top layer of the root of subject:
+var iteration = search.next();
+console.log(iteration.value.accessor); // Logs "greetings1"
+console.log(iteration.value.currentValue); // Logs ["Hello World!"]
+iteration = search.next();
+console.log(iteration.value.accessor); // Logs "greetings2"
+console.log(iteration.value.currentValue); // Logs ["Good Morning!"]
+
+// Finished enumerating root Object...
+// Now it will traverse and enumerate Objects/Arrays it saw in-order:
+iteration = search.next();
+console.log(iteration.value.accessor); // Logs 0
+console.log(iteration.value.currentValue); // Logs "Hello World"
+iteration = search.next();
+console.log(iteration.value.accessor); // Logs 0
+console.log(iteration.value.currentValue); // Logs "Good Morning"
+```
+
+</details>
+
+<details><summary>Example 2: Using `bfs` with a search index to traverse and enumerate an Object's *specific* properties:</summary>
+
+```JavaScript
+var subject = {
+  greetings1: [
+    "Hello World!"
+  ],
+  greetings2: [
+    "Good Morning!"
+  ]
+};
+
+var search = {
+  greetings2: {
+    0: null
+  }
+};
+
+var search = differentia.bfs(subject, search);
+
+// Starts on the top layer of the root of subject:
+var iteration = search.next();
+console.log(iteration.value.accessor); // Logs "greetings2"
+console.log(iteration.value.currentValue); // Logs ["Good Morning!"]
+
+// Finished enumerating root Object...
+// Now it will traverse and enumerate Objects/Arrays it saw:
+iteration = search.next();
+console.log(iteration.value.accessor); // Logs 0
+console.log(iteration.value.currentValue); // Logs "Good Morning!"
+```
+
+</details>
+
+---
+
+# Main Functions
 
 ### `clone`
 
@@ -460,6 +553,152 @@ differentia.deepSeal(subject);
 
 ___
 
+### `paths`
+
+*Function*
+```JavaScript
+paths( subject [, search = null ] );
+```
+Traverses and enumerates `subject`, returning an array listing all paths of the tree.
+
+#### Parameters
+- **`subject`** Object/Array
+
+  The Object or Array to search.
+
+- **`search`** (*Optional*) Object/Array
+
+  An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
+
+#### Examples
+<details><summary>Example 1: Using `paths` to record the paths/branches in an Object:</summary>
+
+```JavaScript
+var subject = {
+  string1: "Pretty",
+  array1: [
+    "Little Clouds",
+    "Little Trees"
+  ]
+};
+
+var paths = differentia.paths(subject);
+
+console.log(paths);
+/* Logs:
+[
+  ["searchRoot", "string1"],
+  ["searchRoot", "array1", "0"],
+  ["searchRoot", "array1", "1"]
+]
+*/
+```
+</details>
+
+___
+
+### `pathfind`
+
+*Function*
+```JavaScript
+pathfind( subject, findValue [, search = null ] );
+```
+Traverses and enumerates `subject`, searching for `findValue`. Returns an Array containing the path of `findValue`, or `null` if it was not found.
+
+#### Parameters
+- **`subject`** Object/Array
+
+  The Object or Array to search.
+
+- **`findValue`** Object/Array
+
+  The value to find the path of.
+
+- **`search`** (*Optional*) Object/Array
+
+  An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
+
+#### Examples
+<details><summary>Example 1: Using `paths` to record the paths/branches in an Object:</summary>
+
+```JavaScript
+var subject = {
+  string1: "Pretty",
+  array1: [
+    "Little Clouds",
+    "Little Trees"
+  ]
+};
+
+var path = differentia.pathfind(subject, "Little Trees");
+
+console.log(path);
+/* Logs:
+[
+  ["searchRoot", "array1", "1"]
+]
+*/
+```
+</details>
+
+---
+
+### `diffPaths`
+
+*Function*
+```JavaScript
+diffPaths( subject, compare [, search = null ] );
+```
+Traverses and enumerates `subject`, returning an array listing all paths of the tree which differ from the paths of `compare`.
+
+## Parameters
+- **`subject`** Object/Array
+
+  The Object or Array to search.
+
+- **`compared`** Object/Array
+
+  The Object or Array to compare to `subject`.
+
+- **`search`** (*Optional*) Object/Array
+
+  An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
+
+## Examples
+<details><summary>Example 1: Using `paths` to find differing paths/branches:</summary>
+
+```JavaScript
+var subject = {
+  string1: "Pretty",
+  array1: [
+    "Little Clouds",
+    "Little Trees"
+  ]
+};
+
+var compared = {
+  string2: "Pretty",
+  array1: [
+    "Little Branches",
+    "Little Leaves"
+  ]
+};
+
+var differingPaths = differentia.diffPaths(subject, compare);
+
+console.log(differingPaths);
+/* Logs:
+[
+  ["searchRoot","string1"],
+  ["searchRoot","array1","0"],
+  ["searchRoot","array1","1"]
+]
+*/
+```
+</details>
+
+___
+
 # Higher-Order Functions
 
 ### `forEach`
@@ -468,7 +707,7 @@ ___
 ```JavaScript
 forEach( subject , callback [, search = null ] );
 ```
-A simple IOC wrapper to the [iddfs](#iddfs) iterator. `callback` is executed for each element. Unlike `Array.prototype.forEach`, this implementation allows a return value of any type, which will be returned to the caller.
+A simple IOC wrapper to the [dfs](#dfs) iterator. `callback` is executed for each element. Unlike `Array.prototype.forEach`, this implementation allows a return value of any type, which will be returned to the caller.
 
 #### Parameters
 - **`subject`** Object/Array
@@ -538,7 +777,7 @@ differentia.forEach(subject, function (currentValue, accessor, subject) {
 ```JavaScript
 find( subject , callback [, search = null ] );
 ```
-A simple IOC wrapper to the [iddfs](#iddfs) iterator. `callback` is executed for each element. If `callback` returns `true` at any time, then `currentValue` is immediately returned. If `callback` never returns `true`, then `undefined` is returned.
+A simple IOC wrapper to the [dfs](#dfs) iterator. `callback` is executed for each element. If `callback` returns `true` at any time, then `currentValue` is immediately returned. If `callback` never returns `true`, then `undefined` is returned.
 
 #### Parameters
 - **`subject`** Object/Array
@@ -602,7 +841,7 @@ console.log(foundValue); // Logs undefined;
 ```JavaScript
 some( subject , callback [, search = null ] );
 ```
-A simple IOC wrapper to the [iddfs](#iddfs) iterator. `callback` is executed for each element. If `callback` returns `true` at any time, then `true` is immediately returned. If `callback` never returns `true`, then `false` is returned. You can use this function to test if a least one element of the Object tree passes a test.
+A simple IOC wrapper to the [dfs](#dfs) iterator. `callback` is executed for each element. If `callback` returns `true` at any time, then `true` is immediately returned. If `callback` never returns `true`, then `false` is returned. You can use this function to test if a least one element of the Object tree passes a test.
 
 #### Parameters
 - **`subject`** Object/Array
@@ -659,7 +898,7 @@ console.log(passed); // Logs false, all tests failed.
 ```JavaScript
 every( subject , callback [, search = null ] );
 ```
-A simple IOC wrapper to the [iddfs](#iddfs) iterator. `callback` is executed for each element. If `callback` returns `false` (or a non-truthy value) at any time, then `false` is immediately returned. If `callback` returns `true` for every element, then `true` is returned. You can use this function to test if all elements of the Object tree pass a test.
+A simple IOC wrapper to the [dfs](#dfs) iterator. `callback` is executed for each element. If `callback` returns `false` (or a non-truthy value) at any time, then `false` is immediately returned. If `callback` returns `true` for every element, then `true` is returned. You can use this function to test if all elements of the Object tree pass a test.
 
 #### Parameters
 - **`subject`** Object/Array
@@ -716,7 +955,7 @@ console.log(passed); // Logs false, at least one test failed.
 ```JavaScript
 map( subject , callback [, search = null ] );
 ```
-A simple IOC wrapper to the [iddfs](#iddfs) iterator. Constructs a structural copy of `subject` using the return values of `callback`, which is executed once for each primitive element.
+A simple IOC wrapper to the [dfs](#dfs) iterator. Constructs a structural copy of `subject` using the return values of `callback`, which is executed once for each primitive element.
 
 #### Parameters
 - **`subject`** Object/Array
@@ -769,6 +1008,91 @@ console.log(copy);
   two: [3,5,7,9,11,13],
   thirteen: [14,16,18,20,22]
 };
+*/
+```
+
+</details>
+
+---
+
+### `filter`
+
+*Higher-Order Function*
+```JavaScript
+filter( subject , callback [, search = null ] );
+```
+A simple IOC wrapper to the [bfs](#bfs) iterator. Constructs a structural copy of `subject` using only values/paths which pass the test in `callback`, which is executed once for each primitive element.
+
+#### Parameters
+- **`subject`** Object/Array
+
+  The root Object or Array to enumerate & traverse.
+
+- **`callback`** Function
+
+  The callback function to execute for each primitive element. If `callback` returns `true`, the current value and node path will be cloned.
+
+- **`search`** (*Optional*) Object/Array
+
+  An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
+
+#### Callback Parameters
+- **`currentValue`**
+
+  The value of the element of enumeration. Equal to `subject[accessor]`.
+
+- **`accessor`**
+
+  The accessor being used to retrieve `currentValue` from the Object/Array being enumerated.
+
+- **`subject`**
+
+  The Object/Array being enumerated.
+
+#### Examples
+<details><summary>Example 1: Using `filter` to only clone Numbers:</summary>
+
+```JavaScript
+var subject = {
+  people: [
+    {
+      name: "Jon Snow",
+      number: 5555555555
+    },
+    {
+      name: "John Madden",
+      number: 1231231234
+    },
+    {
+      name: "Jimmy Neutron",
+      number: 0001112222
+    }
+  ],
+  peopleCount: 3
+};
+
+// Will clone all numbers and their paths into a new Object
+var copy = differentia.filter(subject, function (currentValue, accessor, subject) {
+  return typeof currentValue === "number";
+});
+
+console.log(copy);
+// Logs:
+/*
+{
+  "peopleCount": 3,
+  "people": [
+    {
+      "number": 5555555555
+    },
+    {
+      "number": 1231231234
+    },
+    {
+      "number": 300178
+    }
+  ]
+}
 */
 ```
 
