@@ -4,19 +4,12 @@
 ===
 This library provides a basic suite of Object/Array focused functions. They are all "deep" algorithms, and fully traverse all child Objects/Arrays/properties unless given a search index object with specifies otherwise.
 
-- Deep Object Cloning
-- Deep Object Diffing
-- Deep Freezing/Sealing
-- Differential Deep Object Cloning
-- A small compliment of higher-order functions.
-
----
-
 # :closed_book: Documentation
-## Functions
-- [Main Functions](#main-functions)
+
+- [Search Algorithm Iterators](#search-algorithm-iterators)
   - [dfs](#dfs)
   - [bfs](#bfs)
+- [Main Functions](#main-functions)
   - [clone](#clone)
   - [diffClone](#diffclone)
   - [diff](#diff)
@@ -24,6 +17,7 @@ This library provides a basic suite of Object/Array focused functions. They are 
   - [deepSeal](#deepseal)
   - [paths](#paths)
   - [pathfind](#pathfind)
+  - [diffpaths](#diffpaths)
 - [Higher-Order Functions](#higher-order-functions)
   - [forEach](#foreach)
   - [find](#find)
@@ -32,7 +26,9 @@ This library provides a basic suite of Object/Array focused functions. They are 
   - [map](#map)
   - [filter](#filter)
 
-# :page_facing_up: Supported Data Types
+---
+
+## :page_facing_up: Supported Data Types
 DataType|Clone|Diff
 ---|---|---
 Function|:x:|:x:
@@ -47,9 +43,7 @@ RegExp|:white_check_mark:|:white_check_mark:
 
 ---
 
-# Main Functions
-
-## Search Algorithms
+## Search Algorithm Iterators
 
 The search iterators, `bfs` and `dfs`, are actually both the same `searchIterator` algorithm (See CONTRIBUTING.md for more details about `searchIterator`) with differing traversal scheduling data structures (Queue VS Stack).
 
@@ -258,6 +252,8 @@ console.log(iteration.value.currentValue); // Logs "Good Morning!"
 </details>
 
 ---
+
+# Main Functions
 
 ### `clone`
 
@@ -563,12 +559,12 @@ ___
 ```JavaScript
 paths( subject [, search = null ] );
 ```
-Traverses and enumerates `subject`, recording all paths of the tree. Returns an Array containing Arrays of accessor paths.
+Traverses and enumerates `subject`, returning an array listing all paths of the tree.
 
 #### Parameters
 - **`subject`** Object/Array
 
-  The Object or Array to seal.
+  The Object or Array to search.
 
 - **`search`** (*Optional*) Object/Array
 
@@ -612,7 +608,7 @@ Traverses and enumerates `subject`, searching for `findValue`. Returns an Array 
 #### Parameters
 - **`subject`** Object/Array
 
-  The Object or Array to seal.
+  The Object or Array to search.
 
 - **`findValue`** Object/Array
 
@@ -640,6 +636,62 @@ console.log(path);
 /* Logs:
 [
   ["searchRoot", "array1", "1"]
+]
+*/
+```
+</details>
+
+---
+
+### `diffPaths`
+
+*Function*
+```JavaScript
+diffPaths( subject, compare [, search = null ] );
+```
+Traverses and enumerates `subject`, returning an array listing all paths of the tree which differ from the paths of `compare`.
+
+## Parameters
+- **`subject`** Object/Array
+
+  The Object or Array to search.
+
+- **`compared`** Object/Array
+
+  The Object or Array to compare to `subject`.
+
+- **`search`** (*Optional*) Object/Array
+
+  An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
+
+## Examples
+<details><summary>Example 1: Using `paths` to find differing paths/branches:</summary>
+
+```JavaScript
+var subject = {
+  string1: "Pretty",
+  array1: [
+    "Little Clouds",
+    "Little Trees"
+  ]
+};
+
+var compared = {
+  string2: "Pretty",
+  array1: [
+    "Little Branches",
+    "Little Leaves"
+  ]
+};
+
+var differingPaths = differentia.diffPaths(subject, compare);
+
+console.log(differingPaths);
+/* Logs:
+[
+  ["searchRoot","string1"],
+  ["searchRoot","array1","0"],
+  ["searchRoot","array1","1"]
 ]
 */
 ```
