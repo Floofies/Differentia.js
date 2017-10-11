@@ -23,7 +23,7 @@ Creates a `prod-build` directory to build the production release into. Saves `sr
 Add `clean` at the end to remove `node_modules`.
 
 # Adding Algorithms
-To add an algorithm to the library, you must use the Strategy Pattern together with `runStrategy`, which is the primary gateway for your algorithms to interact with and use the `iddfs` iterator. Your algorithm will be tightly coupled to the  the `iddfs` iterator, and you should make use of one of the many properties made available through it's `state` object. An algorithm may "steer" the search algorithm by directly mutating certain properties of `state`. See documentation for `iddfs` in `README.md` for more information.
+To add an algorithm to the library, you must use the Strategy Pattern together with `runStrategy`, which is the primary gateway for your algorithms to interact with a search iterator. Your algorithm will be tightly coupled to `searchIterator`, and you should make use of one of the many properties made available through it's shared state object. An algorithm may "steer" the search algorithm by directly mutating certain properties of `state`. See documentation for *Search Algorithm Iterators* in `README.md` for more information.
 
 All strategies added to the `strategies` object will be automatically revealed to the end-user via their `interface` properties. Once you add a strategy, you should also include it's name in `spec/Spec.js` in the first unit test, as part of the `modules` array; the test will verify that your strategy is accessible.
 
@@ -48,11 +48,11 @@ Property|Data Type|Description
 `entry`|Function|(*Optional*) A Call-With-Current-State callback to run with the first iterator state, only once. This function cannot return values.
 `main`|Function|A Call-With-Current-State callback to run on every iteraton. If this function returns something other than `undefined`, it will be returned to the user's caller.
 
-`entry` and `main` recieve a single `state` argument, the iterator state flyweight Object, which is a single object the iterator actively mutates per-iteration. See documentation for `iddfs` in `README.md` for more information.
+`entry` and `main` recieve a single `state` argument, the iterator state flyweight Object, which is a single object the iterator actively mutates per-iteration. See documentation for *Search Algorithm Iterators* in `README.md` for more information.
 
 ---
 
-Your Strategy's `interface` function must call `runStrategy` to use the `iddfs` iterator:
+Your Strategy's `interface` function must call `runStrategy` to use search iterators:
 
 ### `runStrategy`
 
@@ -62,7 +62,7 @@ runStrategy( strategy, searchAlg, parameters );
 ```
 An IOC wrapper for Generators/Iterators. `runStrategy` advances the iterator returned by `searchIterator` and executes Call-With-Current-State functions supplied in `strategy`. The state flyweight object is passed to `strategy.main`, which is executed for each element, and `strategy.entry`, which is only executed for the first element. If `strategy.main` returns something other than `undefined`, it will be returned to the caller.
 
-`searchAlg` is the search algorithm Generator to use; it can be `dfs` or `bfs`, or any Generator.
+`searchAlg` is the search algorithm iterator to use; it can be `dfs` or `bfs`, or any Generator.
 
 #### Parameters
 - **`strategy`** Object
