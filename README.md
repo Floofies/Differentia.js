@@ -16,7 +16,7 @@ This library provides a basic suite of Object/Array focused functions. They are 
   - [deepFreeze](#deepfreeze)
   - [deepSeal](#deepseal)
   - [paths](#paths)
-  - [pathfind](#pathfind)
+  - [pathFind](#pathfind)
   - [diffpaths](#diffpaths)
 - [Higher-Order Functions](#higher-order-functions)
   - [forEach](#foreach)
@@ -596,11 +596,11 @@ console.log(paths);
 
 ___
 
-### `pathfind`
+### `pathFind`
 
 *Function*
 ```JavaScript
-pathfind( subject, findValue [, search = null ] );
+pathFind( subject, findValue [, search = null ] );
 ```
 Traverses and enumerates `subject`, searching for `findValue`. Returns an Array containing the path of `findValue`, or `null` if it was not found.
 
@@ -629,7 +629,7 @@ var subject = {
   ]
 };
 
-var path = differentia.pathfind(subject, "Little Trees");
+var path = differentia.pathFind(subject, "Little Trees");
 
 console.log(path);
 /* Logs:
