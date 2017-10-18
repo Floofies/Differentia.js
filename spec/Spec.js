@@ -442,7 +442,7 @@ describe("map", function () {
 	});
 });
 
-describe("paths", function () {
+describe("nodePaths", function () {
 	const expectedPaths = [
 		["searchRoot"],
 		["searchRoot","0"],
@@ -454,9 +454,57 @@ describe("paths", function () {
 		["searchRoot","0","address","geo"],
 		["searchRoot","1","address","geo"]
 	];
-	it("should return an array of all paths", function () {
+	it("should return an array of all node/object paths", function () {
+		expect(diff(d.nodePaths(testObjects["Multidimensional Acyclic"]), expectedPaths)).toBe(false);
+		expect(diff(d.nodePaths(testObjects["Multidimensional Cyclic"]), expectedPaths)).toBe(false);
+	});
+});
+
+describe("paths", function () {
+	const expectedPaths = [
+		["searchRoot","0"],
+		["searchRoot","1"],
+		["searchRoot","0","id"],
+		["searchRoot","0","name"],
+		["searchRoot","0","username"],
+		["searchRoot","0","email"],
+		["searchRoot","0","regex"],
+		["searchRoot","0","address"],
+		["searchRoot","0","website"],
+		["searchRoot","0","company"],
+		["searchRoot","1","id"],
+		["searchRoot","1","name"],
+		["searchRoot","1","username"],
+		["searchRoot","1","email"],
+		["searchRoot","1","regex"],
+		["searchRoot","1","address"],
+		["searchRoot","1","website"],
+		["searchRoot","1","company"],
+		["searchRoot","0","address","street"],
+		["searchRoot","0","address","suite"],
+		["searchRoot","0","address","city"],
+		["searchRoot","0","address","zipcode"],
+		["searchRoot","0","address","geo"],
+		["searchRoot","0","company","active"],
+		["searchRoot","0","company","name"],
+		["searchRoot","0","company","catchPhrase"],
+		["searchRoot","0","company","bs"],
+		["searchRoot","1","address","street"],
+		["searchRoot","1","address","suite"],
+		["searchRoot","1","address","city"],
+		["searchRoot","1","address","zipcode"],
+		["searchRoot","1","address","geo"],
+		["searchRoot","1","company","active"],
+		["searchRoot","1","company","name"],
+		["searchRoot","1","company","catchPhrase"],
+		["searchRoot","1","company","bs"],
+		["searchRoot","0","address","geo","lat"],
+		["searchRoot","0","address","geo","lng"],
+		["searchRoot","1","address","geo","lat"],
+		["searchRoot","1","address","geo","lng"]
+	];
+	it("should return an array of all node/object/primitive paths", function () {
 		expect(diff(d.paths(testObjects["Multidimensional Acyclic"]), expectedPaths)).toBe(false);
-		expect(diff(d.paths(testObjects["Multidimensional Cyclic"]), expectedPaths)).toBe(false);
 	});
 });
 

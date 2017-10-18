@@ -531,6 +531,7 @@ var differentia = (function () {
 	*/
 	strategies.forEach = {
 		interface: function (subject, callback, search = null) {
+			assert.function(callback, 2);
 			return runStrategy(strategies.forEach, dfs, {
 				subject: subject,
 				search: search,
@@ -554,6 +555,7 @@ var differentia = (function () {
 	*/
 	strategies.find = {
 		interface: function (subject, callback, search = null) {
+			assert.function(callback, 2);
 			return runStrategy(strategies.find, dfs, {
 				subject: subject,
 				search: search,
@@ -579,6 +581,7 @@ var differentia = (function () {
 	*/
 	strategies.some = {
 		interface: function (subject, callback, search = null) {
+			assert.function(callback, 2);
 			return runStrategy(strategies.some, dfs, {
 				subject: subject,
 				search: search,
@@ -607,6 +610,7 @@ var differentia = (function () {
 	*/
 	strategies.every = {
 		interface: function (subject, callback, search = null) {
+			assert.function(callback, 2);
 			return runStrategy(strategies.every, dfs, {
 				subject: subject,
 				search: search,
@@ -635,6 +639,7 @@ var differentia = (function () {
 	*/
 	strategies.map = {
 		interface: function (subject, callback, search = null) {
+			assert.function(callback, 2);
 			return runStrategy(strategies.map, dfs, {
 				subject: subject,
 				search: search,
@@ -654,10 +659,41 @@ var differentia = (function () {
 		}
 	};
 	/**
-	* paths - Creates a record of the tree paths present within `subject`.
+	* nodePaths - Creates a record of the tree paths present within `subject`, ignoring primitives.
 	* @param {Object|Array} subject               The Object/Array to record paths of.
 	* @param {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
 	* @returns {Array}                            An array containing arrays, each representing nodes in a path.
+	*/
+	strategies.nodePaths = {
+		interface: function (subject, search = null) {
+			return runStrategy(strategies.nodePaths, bfs, {
+				subject: subject,
+				search, search
+			});
+		},
+		entry: function (state) {
+			// Keeps track of node (object) paths only
+			state.nodePaths = [["searchRoot"]];
+			state.currentPath = state.nodePaths[0];
+		},
+		main: function (state) {
+			if (state.iterations === 0) {
+				state.currentPath = state.nodePaths[state.nodePaths.length - (state.targetTuples.length + 1)];
+			}
+			if (state.isLast) {
+				return state.nodePaths;
+			}
+			if (state.traverse) {
+				state.nodePaths[state.nodePaths.length] = Array.from(state.currentPath);
+				state.nodePaths[state.nodePaths.length - 1].push(state.accessor);
+			}
+		}
+	};
+		/**
+	* paths - Creates a record of the tree paths present within `subject`, including primitives.
+	* @param {Object|Array} subject               The Object/Array to record paths of.
+	* @param {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns {Array}                            An array containing arrays, each representing nodes/primitives in a path.
 	*/
 	strategies.paths = {
 		interface: function (subject, search = null) {
@@ -667,19 +703,16 @@ var differentia = (function () {
 			});
 		},
 		entry: function (state) {
-			state.paths = [["searchRoot"]];
-			state.currentPath = state.paths[0];
+			strategies.nodePaths.entry(state);
+			// Keeps track of all paths, including primitives
+			state.paths = [];
 		},
 		main: function (state) {
-			if (state.iterations === 0) {
-				state.currentPath = state.paths[state.paths.length - (state.targetTuples.length + 1)];
-			}
+			strategies.nodePaths.main(state);
+			state.paths[state.paths.length] = Array.from(state.currentPath);
+			state.paths[state.paths.length - 1].push(state.accessor);
 			if (state.isLast) {
 				return state.paths;
-			}
-			if (state.traverse) {
-				state.paths[state.paths.length] = Array.from(state.paths[state.paths.length - (state.targetTuples.length + 1)]);
-				state.paths[state.paths.length - 1][state.paths[state.paths.length - 1].length] = state.accessor;
 			}
 		}
 	};
@@ -699,7 +732,7 @@ var differentia = (function () {
 		},
 		entry: strategies.paths.entry,
 		main: function (state) {
-			strategies.paths.main(state);
+			strategies.nodePaths.main(state);
 			if (state.currentValue === state.parameters.findValue) {
 				state.currentPath.push(state.accessor);
 				return state.currentPath;
@@ -753,6 +786,7 @@ var differentia = (function () {
 	*/
 	strategies.filter = {
 		interface: function (subject, callback, search = null) {
+			assert.function(callback, 2);
 			return runStrategy(strategies.filter, bfs, {
 				subject: subject,
 				search: search,
