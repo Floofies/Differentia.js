@@ -16,7 +16,7 @@ This library provides a basic suite of Object/Array focused functions. They are 
   - [deepFreeze](#deepfreeze)
   - [deepSeal](#deepseal)
   - [paths](#paths)
-  - [pathfind](#pathfind)
+  - [pathFind](#pathfind)
   - [diffpaths](#diffpaths)
 - [Higher-Order Functions](#higher-order-functions)
   - [forEach](#foreach)
@@ -54,8 +54,7 @@ Property|Datatype|Description
 accessor|Mixed|The accessor being used to access `value.tuple.subject` during property/element enumerations. Equal to `state.accessors[state.iteration]`.
 accessors|Array|An Array of enumerable acessors found in `value.tuple.search`.
 currentValue|Mixed|The value of the element of enumeration. Equal to `value.tuple.subject[value.accessor]`.
-existing|`null` or Object|If `dfs` encounters an Object/Array it has been before during the same search, this property will be set to the equivalent tuple; otherwise it will be `null`. Objects added to that tuple previously will show up again here.
-isArray|Boolean|Indicates if the Object being traversed/enumerated is an Array.
+existing|`null` or Object|If `dfs` encounters an Object/Array it has seen before during the same search, this property will be set to the equivalent tuple; otherwise it will be `null`. Objects added to that tuple previously will show up again here.
 isContainer|Boolean|Indicates if the current item of the enumeration is an Object or Array.
 isFirst|Boolean|Indicates if the current item of the enumeration is the first item to be enumerated.
 isLast|Boolean|Indicates if the current item of the enumeration is the last item to be enumerated.
@@ -401,7 +400,7 @@ Variable `clonedObject` is now this Object:
 ```JavaScript
 diff( subject , compared [, search = null ] );
 ```
-Returns `true` if any of `compared`'s properties differ in any way from `subject`, or `false` if otherwsie.
+Returns `true` if `compared`'s structure, properties, or values differ in any way from `subject`, or `false` if otherwsie.
 
 #### Parameters
 - **`subject`** Object/Array
@@ -597,11 +596,11 @@ console.log(paths);
 
 ___
 
-### `pathfind`
+### `pathFind`
 
 *Function*
 ```JavaScript
-pathfind( subject, findValue [, search = null ] );
+pathFind( subject, findValue [, search = null ] );
 ```
 Traverses and enumerates `subject`, searching for `findValue`. Returns an Array containing the path of `findValue`, or `null` if it was not found.
 
@@ -630,7 +629,7 @@ var subject = {
   ]
 };
 
-var path = differentia.pathfind(subject, "Little Trees");
+var path = differentia.pathFind(subject, "Little Trees");
 
 console.log(path);
 /* Logs:

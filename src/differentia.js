@@ -288,7 +288,7 @@ var differentia = (function () {
 			}
 		}
 	}
-		/**
+	/**
 	* dfs - A thunk to `searchIterator`, providing a Stack for target nodes.
 	*  Causes `seatchIterator` to behave as Depth-First Search.
 	* @param {Object|Array} subject               The Object/Array to access.
@@ -298,7 +298,7 @@ var differentia = (function () {
 	function dfs(subject, search = null) {
 		return searchIterator(subject, new Stack(), search);
 	}
-		/**
+	/**
 	* bfs - A thunk to `searchIterator`, providing a Queue for target nodes.
 	*  Causes `seatchIterator` to behave as Breadth-First Search.
 	* @param {Object|Array} subject               The Object/Array to access.
@@ -311,10 +311,10 @@ var differentia = (function () {
 	/**
 	* runStrategy - Calls `strategy.entry` and `strategy.main` with the state of the search iterator.
 	*  `strategy.entry` is optional. It is only executed once, for the first value the iterator yields.
-	* @param {Object} strategy    An Object containing an optional `entry` property and a required `main` property.
+	* @param {Object} strategy      An Object containing an optional `entry` property and a required `main` property.
 	* @param {Generator} searchAlg  A Generator to use as the search algorthm.
-	* @param {Object} parameters  An Object containing a required `subject` property, and an optional `search` property.
-	* @returns {Mixed}            Returns anything `strategy.main` returns.
+	* @param {Object} parameters    An Object containing a required `subject` property, and an optional `search` property.
+	* @returns {Mixed}              Returns anything `strategy.main` returns.
 	*/
 	function runStrategy(strategy, searchAlg, parameters) {
 		assert.object(strategy, 1);
@@ -343,6 +343,12 @@ var differentia = (function () {
 		}
 	}
 	const strategies = {};
+	/**
+	* clone - Creates a deep clone of `subject`.
+	* @param  {Object|Array} subject               The Object/Array to clone.
+	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {Object|Array}                     A clone of `subject`.
+	*/
 	strategies.clone = {
 		interface: function (subject, search = null) {
 			return runStrategy(strategies.clone, dfs, {
@@ -385,6 +391,13 @@ var differentia = (function () {
 			}
 		}
 	};
+	/**
+	* diff - Determines if `compared`'s structure, properties, or values differ in any way from `subject`
+	* @param  {Object|Array} subject               The first Object/Array to compare.
+	* @param  {Object|Array} compare               The second Object/Array to compare.
+	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {Boolean}                          Indicates if a difference was found.
+	*/
 	strategies.diff = {
 		interface: function (subject, compare, search = null) {
 			if (search === null && getContainerLength(subject) !== getContainerLength(compare)) {
@@ -430,6 +443,13 @@ var differentia = (function () {
 			}
 		}
 	};
+	/**
+	* diffClone - Clones the parts of `subject` that differ from `compared`'s structure, properties, or values.
+	* @param  {Object|Array} subject               The first Object/Array to compare and also clone.
+	* @param  {Object|Array} compare               The second Object/Array to compare.
+	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {Object|Array}                     A clone of `subject`, only including differences.
+	*/
 	strategies.diffClone = {
 		interface: function (subject, compare, search = null) {
 			return runStrategy(strategies.diffClone, dfs, {
@@ -448,6 +468,12 @@ var differentia = (function () {
 			}
 		}
 	};
+	/**
+	* deepFreeze - Freezes all objects found in `subject`.
+	* @param  {Object|Array} subject               The Object/Array to deeply freeze.
+	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {Object|Array}                     The original `subject`.
+	*/
 	strategies.deepFreeze = {
 		interface: function (subject, search = null) {
 			return runStrategy(strategies.deepFreeze, dfs, {
@@ -467,6 +493,12 @@ var differentia = (function () {
 			}
 		}
 	};
+	/**
+	* deepSeal - Seal all objects found in `subject`.
+	* @param  {Object|Array} subject               The Object/Array to deeply seal.
+	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {Object|Array}                     The original `subject`.
+	*/
 	strategies.deepSeal = {
 		interface: function (subject, search = null) {
 			return runStrategy(strategies.deepSeal, dfs, {
@@ -486,6 +518,17 @@ var differentia = (function () {
 			}
 		}
 	};
+	/**
+	* forEach - A simple IOC wrapper to the `dfs` search iterator.
+	* @param  {Object|Array} subject               The Object/Array to traverse/enumerate.
+	* @param  {callback} callback                  The function to invoke per-property of all objects in `subject`.
+		* @callback callback
+		* @param {Mixed} value                 Equal to `subject[accessor]`.
+		* @param {Mixed} accessor              Used to access `subject`.
+		* @param {Object|Array} subject        The Object/Array being travered/enumerated.
+	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {Mixed}                            Will return anything `callback` returns.
+	*/
 	strategies.forEach = {
 		interface: function (subject, callback, search = null) {
 			return runStrategy(strategies.forEach, dfs, {
@@ -498,6 +541,17 @@ var differentia = (function () {
 			return state.parameters.callback(state.currentValue, state.accessor, state.tuple.subject);
 		}
 	};
+	/**
+	* find - Returns a value if it passes the test, otherwise returns `undefined`.
+	* @param  {Object|Array} subject               The Object/Array to traverse/enumerate.
+	* @param  {callback} callback                  Must return `true` if value passes the test.
+		* @callback callback
+		* @param {Mixed} value                 Equal to `subject[accessor]`.
+		* @param {Mixed} accessor              Used to access `subject`.
+		* @param {Object|Array} subject        The Object/Array being travered/enumerated.
+	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {Boolean}                          A value that passes the test in `callback`.
+	*/
 	strategies.find = {
 		interface: function (subject, callback, search = null) {
 			return runStrategy(strategies.find, dfs, {
@@ -512,6 +566,17 @@ var differentia = (function () {
 			}
 		}
 	};
+	/**
+	* some - Returns `true` if at least one value passes the test, otherwise returns `false`.
+	* @param  {Object|Array} subject               The Object/Array to traverse/enumerate.
+	* @param  {callback} callback                  Must return `true` if value passes the test.
+		* @callback callback
+		* @param {Mixed} value                 Equal to `subject[accessor]`.
+		* @param {Mixed} accessor              Used to access `subject`.
+		* @param {Object|Array} subject        The Object/Array being travered/enumerated.
+	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {Boolean}                          Indicates if at least one value passed the test.
+	*/
 	strategies.some = {
 		interface: function (subject, callback, search = null) {
 			return runStrategy(strategies.some, dfs, {
@@ -529,6 +594,17 @@ var differentia = (function () {
 			}
 		}
 	};
+	/**
+	* every - Returns `true` if all values passes the test, otherwise returns `false`.
+	* @param  {Object|Array} subject               The Object/Array to traverse/enumerate.
+	* @param  {callback} callback                  Must return `true` if value passes the test.
+		* @callback callback
+		* @param {Mixed} value                 Equal to `subject[accessor]`.
+		* @param {Mixed} accessor              Used to access `subject`.
+		* @param {Object|Array} subject        The Object/Array being travered/enumerated.
+	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {Boolean}                          Indicates if all values passed the test.
+	*/
 	strategies.every = {
 		interface: function (subject, callback, search = null) {
 			return runStrategy(strategies.every, dfs, {
@@ -546,6 +622,17 @@ var differentia = (function () {
 			}
 		}
 	};
+	/**
+	* map - Clones the parts of `subject` which pass the test.
+	* @param  {Object|Array} subject               The Object/Array to traverse/enumerate.
+	* @param  {callback} callback                  Must return `true` if value passes the test.
+		* @callback callback
+		* @param {Mixed} value                 Equal to `subject[accessor]`.
+		* @param {Mixed} accessor              Used to access `subject`.
+		* @param {Object|Array} subject        The Object/Array being travered/enumerated.
+	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {Object|Array}                     A clone of `subject`, only containing values which pass the test.
+	*/
 	strategies.map = {
 		interface: function (subject, callback, search = null) {
 			return runStrategy(strategies.map, dfs, {
@@ -566,6 +653,12 @@ var differentia = (function () {
 			}
 		}
 	};
+	/**
+	* paths - Creates a record of the tree paths present within `subject`.
+	* @param {Object|Array} subject               The Object/Array to record paths of.
+	* @param {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns {Array}                            An array containing arrays, each representing nodes in a path.
+	*/
 	strategies.paths = {
 		interface: function (subject, search = null) {
 			return runStrategy(strategies.paths, bfs, {
@@ -590,6 +683,12 @@ var differentia = (function () {
 			}
 		}
 	};
+	/**
+	* pathFind - Creates a record of the tree path to `findValue` if found within `subject`, or returns `null`.
+	* @param {Object|Array} subject               The Object/Array to search for `findValue`.
+	* @param {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns {Array|null}                       An array containing arrays, each representing nodes in a path.
+	*/
 	strategies.pathFind = {
 		interface: function (subject, findValue, search = null) {
 			return runStrategy(strategies.pathFind, bfs, {
@@ -610,6 +709,13 @@ var differentia = (function () {
 			}
 		}
 	};
+	/**
+	* diffPaths - Creates a record of tree paths in `subject` which differ from the tree paths of `compare`.
+	* @param  {Object|Array} subject               The first Object/Array to compare, and record paths from.
+	* @param  {Object|Array} compare               The second Object/Array to compare.
+	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {Array}                            An array containing arrays, each representing nodes in a path.
+	*/
 	strategies.diffPaths = {
 		interface: function (subject, compare, search = null) {
 			return runStrategy(strategies.diffPaths, bfs, {
@@ -634,6 +740,17 @@ var differentia = (function () {
 			}
 		}
 	},
+	/**
+	* filter - Clones the parts of `subject` which pass the test.
+	* @param  {Object|Array} subject               The Object/Array to traverse/enumerate.
+	* @param  {callback} callback                  Must return `true` if value passes the test.
+		* @callback callback
+		* @param {Mixed} value                 Equal to `subject[accessor]`.
+		* @param {Mixed} accessor              Used to access `subject`.
+		* @param {Object|Array} subject        The Object/Array being travered/enumerated.
+	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {Object|Array}                     A clone of `subject`, only containing values which pass the test.
+	*/
 	strategies.filter = {
 		interface: function (subject, callback, search = null) {
 			return runStrategy(strategies.filter, bfs, {
