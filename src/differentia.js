@@ -234,9 +234,11 @@ var differentia = (function () {
 				state.tuple = state.targetTuples.take(),
 				state.iterations = 0,
 				state.accessors = Object.keys(state.tuple.search);
+
 				state.accessor = state.accessors[state.iterations],
 				state.length = state.accessors.length,
 				state.iterations < state.length;
+				
 				state.iterations++
 			) {
 				// Indicates if iterated property is a container
@@ -765,8 +767,7 @@ var differentia = (function () {
 		main: function (state) {
 			strategies.paths.main(state);
 			if (strategies.diff.main(state)) {
-				state.diffPaths[state.diffPaths.length] = Array.from(state.currentPath);
-				state.diffPaths[state.diffPaths.length - 1].push(state.accessor);
+				state.diffPaths.push(state.paths[state.paths.length - 1]);
 			}
 			if (state.isLast) {
 				return state.diffPaths;
