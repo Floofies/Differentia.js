@@ -629,15 +629,15 @@ var differentia = (function () {
 		}
 	};
 	/**
-	* map - Clones the parts of `subject` which pass the test.
+	* map - Clones `subject`, using the results of calling a provided function on every value.
 	* @param  {Object|Array} subject               The Object/Array to traverse/enumerate.
-	* @param  {callback} callback                  Must return `true` if value passes the test.
+	* @param  {callback} callback                  The callback with which to process values.
 		* @callback callback
 		* @param {Mixed} value                 Equal to `subject[accessor]`.
 		* @param {Mixed} accessor              Used to access `subject`.
 		* @param {Object|Array} subject        The Object/Array being travered/enumerated.
 	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
-	* @returns  {Object|Array}                     A clone of `subject`, only containing values which pass the test.
+	* @returns  {Object|Array}                     A clone of `subject`.
 	*/
 	strategies.map = {
 		interface: function (subject, callback, search = null) {
