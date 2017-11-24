@@ -238,7 +238,7 @@ var differentia = (function () {
 				state.accessor = state.accessors[state.iterations],
 				state.length = state.accessors.length,
 				state.iterations < state.length;
-				
+
 				state.iterations++
 			) {
 				// Indicates if iterated property is a container
@@ -710,12 +710,12 @@ var differentia = (function () {
 			}
 		}
 	};
-		/**
-	* paths - Creates a record of the tree paths present within `subject`, including primitives.
-	* @param {(Object|Array)} subject               The Object/Array to record paths of.
-	* @param {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
-	* @returns {Array}                            An array containing arrays, each representing nodes/primitives in a path.
-	*/
+	/**
+* paths - Creates a record of the tree paths present within `subject`, including primitives.
+* @param {(Object|Array)} subject               The Object/Array to record paths of.
+* @param {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
+* @returns {Array}                            An array containing arrays, each representing nodes/primitives in a path.
+*/
 	strategies.paths = {
 		interface: function (subject, search = null) {
 			return runStrategy(strategies.paths, bfs, {
@@ -738,14 +738,14 @@ var differentia = (function () {
 		}
 	};
 	/**
-	* pathFind - Creates a record of the tree path to `findValue` if found within `subject`, or returns `null`.
+	* findPath - Creates a record of the first found tree path to `findValue` if found within `subject`, or returns `null`.
 	* @param {(Object|Array)} subject               The Object/Array to search for `findValue`.
 	* @param {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 	* @returns {(Array|null)}                       An array containing arrays, each representing nodes in a path.
 	*/
-	strategies.pathFind = {
+	strategies.findPath = {
 		interface: function (subject, findValue, search = null) {
-			return runStrategy(strategies.pathFind, bfs, {
+			return runStrategy(strategies.findPath, bfs, {
 				subject: subject,
 				search: search,
 				findValue: findValue
@@ -753,13 +753,79 @@ var differentia = (function () {
 		},
 		entry: strategies.paths.entry,
 		main: function (state) {
-			strategies.nodePaths.main(state);
+			strategies.paths.main(state);
 			if (state.currentValue === state.parameters.findValue) {
-				state.currentPath.push(state.accessor);
-				return state.currentPath;
+				var loc = state.paths.length > 1 ? state.paths.length - 1 : 0;
+				return state.paths[loc];
 			}
 			if (state.isLast) {
 				return null;
+			}
+		}
+	};
+	/**
+	* findPaths - Creates a record of all of the tree paths to `findValue` if found within `subject`, or returns `null`.
+	* @param {(Object|Array)} subject               The Object/Array to search for `findValue`.
+	* @param {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns {(Array|null)}                       An array containing arrays, each representing nodes in a path.
+	*/
+	strategies.findPaths = {
+		interface: function (subject, findValue, search = null) {
+			return runStrategy(strategies.findPaths, bfs, {
+				subject: subject,
+				search: search,
+				findValue: findValue
+			});
+		},
+		entry: function (state) {
+			strategies.paths.entry(state);
+			state.foundPaths = [];
+		},
+		main: function (state) {
+			strategies.paths.main(state);
+			if (state.currentValue === state.parameters.findValue) {
+				var loc = state.paths.length > 0 ? state.paths.length - 1 : 0;
+				state.foundPaths.push(state.paths[loc]);
+			}
+			if (state.isLast) {
+				return state.foundPaths.length > 0 ? state.foundPaths : null;
+			}
+		}
+	};
+	/**
+	* findShortestPath - Creates a record of the shortest tree path to `findValue` if found within `subject`, or returns `null`.
+	* @param {(Object|Array)} subject               The Object/Array to search for `findValue`.
+	* @param {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns {(Array|null)}                       An array containing arrays, each representing nodes in a path.
+	*/
+	strategies.findShortestPath = {
+		interface: function (subject, findValue, search = null) {
+			return runStrategy(strategies.findShortestPath, bfs, {
+				subject: subject,
+				search: search,
+				findValue: findValue
+			});
+		},
+		entry: function (state) {
+			strategies.paths.entry(state);
+			state.depthLimit = Infinity;
+			state.shortestDepth = Infinity;
+			state.shortestPath = null;
+		},
+		main: function (state) {
+			strategies.paths.main(state);
+			if (state.isContainer && state.currentPath.length > state.depthLimit) {
+				state.traverse = false;
+			}
+			if (state.currentValue === state.parameters.findValue) {
+				state.depthLimit = state.currentPath.length;
+				if (state.currentPath.length < state.shortestDepth) {
+					state.shortestDepth = state.currentPath.length;
+					state.shortestPath = state.currentPath;
+				}
+			}
+			if (state.isLast) {
+				return state.shortestPath;
 			}
 		}
 	};
@@ -793,72 +859,72 @@ var differentia = (function () {
 			}
 		}
 	},
-	/**
-	* filter - Clones the parts of `subject` which pass the test.
-	* @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
-	* @param  {callback} callback                  Must return `true` if value passes the test.
-		* @callback callback
-		* @param {Mixed} value                 Equal to `subject[accessor]`.
-		* @param {Mixed} accessor              Used to access `subject`.
-		* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
-	* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
-	* @returns  {(Object|Array)}                     A clone of `subject`, only containing values which pass the test.
-	*/
-	strategies.filter = {
-		interface: function (subject, callback, search = null) {
-			assert.function(callback, 2);
-			return runStrategy(strategies.filter, bfs, {
-				subject: subject,
-				search: search,
-				callback: callback
-			});
-		},
-		entry: function (state) {
-			strategies.clone.entry(state);
-			strategies.paths.entry(state);
-			state.pendingPaths = [];
-		},
-		main: function (state) {
-			strategies.paths.main(state);
-			if (!state.isContainer && strategies.forEach.main(state)) {
-				state.pendingPaths[state.pendingPaths.length] = Array.from(state.currentPath);
-				state.pendingPaths[state.pendingPaths.length - 1].push(state.accessor);
-			}
-			if (state.isLast) {
-				while (state.pendingPaths.length > 0) {
-					var path = state.pendingPaths.shift();
-					var nodeQueue = new Queue();
-					nodeQueue.push({
-						subject: state.subjectRoot,
-						clone: state.cloneRoot
-					});
-					while (path.length > 0 && nodeQueue.length > 0) {
-						var accessor = path.shift();
-						if (accessor === "searchRoot") {
-							continue;
-						}
-						var tuple = nodeQueue.shift();
-						if (!(accessor in tuple.clone)) {
-							if (path.length === 0) {
-								tuple.clone[accessor] = tuple.subject[accessor];
-							} else {
-								tuple.clone[accessor] = createContainer(tuple.subject[accessor]);
-							}
-						}
-						if (path.length === 0) {
-							continue;
-						}
-						var nextTuple = {};
-						for (var unit in tuple) {
-							nextTuple[unit] = tuple[unit][accessor];
-						}
-						nodeQueue.push(nextTuple);
-					}
+		/**
+		* filter - Clones the parts of `subject` which pass the test.
+		* @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
+		* @param  {callback} callback                  Must return `true` if value passes the test.
+			* @callback callback
+			* @param {Mixed} value                 Equal to `subject[accessor]`.
+			* @param {Mixed} accessor              Used to access `subject`.
+			* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
+		* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
+		* @returns  {(Object|Array)}                     A clone of `subject`, only containing values which pass the test.
+		*/
+		strategies.filter = {
+			interface: function (subject, callback, search = null) {
+				assert.function(callback, 2);
+				return runStrategy(strategies.filter, bfs, {
+					subject: subject,
+					search: search,
+					callback: callback
+				});
+			},
+			entry: function (state) {
+				strategies.clone.entry(state);
+				strategies.paths.entry(state);
+				state.pendingPaths = [];
+			},
+			main: function (state) {
+				strategies.paths.main(state);
+				if (!state.isContainer && strategies.forEach.main(state)) {
+					state.pendingPaths[state.pendingPaths.length] = Array.from(state.currentPath);
+					state.pendingPaths[state.pendingPaths.length - 1].push(state.accessor);
 				}
-				return state.cloneRoot;
+				if (state.isLast) {
+					while (state.pendingPaths.length > 0) {
+						var path = state.pendingPaths.shift();
+						var nodeQueue = new Queue();
+						nodeQueue.push({
+							subject: state.subjectRoot,
+							clone: state.cloneRoot
+						});
+						while (path.length > 0 && nodeQueue.length > 0) {
+							var accessor = path.shift();
+							if (accessor === "searchRoot") {
+								continue;
+							}
+							var tuple = nodeQueue.shift();
+							if (!(accessor in tuple.clone)) {
+								if (path.length === 0) {
+									tuple.clone[accessor] = tuple.subject[accessor];
+								} else {
+									tuple.clone[accessor] = createContainer(tuple.subject[accessor]);
+								}
+							}
+							if (path.length === 0) {
+								continue;
+							}
+							var nextTuple = {};
+							for (var unit in tuple) {
+								nextTuple[unit] = tuple[unit][accessor];
+							}
+							nodeQueue.push(nextTuple);
+						}
+					}
+					return state.cloneRoot;
+				}
 			}
 		}
-	}
 	// Reveal Modules
 	var publicModules = {};
 	// Add some extra functions which are not search strategies

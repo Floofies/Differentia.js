@@ -23,7 +23,7 @@ describe("differentia", function () {
 		'deepFreeze',
 		'deepSeal',
 		'paths',
-		'pathFind',
+		'findPath',
 		'diffPaths',
 		'filter'
 	];
@@ -508,15 +508,15 @@ describe("paths", function () {
 	});
 });
 
-describe("pathFind", function () {
+describe("findPath", function () {
 	it("should return the path of the input if found", function () {
 		var expectedPath = ["searchRoot", "0", "address", "geo", "lng"];
-		expect(diff(d.pathFind(testObjects["Multidimensional Acyclic"], 81.1496), expectedPath)).toBe(false);
+		expect(diff(d.findPath(testObjects["Multidimensional Acyclic"], 81.1496), expectedPath)).toBe(false);
 		expectedPath = ["searchRoot", "1", "company", "name"];
-		expect(diff(d.pathFind(testObjects["Multidimensional Acyclic"], "Deckow-Crist"), expectedPath)).toBe(false);
+		expect(diff(d.findPath(testObjects["Multidimensional Acyclic"], "Deckow-Crist"), expectedPath)).toBe(false);
 	});
 	it("should return null if input is not found", function () {
-		expect(d.pathFind(testObjects["Multidimensional Acyclic"], "This value does not exist!")).toBe(null);
+		expect(d.findPath(testObjects["Multidimensional Acyclic"], "This value does not exist!")).toBe(null);
 	})
 });
 
