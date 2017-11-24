@@ -858,73 +858,73 @@ var differentia = (function () {
 				return state.diffPaths;
 			}
 		}
-	},
-		/**
-		* filter - Clones the parts of `subject` which pass the test.
-		* @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
-		* @param  {callback} callback                  Must return `true` if value passes the test.
-			* @callback callback
-			* @param {Mixed} value                 Equal to `subject[accessor]`.
-			* @param {Mixed} accessor              Used to access `subject`.
-			* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
-		* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
-		* @returns  {(Object|Array)}                     A clone of `subject`, only containing values which pass the test.
-		*/
-		strategies.filter = {
-			interface: function (subject, callback, search = null) {
-				assert.function(callback, 2);
-				return runStrategy(strategies.filter, bfs, {
-					subject: subject,
-					search: search,
-					callback: callback
-				});
-			},
-			entry: function (state) {
-				strategies.clone.entry(state);
-				strategies.paths.entry(state);
-				state.pendingPaths = [];
-			},
-			main: function (state) {
-				strategies.paths.main(state);
-				if (!state.isContainer && strategies.forEach.main(state)) {
-					state.pendingPaths[state.pendingPaths.length] = Array.from(state.currentPath);
-					state.pendingPaths[state.pendingPaths.length - 1].push(state.accessor);
-				}
-				if (state.isLast) {
-					while (state.pendingPaths.length > 0) {
-						var path = state.pendingPaths.shift();
-						var nodeQueue = new Queue();
-						nodeQueue.push({
-							subject: state.subjectRoot,
-							clone: state.cloneRoot
-						});
-						while (path.length > 0 && nodeQueue.length > 0) {
-							var accessor = path.shift();
-							if (accessor === "searchRoot") {
-								continue;
-							}
-							var tuple = nodeQueue.shift();
-							if (!(accessor in tuple.clone)) {
-								if (path.length === 0) {
-									tuple.clone[accessor] = tuple.subject[accessor];
-								} else {
-									tuple.clone[accessor] = createContainer(tuple.subject[accessor]);
-								}
-							}
-							if (path.length === 0) {
-								continue;
-							}
-							var nextTuple = {};
-							for (var unit in tuple) {
-								nextTuple[unit] = tuple[unit][accessor];
-							}
-							nodeQueue.push(nextTuple);
+	};
+	/**
+	* filter - Clones the parts of `subject` which pass the test.
+	* @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
+	* @param  {callback} callback                  Must return `true` if value passes the test.
+		* @callback callback
+		* @param {Mixed} value                 Equal to `subject[accessor]`.
+		* @param {Mixed} accessor              Used to access `subject`.
+		* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
+	* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {(Object|Array)}                     A clone of `subject`, only containing values which pass the test.
+	*/
+	strategies.filter = {
+		interface: function (subject, callback, search = null) {
+			assert.function(callback, 2);
+			return runStrategy(strategies.filter, bfs, {
+				subject: subject,
+				search: search,
+				callback: callback
+			});
+		},
+		entry: function (state) {
+			strategies.clone.entry(state);
+			strategies.paths.entry(state);
+			state.pendingPaths = [];
+		},
+		main: function (state) {
+			strategies.paths.main(state);
+			if (!state.isContainer && strategies.forEach.main(state)) {
+				state.pendingPaths[state.pendingPaths.length] = Array.from(state.currentPath);
+				state.pendingPaths[state.pendingPaths.length - 1].push(state.accessor);
+			}
+			if (state.isLast) {
+				while (state.pendingPaths.length > 0) {
+					var path = state.pendingPaths.shift();
+					var nodeQueue = new Queue();
+					nodeQueue.push({
+						subject: state.subjectRoot,
+						clone: state.cloneRoot
+					});
+					while (path.length > 0 && nodeQueue.length > 0) {
+						var accessor = path.shift();
+						if (accessor === "searchRoot") {
+							continue;
 						}
+						var tuple = nodeQueue.shift();
+						if (!(accessor in tuple.clone)) {
+							if (path.length === 0) {
+								tuple.clone[accessor] = tuple.subject[accessor];
+							} else {
+								tuple.clone[accessor] = createContainer(tuple.subject[accessor]);
+							}
+						}
+						if (path.length === 0) {
+							continue;
+						}
+						var nextTuple = {};
+						for (var unit in tuple) {
+							nextTuple[unit] = tuple[unit][accessor];
+						}
+						nodeQueue.push(nextTuple);
 					}
-					return state.cloneRoot;
 				}
+				return state.cloneRoot;
 			}
 		}
+	}
 	// Reveal Modules
 	var publicModules = {};
 	// Add some extra functions which are not search strategies
