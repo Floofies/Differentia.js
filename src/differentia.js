@@ -150,8 +150,8 @@ var differentia = (function () {
 	/**
 	* createContainer - Returns a new empty Array/Object matching the type of `input`.
 	*  If `input` is not an Object or Array, `null` is returned.
-	* @param {Object|Array} input   An Object or Array.
-	* @returns {Object|Array|null}
+	* @param {(Object|Array)} input   An Object or Array.
+	* @returns {(Object|Array|null)}
 	*/
 	function createContainer(input) {
 		if (Array.isArray(input)) {
@@ -165,7 +165,7 @@ var differentia = (function () {
 	/**
 	* getContainerLength - Returns the number of enumerable indexes/properties of `input`.
 	*  If `input` is not an Object or Array, a TypeError is thrown.
-	* @param {Object|Array} input
+	* @param {(Object|Array)} input
 	* @returns {Number}            The number of enumerable properties/indexes in `input`.
 	*/
 	function getContainerLength(input) {
@@ -201,9 +201,9 @@ var differentia = (function () {
 	/**
 	* searchIterator - An adaptable graph search algorithm
 	*  Returns an Iterator usable with `next()`.
-	* @param {Object|Array} subject               The Object/Array to access.
-	* @param {Queue|Stack} targetTuples           An instance of `Queue` or `Stack` to store target nodes in.
-	* @param {Object|Array|null} [search = null]  The Object/Array used to target accessors in `subject`
+	* @param {(Object|Array)} subject               The Object/Array to access.
+	* @param {(Queue|Stack)} targetTuples           An instance of `Queue` or `Stack` to store target nodes in.
+	* @param {(Object|Array|null)} [search = null]  The Object/Array used to target accessors in `subject`
 	* @returns {Iterator}
 	*/
 	function* searchIterator(subject, targetTuples, search = null) {
@@ -293,8 +293,8 @@ var differentia = (function () {
 	/**
 	* dfs - A thunk to `searchIterator`, providing a Stack for target nodes.
 	*  Causes `seatchIterator` to behave as Depth-First Search.
-	* @param {Object|Array} subject               The Object/Array to access.
-	* @param {Object|Array|null} [search = null]  The Object/Array used to target accessors in `subject`
+	* @param {(Object|Array)} subject               The Object/Array to access.
+	* @param {(Object|Array|null)} [search = null]  The Object/Array used to target accessors in `subject`
 	* @returns {Iterator}
 	*/
 	function dfs(subject, search = null) {
@@ -303,8 +303,8 @@ var differentia = (function () {
 	/**
 	* bfs - A thunk to `searchIterator`, providing a Queue for target nodes.
 	*  Causes `seatchIterator` to behave as Breadth-First Search.
-	* @param {Object|Array} subject               The Object/Array to access.
-	* @param {Object|Array|null} [search = null]  The Object/Array used to target accessors in `subject`
+	* @param {(Object|Array)} subject               The Object/Array to access.
+	* @param {(Object|Array|null)} [search = null]  The Object/Array used to target accessors in `subject`
 	* @returns {Iterator}
 	*/
 	function bfs(subject, search = null) {
@@ -314,6 +314,16 @@ var differentia = (function () {
 	* runStrategy - Calls `strategy.entry` and `strategy.main` with the state of the search iterator.
 	*  `strategy.entry` is optional. It is only executed once, for the first value the iterator yields.
 	* @param {Object} strategy      An Object containing an optional `entry` property and a required `main` property.
+		* @param {callback} strategy.entry  A function to run once, on the first yielded state.
+			* @callback strategy.entry
+			* @param {Object} state  A reference to the state flyweight yielded by `searchIterator`.
+		* @param {callback} strategy.main   A function to run on every yielded state.
+			* @callback strategy.main
+			* @param {Object} state  A reference to the state flyweight yielded by `searchIterator`.
+		* @param {callback} strategy.done   A function to run on the last state.
+			* @callback strategy.done
+			* @param {Object} state  A reference to the state flyweight yielded by `searchIterator`.
+			* @param {(Object|undefined)} returnValue  The value returned by `strategy.main`.
 	* @param {Generator} searchAlg  A Generator to use as the search algorthm.
 	* @param {Object} parameters    An Object containing a required `subject` property, and an optional `search` property.
 	* @returns {Mixed}              Returns anything `strategy.main` returns.
@@ -324,7 +334,7 @@ var differentia = (function () {
 		assert.object(parameters, 3);
 		assert.props(parameters, ["subject"], 3);
 		// Initialize search algorithm.
-		var iterator = searchAlg(parameters.subject, parameters.search);
+		const iterator = searchAlg(parameters.subject, parameters.search);
 		var iteration = iterator.next();
 		var state = iteration.value;
 		// Save parameters in a prop the strategy can see
@@ -338,18 +348,27 @@ var differentia = (function () {
 		while (!iteration.done) {
 			returnValue = strategy.main(state);
 			if (returnValue !== undefined) {
-				return returnValue;
+				break;
 			}
 			iteration = iterator.next();
 			state = iteration.value;
+		}
+		if ("done" in strategy) {
+			var doneReturnValue = strategy.done(state, returnValue);
+			if (doneReturnValue !== undefined) {
+				return doneReturnValue;
+			}
+		}
+		if (returnValue !== undefined) {
+			return returnValue;
 		}
 	}
 	const strategies = {};
 	/**
 	* clone - Creates a deep clone of `subject`.
-	* @param  {Object|Array} subject               The Object/Array to clone.
-	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
-	* @returns  {Object|Array}                     A clone of `subject`.
+	* @param  {(Object|Array)} subject               The Object/Array to clone.
+	* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {(Object|Array)}                     A clone of `subject`.
 	*/
 	strategies.clone = {
 		interface: function (subject, search = null) {
@@ -395,9 +414,9 @@ var differentia = (function () {
 	};
 	/**
 	* diff - Determines if `compared`'s structure, properties, or values differ in any way from `subject`
-	* @param  {Object|Array} subject               The first Object/Array to compare.
-	* @param  {Object|Array} compare               The second Object/Array to compare.
-	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @param  {(Object|Array)} subject               The first Object/Array to compare.
+	* @param  {(Object|Array)} compare               The second Object/Array to compare.
+	* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 	* @returns  {Boolean}                          Indicates if a difference was found.
 	*/
 	strategies.diff = {
@@ -447,10 +466,10 @@ var differentia = (function () {
 	};
 	/**
 	* diffClone - Clones the parts of `subject` that differ from `compared`'s structure, properties, or values.
-	* @param  {Object|Array} subject               The first Object/Array to compare and also clone.
-	* @param  {Object|Array} compare               The second Object/Array to compare.
-	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
-	* @returns  {Object|Array}                     A clone of `subject`, only including differences.
+	* @param  {(Object|Array)} subject               The first Object/Array to compare and also clone.
+	* @param  {(Object|Array)} compare               The second Object/Array to compare.
+	* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {(Object|Array)}                     A clone of `subject`, only including differences.
 	*/
 	strategies.diffClone = {
 		interface: function (subject, compare, search = null) {
@@ -472,9 +491,9 @@ var differentia = (function () {
 	};
 	/**
 	* deepFreeze - Freezes all objects found in `subject`.
-	* @param  {Object|Array} subject               The Object/Array to deeply freeze.
-	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
-	* @returns  {Object|Array}                     The original `subject`.
+	* @param  {(Object|Array)} subject               The Object/Array to deeply freeze.
+	* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {(Object|Array)}                     The original `subject`.
 	*/
 	strategies.deepFreeze = {
 		interface: function (subject, search = null) {
@@ -497,9 +516,9 @@ var differentia = (function () {
 	};
 	/**
 	* deepSeal - Seal all objects found in `subject`.
-	* @param  {Object|Array} subject               The Object/Array to deeply seal.
-	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
-	* @returns  {Object|Array}                     The original `subject`.
+	* @param  {(Object|Array)} subject               The Object/Array to deeply seal.
+	* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {(Object|Array)}                     The original `subject`.
 	*/
 	strategies.deepSeal = {
 		interface: function (subject, search = null) {
@@ -522,13 +541,13 @@ var differentia = (function () {
 	};
 	/**
 	* forEach - A simple IOC wrapper to the `dfs` search iterator.
-	* @param  {Object|Array} subject               The Object/Array to traverse/enumerate.
+	* @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
 	* @param  {callback} callback                  The function to invoke per-property of all objects in `subject`.
 		* @callback callback
 		* @param {Mixed} value                 Equal to `subject[accessor]`.
 		* @param {Mixed} accessor              Used to access `subject`.
-		* @param {Object|Array} subject        The Object/Array being travered/enumerated.
-	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+		* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
+	* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 	* @returns  {Mixed}                            Will return anything `callback` returns.
 	*/
 	strategies.forEach = {
@@ -546,13 +565,13 @@ var differentia = (function () {
 	};
 	/**
 	* find - Returns a value if it passes the test, otherwise returns `undefined`.
-	* @param  {Object|Array} subject               The Object/Array to traverse/enumerate.
+	* @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
 	* @param  {callback} callback                  Must return `true` if value passes the test.
 		* @callback callback
 		* @param {Mixed} value                 Equal to `subject[accessor]`.
 		* @param {Mixed} accessor              Used to access `subject`.
-		* @param {Object|Array} subject        The Object/Array being travered/enumerated.
-	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+		* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
+	* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 	* @returns  {Boolean}                          A value that passes the test in `callback`.
 	*/
 	strategies.find = {
@@ -572,13 +591,13 @@ var differentia = (function () {
 	};
 	/**
 	* some - Returns `true` if at least one value passes the test, otherwise returns `false`.
-	* @param  {Object|Array} subject               The Object/Array to traverse/enumerate.
+	* @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
 	* @param  {callback} callback                  Must return `true` if value passes the test.
 		* @callback callback
 		* @param {Mixed} value                 Equal to `subject[accessor]`.
 		* @param {Mixed} accessor              Used to access `subject`.
-		* @param {Object|Array} subject        The Object/Array being travered/enumerated.
-	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+		* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
+	* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 	* @returns  {Boolean}                          Indicates if at least one value passed the test.
 	*/
 	strategies.some = {
@@ -601,13 +620,13 @@ var differentia = (function () {
 	};
 	/**
 	* every - Returns `true` if all values passes the test, otherwise returns `false`.
-	* @param  {Object|Array} subject               The Object/Array to traverse/enumerate.
+	* @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
 	* @param  {callback} callback                  Must return `true` if value passes the test.
 		* @callback callback
 		* @param {Mixed} value                 Equal to `subject[accessor]`.
 		* @param {Mixed} accessor              Used to access `subject`.
-		* @param {Object|Array} subject        The Object/Array being travered/enumerated.
-	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+		* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
+	* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 	* @returns  {Boolean}                          Indicates if all values passed the test.
 	*/
 	strategies.every = {
@@ -629,15 +648,15 @@ var differentia = (function () {
 		}
 	};
 	/**
-	* map - Clones `subject`, using the results of calling a provided function on every value.
-	* @param  {Object|Array} subject               The Object/Array to traverse/enumerate.
+	* map - Clones `subject`, using the return values of `callback`, which is executed once for each primitive element.
+	* @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
 	* @param  {callback} callback                  The callback with which to process values.
 		* @callback callback
 		* @param {Mixed} value                 Equal to `subject[accessor]`.
 		* @param {Mixed} accessor              Used to access `subject`.
-		* @param {Object|Array} subject        The Object/Array being travered/enumerated.
-	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
-	* @returns  {Object|Array}                     A clone of `subject`.
+		* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
+	* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {(Object|Array)}                     A clone of `subject`.
 	*/
 	strategies.map = {
 		interface: function (subject, callback, search = null) {
@@ -662,8 +681,8 @@ var differentia = (function () {
 	};
 	/**
 	* nodePaths - Creates a record of the tree paths present within `subject`, ignoring primitives.
-	* @param {Object|Array} subject               The Object/Array to record paths of.
-	* @param {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @param {(Object|Array)} subject               The Object/Array to record paths of.
+	* @param {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 	* @returns {Array}                            An array containing arrays, each representing nodes in a path.
 	*/
 	strategies.nodePaths = {
@@ -693,8 +712,8 @@ var differentia = (function () {
 	};
 		/**
 	* paths - Creates a record of the tree paths present within `subject`, including primitives.
-	* @param {Object|Array} subject               The Object/Array to record paths of.
-	* @param {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @param {(Object|Array)} subject               The Object/Array to record paths of.
+	* @param {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 	* @returns {Array}                            An array containing arrays, each representing nodes/primitives in a path.
 	*/
 	strategies.paths = {
@@ -720,9 +739,9 @@ var differentia = (function () {
 	};
 	/**
 	* pathFind - Creates a record of the tree path to `findValue` if found within `subject`, or returns `null`.
-	* @param {Object|Array} subject               The Object/Array to search for `findValue`.
-	* @param {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
-	* @returns {Array|null}                       An array containing arrays, each representing nodes in a path.
+	* @param {(Object|Array)} subject               The Object/Array to search for `findValue`.
+	* @param {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns {(Array|null)}                       An array containing arrays, each representing nodes in a path.
 	*/
 	strategies.pathFind = {
 		interface: function (subject, findValue, search = null) {
@@ -746,9 +765,9 @@ var differentia = (function () {
 	};
 	/**
 	* diffPaths - Creates a record of tree paths in `subject` which differ from the tree paths of `compare`.
-	* @param  {Object|Array} subject               The first Object/Array to compare, and record paths from.
-	* @param  {Object|Array} compare               The second Object/Array to compare.
-	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @param  {(Object|Array)} subject               The first Object/Array to compare, and record paths from.
+	* @param  {(Object|Array)} compare               The second Object/Array to compare.
+	* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 	* @returns  {Array}                            An array containing arrays, each representing nodes in a path.
 	*/
 	strategies.diffPaths = {
@@ -776,14 +795,14 @@ var differentia = (function () {
 	},
 	/**
 	* filter - Clones the parts of `subject` which pass the test.
-	* @param  {Object|Array} subject               The Object/Array to traverse/enumerate.
+	* @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
 	* @param  {callback} callback                  Must return `true` if value passes the test.
 		* @callback callback
 		* @param {Mixed} value                 Equal to `subject[accessor]`.
 		* @param {Mixed} accessor              Used to access `subject`.
-		* @param {Object|Array} subject        The Object/Array being travered/enumerated.
-	* @param  {Object|Array|null} [search = null]  An optional search index, acting as a traversal whitelist.
-	* @returns  {Object|Array}                     A clone of `subject`, only containing values which pass the test.
+		* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
+	* @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns  {(Object|Array)}                     A clone of `subject`, only containing values which pass the test.
 	*/
 	strategies.filter = {
 		interface: function (subject, callback, search = null) {
@@ -849,11 +868,13 @@ var differentia = (function () {
 	publicModules.isContainer = isContainer;
 	// Automatically Reveal Strategy Interfaces
 	for (var strategy in strategies) {
+		assert.props(strategies[strategy], ["interface", "main"], "strategies." + strategy);
+		//TODO: Which one?
 		if (!("interface" in strategies[strategy])) {
-			throw new TypeError("Strategy \"" + strategy + "\" must have an \"interface\" property.");
+			console.error("Strategy \"" + strategy + "\" must have an \"interface\" property.");
 		}
 		if (!("main" in strategies[strategy])) {
-			throw new TypeError("Strategy \"" + strategy + "\" must have a \"main\" property.");
+			console.error("Strategy \"" + strategy + "\" must have a \"main\" property.");
 		}
 		publicModules[strategy] = strategies[strategy].interface;
 	}
