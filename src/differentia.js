@@ -65,6 +65,7 @@ var differentia = (function () {
 	* OffsetArray.prototype.set - Assigns a value to an index.
 	* @param {Number} index
 	* @param {any} value
+	* @returns {Number}  The new length of the view.
 	*/
 	OffsetArray.prototype.set = function (index, value) {
 		const newIndex = this.index0 + Number(index);
@@ -72,9 +73,11 @@ var differentia = (function () {
 			this.length = newIndex + 1;
 		}
 		this.array[newIndex] = value;
+		return this.length;
 	};
 	/**
 	* OffsetArray.prototype.shift - Returns the first element and excludes it from the view.
+	*  If the view is empty, it will return `undefined`.
 	* @returns {any}
 	*/
 	OffsetArray.prototype.shift = function () {
@@ -87,6 +90,8 @@ var differentia = (function () {
 	};
 	/**
 	* OffsetArray.prototype.pop - Returns the last element and excludes it from the view.
+	*  Returns the new length of the view.
+	*  If the view is empty, it will return `undefined`.
 	* @returns {any}
 	*/
 	OffsetArray.prototype.pop = function () {
@@ -98,11 +103,12 @@ var differentia = (function () {
 	};
 	/**
 	* OffsetArray.prototype.push - Adds a value to the end of the view.
+	*  Returns the new length of the view.
 	* @param {any} value
 	*/
 	OffsetArray.prototype.push = function (value) {
 		this.array[this.index0 + this.length] = value;
-		this.length++;
+		return ++this.length;
 	};
 	/**
 	* Queue - Wraps OffsetArray, providing `OffsetArray.prototype.shift` as a `take` property.
@@ -694,28 +700,42 @@ var differentia = (function () {
 		},
 		entry: function (state) {
 			// Keeps track of node (object) paths only
-			state.nodePaths = [["searchRoot"]];
-			state.currentPath = state.nodePaths[0];
+			state.nodePaths = [[]];
+			state.isSecond = null;
 		},
 		main: function (state) {
+			if (state.isSecond === true) {
+				state.isSecond = false;
+			}
 			if (state.iterations === 0) {
-				state.currentPath = state.nodePaths[state.nodePaths.length - (state.targetTuples.length + 1)];
+				state.pathAccessor = state.nodePaths.length > 1 ? (state.nodePaths.length - (state.targetTuples.length + 1)) : 0;
+				if (!(state.pathAccessor in state.nodePaths)) {
+					state.nodePaths[state.pathAccessor] = [];
+				}
+				state.currentPath = state.nodePaths[state.pathAccessor];
+			}
+			if (!state.isFirst && state.isSecond === null) {
+				state.isSecond = true;
+			}
+			if (state.traverse) {
+				if (state.isSecond) {
+					state.nodePaths.push([]);
+				} else if (!state.isFirst) {
+					state.nodePaths.push(Array.from(state.currentPath));
+				}
+				state.nodePaths[state.nodePaths.length - 1].push(state.accessor);
 			}
 			if (state.isLast) {
 				return state.nodePaths;
 			}
-			if (state.traverse) {
-				state.nodePaths[state.nodePaths.length] = Array.from(state.currentPath);
-				state.nodePaths[state.nodePaths.length - 1].push(state.accessor);
-			}
 		}
 	};
 	/**
-* paths - Creates a record of the tree paths present within `subject`, including primitives.
-* @param {(Object|Array)} subject               The Object/Array to record paths of.
-* @param {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
-* @returns {Array}                            An array containing arrays, each representing nodes/primitives in a path.
-*/
+	* paths - Creates a record of the tree paths present within `subject`, including primitives.
+	* @param {(Object|Array)} subject               The Object/Array to record paths of.
+	* @param {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
+	* @returns {Array}                            An array containing arrays, each representing nodes/primitives in a path.
+	*/
 	strategies.paths = {
 		interface: function (subject, search = null) {
 			return runStrategy(strategies.paths, bfs, {
@@ -726,11 +746,15 @@ var differentia = (function () {
 		entry: function (state) {
 			strategies.nodePaths.entry(state);
 			// Keeps track of all paths, including primitives
-			state.paths = [];
+			state.paths = [[]];
 		},
 		main: function (state) {
 			strategies.nodePaths.main(state);
-			state.paths[state.paths.length] = Array.from(state.currentPath);
+			if (state.isSecond) {
+				state.paths.push([]);
+			} else if (!state.isFirst) {
+				state.paths.push(Array.from(state.currentPath));
+			}
 			state.paths[state.paths.length - 1].push(state.accessor);
 			if (state.isLast) {
 				return state.paths;
@@ -755,8 +779,7 @@ var differentia = (function () {
 		main: function (state) {
 			strategies.paths.main(state);
 			if (state.currentValue === state.parameters.findValue) {
-				var loc = state.paths.length > 1 ? state.paths.length - 1 : 0;
-				return state.paths[loc];
+				return state.paths[state.paths.length > 1 ? state.paths.length - 1 : 0];
 			}
 			if (state.isLast) {
 				return null;
@@ -821,7 +844,7 @@ var differentia = (function () {
 				state.depthLimit = state.currentPath.length;
 				if (state.currentPath.length < state.shortestDepth) {
 					state.shortestDepth = state.currentPath.length;
-					state.shortestPath = state.currentPath;
+					state.shortestPath = state.paths[state.paths.length - 1];
 				}
 			}
 			if (state.isLast) {
@@ -887,7 +910,7 @@ var differentia = (function () {
 		main: function (state) {
 			strategies.paths.main(state);
 			if (!state.isContainer && strategies.forEach.main(state)) {
-				state.pendingPaths[state.pendingPaths.length] = Array.from(state.currentPath);
+				state.pendingPaths.push(Array.from(state.currentPath));
 				state.pendingPaths[state.pendingPaths.length - 1].push(state.accessor);
 			}
 			if (state.isLast) {
@@ -925,13 +948,13 @@ var differentia = (function () {
 			}
 		}
 	}
-	// Reveal Modules
-	var publicModules = {};
-	// Add some extra functions which are not search strategies
-	publicModules.dfs = dfs;
-	publicModules.bfs = bfs;
-	publicModules.getContainerLength = getContainerLength;
-	publicModules.isContainer = isContainer;
+	// Modules to Reveal
+	var publicModules = {
+		dfs: dfs,
+		bfs: bfs,
+		getContainerLength: getContainerLength,
+		isContainer: isContainer
+	};
 	// Automatically Reveal Strategy Interfaces
 	for (var strategy in strategies) {
 		assert.props(strategies[strategy], ["interface", "main"], "strategies." + strategy);

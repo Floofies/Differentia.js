@@ -12,29 +12,30 @@ describe("differentia", function () {
 		'getContainerLength',
 		'bfs',
 		'dfs',
-		'forEach',
 		'diff',
 		'clone',
 		'diffClone',
-		'find',
-		'every',
-		'some',
-		'map',
 		'deepFreeze',
 		'deepSeal',
+		'forEach',
+		'find',
+		'some',
+		'every',
+		'map',
+		'nodePaths',
 		'paths',
 		'findPath',
+		'findPaths',
+		'findShortestPath',
 		'diffPaths',
 		'filter'
 	];
 	it("should contain \"" + modules.join("\", \"") + "\"", function () {
-		modules.forEach(function (moduleName) {
-			expect(moduleName in differentia).toBe(true);
-		});
+		modules.forEach(moduleName => expect(moduleName in differentia).toBe(true));
 	});
 });
 
-var d = differentia;
+const d = differentia;
 
 function createTestObject() {
 	return [
@@ -98,6 +99,17 @@ testObjects["Linear Cyclic"][3] = testObjects["Linear Cyclic"];
 testObjects["Multidimensional Cyclic"] = createTestObject();
 testObjects["Multidimensional Cyclic"][0].otherUser = testObjects["Multidimensional Cyclic"][1];
 testObjects["Multidimensional Cyclic"][1].otherUser = testObjects["Multidimensional Cyclic"][0];
+// Useful for mapping shortest path
+testObjects["Multipath"] = {
+	path1: {
+		path12: {
+			path13: [0, 1, 2, 3, 4]
+		}
+	},
+	path2: {
+		path22: [0, 1, 2, 3, 4]
+	}
+};
 
 function createKeyCounter() {
 	var testObject = testObjects["Multidimensional Cyclic"];
@@ -159,7 +171,7 @@ diff.test = function (tuple, map, noIndex) {
 		if (!(accessor in tuple.subject)) {
 			continue;
 		}
-		if (!("compare" in tuple) || !(accessor in tuple.compare)) {
+		if (!("compare" in tuple) && !(typeof tuple.compare !== "object") || !(accessor in tuple.compare)) {
 			return true;
 		}
 		var subjectProp = tuple.subject[accessor];
@@ -436,23 +448,22 @@ describe("deepSeal", function () {
 
 describe("map", function () {
 	it("should map all elements", function () {
-		var start = [2,4,6,8,10,12];
-		var mapped = [3,5,7,9,11,13];
+		var start = [2, 4, 6, 8, 10, 12];
+		var mapped = [3, 5, 7, 9, 11, 13];
 		expect(diff(d.map(start, value => value + 1), mapped)).toBe(false);
 	});
 });
 
 describe("nodePaths", function () {
 	const expectedPaths = [
-		["searchRoot"],
-		["searchRoot","0"],
-		["searchRoot","1"],
-		["searchRoot","0","address"],
-		["searchRoot","0","company"],
-		["searchRoot","1","address"],
-		["searchRoot","1","company"],
-		["searchRoot","0","address","geo"],
-		["searchRoot","1","address","geo"]
+		["0"],
+		["1"],
+		["0", "address"],
+		["0", "company"],
+		["1", "address"],
+		["1", "company"],
+		["0", "address", "geo"],
+		["1", "address", "geo"]
 	];
 	it("should return an array of all node/object paths", function () {
 		expect(diff(d.nodePaths(testObjects["Multidimensional Acyclic"]), expectedPaths)).toBe(false);
@@ -462,46 +473,46 @@ describe("nodePaths", function () {
 
 describe("paths", function () {
 	const expectedPaths = [
-		["searchRoot","0"],
-		["searchRoot","1"],
-		["searchRoot","0","id"],
-		["searchRoot","0","name"],
-		["searchRoot","0","username"],
-		["searchRoot","0","email"],
-		["searchRoot","0","regex"],
-		["searchRoot","0","address"],
-		["searchRoot","0","website"],
-		["searchRoot","0","company"],
-		["searchRoot","1","id"],
-		["searchRoot","1","name"],
-		["searchRoot","1","username"],
-		["searchRoot","1","email"],
-		["searchRoot","1","regex"],
-		["searchRoot","1","address"],
-		["searchRoot","1","website"],
-		["searchRoot","1","company"],
-		["searchRoot","0","address","street"],
-		["searchRoot","0","address","suite"],
-		["searchRoot","0","address","city"],
-		["searchRoot","0","address","zipcode"],
-		["searchRoot","0","address","geo"],
-		["searchRoot","0","company","active"],
-		["searchRoot","0","company","name"],
-		["searchRoot","0","company","catchPhrase"],
-		["searchRoot","0","company","bs"],
-		["searchRoot","1","address","street"],
-		["searchRoot","1","address","suite"],
-		["searchRoot","1","address","city"],
-		["searchRoot","1","address","zipcode"],
-		["searchRoot","1","address","geo"],
-		["searchRoot","1","company","active"],
-		["searchRoot","1","company","name"],
-		["searchRoot","1","company","catchPhrase"],
-		["searchRoot","1","company","bs"],
-		["searchRoot","0","address","geo","lat"],
-		["searchRoot","0","address","geo","lng"],
-		["searchRoot","1","address","geo","lat"],
-		["searchRoot","1","address","geo","lng"]
+		["0"],
+		["1"],
+		["0", "id"],
+		["0", "name"],
+		["0", "username"],
+		["0", "email"],
+		["0", "regex"],
+		["0", "address"],
+		["0", "website"],
+		["0", "company"],
+		["1", "id"],
+		["1", "name"],
+		["1", "username"],
+		["1", "email"],
+		["1", "regex"],
+		["1", "address"],
+		["1", "website"],
+		["1", "company"],
+		["0", "address", "street"],
+		["0", "address", "suite"],
+		["0", "address", "city"],
+		["0", "address", "zipcode"],
+		["0", "address", "geo"],
+		["0", "company", "active"],
+		["0", "company", "name"],
+		["0", "company", "catchPhrase"],
+		["0", "company", "bs"],
+		["1", "address", "street"],
+		["1", "address", "suite"],
+		["1", "address", "city"],
+		["1", "address", "zipcode"],
+		["1", "address", "geo"],
+		["1", "company", "active"],
+		["1", "company", "name"],
+		["1", "company", "catchPhrase"],
+		["1", "company", "bs"],
+		["0", "address", "geo", "lat"],
+		["0", "address", "geo", "lng"],
+		["1", "address", "geo", "lat"],
+		["1", "address", "geo", "lng"]
 	];
 	it("should return an array of all node/object/primitive paths", function () {
 		expect(diff(d.paths(testObjects["Multidimensional Acyclic"]), expectedPaths)).toBe(false);
@@ -510,9 +521,9 @@ describe("paths", function () {
 
 describe("findPath", function () {
 	it("should return the path of the input if found", function () {
-		var expectedPath = ["searchRoot", "0", "address", "geo", "lng"];
+		var expectedPath = ["0", "address", "geo", "lng"];
 		expect(diff(d.findPath(testObjects["Multidimensional Acyclic"], 81.1496), expectedPath)).toBe(false);
-		expectedPath = ["searchRoot", "1", "company", "name"];
+		expectedPath = ["1", "company", "name"];
 		expect(diff(d.findPath(testObjects["Multidimensional Acyclic"], "Deckow-Crist"), expectedPath)).toBe(false);
 	});
 	it("should return null if input is not found", function () {
@@ -520,51 +531,58 @@ describe("findPath", function () {
 	})
 });
 
+describe("findShortestPath", function () {
+	it("should find the shortest path to the value", function () {
+		var expectedPath = ["path2", "path22", "2"];
+		expect(diff(d.findShortestPath(testObjects["Multipath"], 2), expectedPath)).toBe(false)
+	});
+});
+
 describe("diffPaths", function () {
 	it("should return an array of paths that differ", function () {
 		var expectedPaths = [
-			["searchRoot","0"],
-			["searchRoot","1"],
-			["searchRoot","0","id"],
-			["searchRoot","0","name"],
-			["searchRoot","0","username"],
-			["searchRoot","0","email"],
-			["searchRoot","0","regex"],
-			["searchRoot","0","address"],
-			["searchRoot","0","website"],
-			["searchRoot","0","company"],
-			["searchRoot","0","otherUser"],
-			["searchRoot","1","id"],
-			["searchRoot","1","name"],
-			["searchRoot","1","username"],
-			["searchRoot","1","email"],
-			["searchRoot","1","regex"],
-			["searchRoot","1","address"],
-			["searchRoot","1","website"],
-			["searchRoot","1","company"],
-			["searchRoot","1","otherUser"],
-			["searchRoot","0","address","street"],
-			["searchRoot","0","address","suite"],
-			["searchRoot","0","address","city"],
-			["searchRoot","0","address","zipcode"],
-			["searchRoot","0","address","geo"],
-			["searchRoot","0","company","active"],
-			["searchRoot","0","company","name"],
-			["searchRoot","0","company","catchPhrase"],
-			["searchRoot","0","company","bs"],
-			["searchRoot","1","address","street"],
-			["searchRoot","1","address","suite"],
-			["searchRoot","1","address","city"],
-			["searchRoot","1","address","zipcode"],
-			["searchRoot","1","address","geo"],
-			["searchRoot","1","company","active"],
-			["searchRoot","1","company","name"],
-			["searchRoot","1","company","catchPhrase"],
-			["searchRoot","1","company","bs"],
-			["searchRoot","0","address","geo","lat"],
-			["searchRoot","0","address","geo","lng"],
-			["searchRoot","1","address","geo","lat"],
-			["searchRoot","1","address","geo","lng"]
+			["0"],
+			["1"],
+			["0", "id"],
+			["0", "name"],
+			["0", "username"],
+			["0", "email"],
+			["0", "regex"],
+			["0", "address"],
+			["0", "website"],
+			["0", "company"],
+			["0", "otherUser"],
+			["1", "id"],
+			["1", "name"],
+			["1", "username"],
+			["1", "email"],
+			["1", "regex"],
+			["1", "address"],
+			["1", "website"],
+			["1", "company"],
+			["1", "otherUser"],
+			["0", "address", "street"],
+			["0", "address", "suite"],
+			["0", "address", "city"],
+			["0", "address", "zipcode"],
+			["0", "address", "geo"],
+			["0", "company", "active"],
+			["0", "company", "name"],
+			["0", "company", "catchPhrase"],
+			["0", "company", "bs"],
+			["1", "address", "street"],
+			["1", "address", "suite"],
+			["1", "address", "city"],
+			["1", "address", "zipcode"],
+			["1", "address", "geo"],
+			["1", "company", "active"],
+			["1", "company", "name"],
+			["1", "company", "catchPhrase"],
+			["1", "company", "bs"],
+			["0", "address", "geo", "lat"],
+			["0", "address", "geo", "lng"],
+			["1", "address", "geo", "lat"],
+			["1", "address", "geo", "lng"]
 		];
 		expect(diff(differentia.diffPaths(testObjects["Multidimensional Cyclic"], testObjects["Linear Acyclic"]), expectedPaths)).toBe(false);
 	});
@@ -587,13 +605,14 @@ describe("filter", function () {
 				"id": 2,
 				"address": {
 					"zipcode": 90566,
-					"geo": 
-					{
-						"lat": -43.9509,
-						"lng": -34.4618}
-					}
+					"geo":
+						{
+							"lat": -43.9509,
+							"lng": -34.4618
+						}
 				}
-			];
+			}
+		];
 		expect(diff(d.filter(testObjects["Multidimensional Acyclic"], value => typeof value === "number"), expectedObject)).toBe(false);
 	});
 	it("should return an empty array if no values pass the test", function () {
