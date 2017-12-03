@@ -45,14 +45,16 @@ A Strategy is an object with the following properties:
 Property|Data Type|Description
 ---|---|---
 `interface`|Function|The interface function revealed by `module.exports` and the global `differentia` namespace, to be exposed to and directly run by the end-user. The function must contain a call to `runStrategy`, supplying it's parent object as the first parameter.
-`entry`|Function|(*Optional*) A Call-With-Current-State callback to run with the first iterator state, only once. This function cannot return values.
+`entry`|Function|(*Optional*) A Call-With-Current-State callback to run once on the first iteration. This function cannot return anything. Initial set-up code should be run in this function.
 `main`|Function|A Call-With-Current-State callback to run on every iteraton. If this function returns something other than `undefined`, it will be returned to the user's caller.
+`done`|Function|(*Optional*) A Call-With-Current-State callback to run on the last iteration. It recieves the return value of `main` as its second argument. If this function returns something other than `undefined`, it will be returned to the user's caller; otherwise, the value returned by `main` will be returned to the user's caller.
+`error`|Function|(*Optional*) A Call-With-Current-State callback to run when an error thrown. It recieves the `Error` object as its second argument. If this function returns something other than `undefined`, it will be returned to the user's caller.
 
-`entry` and `main` recieve a single `state` argument, the iterator state flyweight Object, which is a single object the iterator actively mutates per-iteration. See documentation for *Search Algorithm Iterators* in `README.md` for more information.
+`entry`, `main`, `done`, and `error` all recieve a `state` object as their first parameter, which is the iterator's state flyweight object; a single object which the iterator actively mutates per-iteration. See documentation for *Search Algorithm Iterators* in `README.md` for more information.
 
 ---
 
-Your Strategy's `interface` function must call `runStrategy` to use search iterators:
+Your Strategy's `interface` function must call `runStrategy` if it needs to use the search iterators:
 
 ### `runStrategy`
 
@@ -60,7 +62,7 @@ Your Strategy's `interface` function must call `runStrategy` to use search itera
 ```JavaScript
 runStrategy( strategy, searchAlg, parameters );
 ```
-An IOC wrapper for Generators/Iterators. `runStrategy` advances the iterator returned by `searchIterator` and executes Call-With-Current-State functions supplied in `strategy`. The state flyweight object is passed to `strategy.main`, which is executed for each element, and `strategy.entry`, which is only executed for the first element. If `strategy.main` returns something other than `undefined`, it will be returned to the caller.
+An IOC wrapper for Generators/Iterators. `runStrategy` advances the iterator returned by `searchIterator` and executes Call-With-Current-State functions supplied in `strategy`. The state flyweight object is passed to `strategy.main`, which is executed for each element, and `strategy.entry`, which is only executed for the first element. If `strategy.main` returns something other than `undefined`, it will be returned to the caller. Once the iterator has reached the last element, `strategy.done` will be executed with the return value of `strategy.main` as it's second argument.
 
 `searchAlg` is the search algorithm iterator to use; it can be `dfs` or `bfs`, or any Generator.
 
@@ -69,9 +71,9 @@ An IOC wrapper for Generators/Iterators. `runStrategy` advances the iterator ret
 
   The strategy Object.
 
-- **`searchAlg`** Generator
+- **`searchAlg`** Iterator
 
-  A Generator to use as the search algorthm; it can be `dfs` or `bfs`, or any Generator.
+  An iterator to use as the search algorthm; it can be `dfs` or `bfs`, or any Generator.
 
 - **`parameters`** Object
 
@@ -86,10 +88,10 @@ Property|Data Type|Description
 
 ## Example Strategy
 
-This example is an algorithm that overwrites every Primitive of an Object tree with "Hello World".
+This example is an algorithm that returns an object if it contains the string "Good Morning".
 
 ```JavaScript
-// Our test Object
+// Our test Object we will search for "Good Morning".
 var subject = {
   greetings1: [
     "Good Afternoon"
@@ -102,34 +104,59 @@ var subject = {
 // Define your Strategy, adding it to the "strategies" object. "main" and "interface" properties are required.
 strategies.myStrategy = {
 	interface: function (object) {
-		// Here we call "runStrategy" and include our Strategy as parameter 1
+		// This function will be run directly by the library user.
+		// Here we call `runStrategy` and include our Strategy as parameter 1.
+		// `runStrategy` will then begin to execute below callbacks.
 		runStrategy(strategies.myStrategy, dfs {
 			subject: object
 		});
 	},
+	entry: function (state) {
+		// This function will be executed only on the first iteration.
+		// Here we run our initial set-up steps.
+		state.returnValue = null;
+	},
 	main: function (state) {
-		// This function will be executed for every iteration
-		// Only overwrite what is not an Object/Array
-		if (!state.isContainer) {
-			// This assignment is equal to 'object.greetingsN[0] = "Hello World"'
-			state.tuple.subject[state.accessor] = "Hello World";
+		// This function will be executed for every iteration.
+		// Here, we compare the element being iterated over to our desired string.
+		if (state.tuple.subject[state.accessor] === "Good Morning") {
+			// We found the string, so we'll return the parent object.
+			return state.tuple.subject;
+		}
+		// Throw an error if we never found the string.
+		if (state.isLast) {
+			throw new Error("String missing");
+		}
+	},
+	done: function (state, returnValue) {
+		// This function will be executed for the last iteration, or after `main` returns something.
+		// We have the return value of `main` as our second argument.
+		// Here we will add more strings to the object before returning it.
+		returnValue.push("Good Night");
+		return returnValue;
+	},
+	error: function (error, returnValue) {
+		// This function will be executed if any of the above callbacks throws an error.
+		if (error.message === "String missing") {
+			// Handle the error
+			console.error(error.message);
+			// Logs: "String missing"
+		} else {
+			// Can't handle the error; so re-throw.
+			throw error;
 		}
 	}
 };
 
 // Runs the Strategy. This function is exposed to the end-user.
-strategies.myStrategy.interface(subject);
+var greetings = strategies.myStrategy.interface(subject);
 
-// We can now see the Primitives were overwritten with "Hello World".
-console.log(subject);
+// We can now see the string we were searching for and the string we added:
+console.log(greetings);
 /* Logs:
-"{
-	greetings1: [
-		"Hello World"
-	],
-	greetings2: [
-		"Hello World"
-	]
-}"
+"[
+	"Good Morning",
+	"Good Night"
+]"
 */
 ```
