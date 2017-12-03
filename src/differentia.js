@@ -184,6 +184,14 @@ var differentia = (function () {
 		throw new TypeError("The given parameter must be an Object or Array");
 	}
 	/**
+	* runCallback - Executes `state.parameters.callback` and returns whatever the callback does.
+	* @param {Object} state  A reference to the state flyweight yielded by `searchIterator`.
+	* @returns {any}
+	*/
+	function runCallback (state) {
+		return state.parameters.callback(state.currentValue, state.accessor, state.tuple.subject);
+	}
+	/**
 	* createIterationState - Creates the state object for searchIterator.
 	* @returns {Object}  A new iteration state object with sane defaults.
 	*/
@@ -332,42 +340,51 @@ var differentia = (function () {
 			* @param {(Object|undefined)} returnValue  The value returned by `strategy.main`.
 	* @param {Generator} searchAlg  A Generator to use as the search algorthm.
 	* @param {Object} parameters    An Object containing a required `subject` property, and an optional `search` property.
-	* @returns {Mixed}              Returns anything `strategy.main` returns.
+	* @returns {Mixed}              Returns anything returned by `strategy.main` or `strategy.done`.
 	*/
 	function runStrategy(strategy, searchAlg, parameters) {
-		assert.object(strategy, 1);
-		assert.props(strategy, ["main"], 1);
 		assert.object(parameters, 3);
-		assert.props(parameters, ["subject"], 3);
+		assert.props(parameters, ["subject", "search"], 3);
 		// Initialize search algorithm.
 		const iterator = searchAlg(parameters.subject, parameters.search);
 		var iteration = iterator.next();
 		var state = iteration.value;
 		// Save parameters in a prop the strategy can see
 		state.parameters = parameters;
-		// Run preparatory function
-		if ("entry" in strategy) {
-			strategy.entry(state);
-		}
-		var returnValue;
-		// Run the strategy, return what the strategy returns.
-		while (!iteration.done) {
-			returnValue = strategy.main(state);
-			if (returnValue !== undefined) {
-				break;
+		try {
+			// Run `entry` on the first element
+			if ("entry" in strategy) {
+				strategy.entry(state);
 			}
-			iteration = iterator.next();
-			state = iteration.value;
-		}
-		if ("done" in strategy) {
-			var doneReturnValue = strategy.done(state, returnValue);
-			if (doneReturnValue !== undefined) {
-				return doneReturnValue;
+			var returnValue;
+			while (!iteration.done) {
+				state = iteration.value;
+				// Run `main` on every element
+				returnValue = strategy.main(state);
+				if (returnValue !== undefined) {
+					break;
+				}
+				iteration = iterator.next();
+			}
+			// Run `done` on the last element
+			if ("done" in strategy) {
+				var doneReturnValue = strategy.done(state, returnValue);
+				if (doneReturnValue !== undefined) {
+					return doneReturnValue;
+				}
+			}
+		} catch (error) {
+			if ("error" in strategy) {
+				// Run `error` if an error occured;
+				var errorReturnValue = strategy.error(state, error);
+				if (errorReturnValue !== undefined) {
+					returnValue = errorReturnValue;
+				}
+			} else {
+				throw error;
 			}
 		}
-		if (returnValue !== undefined) {
-			return returnValue;
-		}
+		return returnValue;
 	}
 	const strategies = {};
 	/**
@@ -565,9 +582,7 @@ var differentia = (function () {
 				callback: callback
 			});
 		},
-		main: function (state) {
-			return state.parameters.callback(state.currentValue, state.accessor, state.tuple.subject);
-		}
+		main: runCallback
 	};
 	/**
 	* find - Returns a value if it passes the test, otherwise returns `undefined`.
@@ -590,7 +605,7 @@ var differentia = (function () {
 			});
 		},
 		main: function (state) {
-			if (strategies.forEach.main(state)) {
+			if (runCallback(state)) {
 				return state.currentValue;
 			}
 		}
@@ -616,7 +631,7 @@ var differentia = (function () {
 			});
 		},
 		main: function (state) {
-			if (strategies.forEach.main(state)) {
+			if (runCallback(state)) {
 				return true;
 			}
 			if (state.isLast) {
@@ -645,7 +660,7 @@ var differentia = (function () {
 			});
 		},
 		main: function (state) {
-			if (!strategies.forEach.main(state)) {
+			if (!runCallback(state)) {
 				return false;
 			}
 			if (state.isLast) {
@@ -678,7 +693,7 @@ var differentia = (function () {
 			if (state.isContainer) {
 				strategies.clone.main(state);
 			} else {
-				state.tuple.clone[state.accessor] = strategies.forEach.main(state);
+				state.tuple.clone[state.accessor] = runCallback(state);
 			}
 			if (state.isLast) {
 				return state.cloneRoot;
@@ -700,33 +715,36 @@ var differentia = (function () {
 		},
 		entry: function (state) {
 			// Keeps track of node (object) paths only
-			state.nodePaths = [[]];
-			state.isSecond = null;
+			state.nodePaths = [];
+			state.nonTraversedNodePaths = [];
+			state.additions = 0;
+			state.inRoot = true;
 		},
 		main: function (state) {
-			if (state.isSecond === true) {
-				state.isSecond = false;
-			}
 			if (state.iterations === 0) {
-				state.pathAccessor = state.nodePaths.length > 1 ? (state.nodePaths.length - (state.targetTuples.length + 1)) : 0;
-				if (!(state.pathAccessor in state.nodePaths)) {
-					state.nodePaths[state.pathAccessor] = [];
+				if (!state.isFirst) {
+					state.inRoot = false;
 				}
-				state.currentPath = state.nodePaths[state.pathAccessor];
-			}
-			if (!state.isFirst && state.isSecond === null) {
-				state.isSecond = true;
+				if (state.inRoot) {
+					state.currentPath = [];
+				} else {
+					state.pathAccessor = (state.nodePaths.length - 1) - state.additions;
+					state.currentPath = state.nodePaths[state.pathAccessor];
+				}
+				state.additions--;
 			}
 			if (state.traverse) {
-				if (state.isSecond) {
-					state.nodePaths.push([]);
-				} else if (!state.isFirst) {
-					state.nodePaths.push(Array.from(state.currentPath));
-				}
-				state.nodePaths[state.nodePaths.length - 1].push(state.accessor);
+				var newPath = Array.from(state.currentPath);
+				newPath.push(state.accessor);
+				state.nodePaths.push(newPath);
+				state.additions++;
+			} else if (state.isContainer && state.existing !== null) {
+				var newPath = Array.from(state.currentPath);
+				newPath.push(state.accessor);
+				state.nonTraversedNodePaths.push(newPath);
 			}
 			if (state.isLast) {
-				return state.nodePaths;
+				return state.nodePaths.concat(state.nonTraversedNodePaths);
 			}
 		}
 	};
@@ -746,15 +764,11 @@ var differentia = (function () {
 		entry: function (state) {
 			strategies.nodePaths.entry(state);
 			// Keeps track of all paths, including primitives
-			state.paths = [[]];
+			state.paths = [];
 		},
 		main: function (state) {
 			strategies.nodePaths.main(state);
-			if (state.isSecond) {
-				state.paths.push([]);
-			} else if (!state.isFirst) {
-				state.paths.push(Array.from(state.currentPath));
-			}
+			state.paths.push(Array.from(state.currentPath));
 			state.paths[state.paths.length - 1].push(state.accessor);
 			if (state.isLast) {
 				return state.paths;
@@ -807,8 +821,7 @@ var differentia = (function () {
 		main: function (state) {
 			strategies.paths.main(state);
 			if (state.currentValue === state.parameters.findValue) {
-				var loc = state.paths.length > 0 ? state.paths.length - 1 : 0;
-				state.foundPaths.push(state.paths[loc]);
+				state.foundPaths.push(state.paths[state.paths.length > 0 ? state.paths.length - 1 : 0]);
 			}
 			if (state.isLast) {
 				return state.foundPaths.length > 0 ? state.foundPaths : null;
@@ -837,7 +850,7 @@ var differentia = (function () {
 		},
 		main: function (state) {
 			strategies.paths.main(state);
-			if (state.isContainer && state.currentPath.length > state.depthLimit) {
+			if (state.isContainer && state.currentPath !== null && state.currentPath.length > state.depthLimit) {
 				state.traverse = false;
 			}
 			if (state.currentValue === state.parameters.findValue) {
@@ -909,8 +922,12 @@ var differentia = (function () {
 		},
 		main: function (state) {
 			strategies.paths.main(state);
-			if (!state.isContainer && strategies.forEach.main(state)) {
-				state.pendingPaths.push(Array.from(state.currentPath));
+			if (!state.isContainer && runCallback(state)) {
+				if (state.isSecond) {
+					state.pendingPaths.push([]);
+				} else if (!state.isFirst) {
+					state.pendingPaths.push(Array.from(state.currentPath));
+				}
 				state.pendingPaths[state.pendingPaths.length - 1].push(state.accessor);
 			}
 			if (state.isLast) {
@@ -923,9 +940,6 @@ var differentia = (function () {
 					});
 					while (path.length > 0 && nodeQueue.length > 0) {
 						var accessor = path.shift();
-						if (accessor === "searchRoot") {
-							continue;
-						}
 						var tuple = nodeQueue.shift();
 						if (!(accessor in tuple.clone)) {
 							if (path.length === 0) {
@@ -956,16 +970,8 @@ var differentia = (function () {
 		isContainer: isContainer
 	};
 	// Automatically Reveal Strategy Interfaces
-	for (var strategy in strategies) {
-		assert.props(strategies[strategy], ["interface", "main"], "strategies." + strategy);
-		//TODO: Which one?
-		if (!("interface" in strategies[strategy])) {
-			console.error("Strategy \"" + strategy + "\" must have an \"interface\" property.");
-		}
-		if (!("main" in strategies[strategy])) {
-			console.error("Strategy \"" + strategy + "\" must have a \"main\" property.");
-		}
-		publicModules[strategy] = strategies[strategy].interface;
+	for (var acc in strategies) {
+		publicModules[acc] = strategies[acc].interface;
 	}
 	return publicModules;
 })();

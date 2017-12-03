@@ -95,6 +95,18 @@ testObjects["Linear Acyclic"] = ["one", "two", "three"];
 // Fourth element is a cycle
 testObjects["Linear Cyclic"] = ["one", "two", "three"];
 testObjects["Linear Cyclic"][3] = testObjects["Linear Cyclic"];
+// Nested Arrays
+testObjects["Nested Acyclic"] = ["one", "two", [
+	"three", "four", [
+		"five", "six"
+	]
+]];
+testObjects["Nested Cyclic"] = ["one", "two", [
+	"three", "four", [
+		"five", "six"
+	]
+]];
+testObjects["Nested Cyclic"][2].push(testObjects["Nested Cyclic"][2][2]);
 // `otherUser` properties are a cycle
 testObjects["Multidimensional Cyclic"] = createTestObject();
 testObjects["Multidimensional Cyclic"][0].otherUser = testObjects["Multidimensional Cyclic"][1];
@@ -153,7 +165,7 @@ function diff(subject, compare, search = null) {
 	var tuple = { subject, search, compare };
 	var map = new Map();
 	map.set(search, tuple);
-	if (diff.test(tuple, map, noIndex)) {
+	if (diff.test(tuple, map, noIndex) === true) {
 		return true;
 	}
 	return false;
@@ -166,6 +178,7 @@ var supportedRegExpProps = {
 	flags: "flags" in RegExp.prototype
 };
 
+//FIXME: I can't traverse nested arrays.
 diff.test = function (tuple, map, noIndex) {
 	for (var accessor in tuple.search) {
 		if (!(accessor in tuple.subject)) {
@@ -178,7 +191,8 @@ diff.test = function (tuple, map, noIndex) {
 		var compareProp = tuple.compare[accessor];
 		var searchProp = tuple.search[accessor];
 		if ((Array.isArray(subjectProp) && Array.isArray(compareProp))
-			|| (typeof subjectProp === "object" && typeof compareProp === "object")) {
+			|| (typeof subjectProp === "object" && typeof compareProp === "object")
+			&& (subjectProp !== null && compareProp !== null)) {
 			if (subjectProp instanceof RegExp && compareProp instanceof RegExp) {
 				if (
 					subjectProp.source !== compareProp.source
@@ -194,19 +208,28 @@ diff.test = function (tuple, map, noIndex) {
 			} else if (noIndex && testLength(subjectProp) !== testLength(compareProp)) {
 				return true;
 			}
-			if (map.has(tuple.search[accessor])) {
+			if (map.has(searchProp)) {
 				continue;
 			}
 			// Node has not been seen before, so traverse it
 			var nextTuple = {};
 			// Travese the Tuple's properties
 			for (var unit in tuple) {
-				if (unit === "search" || unit === "subject" || accessor in tuple[unit]) {
+				if (
+					(
+						unit === "search"
+						|| unit === "subject"
+						|| (Array.isArray(tuple[unit][accessor]) || typeof tuple[unit][accessor] === "object")
+					)
+					&& accessor in tuple[unit]
+				) {
 					nextTuple[unit] = tuple[unit][accessor];
 				}
 			}
 			map.set(searchProp, nextTuple);
-			return diff.test(nextTuple, map, noIndex);
+			if (diff.test(nextTuple, map, noIndex) === true) {
+				return true;
+			}
 		} else if (subjectProp !== compareProp) {
 			return true;
 		}
@@ -227,12 +250,15 @@ describe("testDiff", function () {
 		expect(diff(testObjects["Linear Acyclic"], testObjects["Linear Cyclic"])).toBe(true);
 		expect(diff(testObjects["Multidimensional Cyclic"], testObjects["Multidimensional Acyclic"])).toBe(true);
 		expect(diff(testObjects["Linear Cyclic"], testObjects["Multidimensional Acyclic"])).toBe(true);
+		expect(diff(testObjects["Nested Cyclic"], testObjects["Nested Acyclic"])).toBe(true);
 	});
 	it("should return false when two objects are the same", function () {
 		expect(diff(testObjects["Linear Acyclic"], testObjects["Linear Acyclic"])).toBe(false);
 		expect(diff(testObjects["Linear Cyclic"], testObjects["Linear Cyclic"])).toBe(false);
 		expect(diff(testObjects["Multidimensional Acyclic"], testObjects["Multidimensional Acyclic"])).toBe(false);
 		expect(diff(testObjects["Multidimensional Cyclic"], testObjects["Multidimensional Cyclic"])).toBe(false);
+		expect(diff(testObjects["Nested Cyclic"], testObjects["Nested Cyclic"])).toBe(false);
+		expect(diff(testObjects["Nested Acyclic"], testObjects["Nested Acyclic"])).toBe(false);
 	});
 });
 
@@ -455,18 +481,30 @@ describe("map", function () {
 });
 
 describe("nodePaths", function () {
-	const expectedPaths = [
-		["0"],
-		["1"],
-		["0", "address"],
-		["0", "company"],
-		["1", "address"],
-		["1", "company"],
-		["0", "address", "geo"],
-		["1", "address", "geo"]
-	];
 	it("should return an array of all node/object paths", function () {
+		var expectedPaths = [
+			["0"],
+			["1"],
+			["0", "address"],
+			["0", "company"],
+			["1", "address"],
+			["1", "company"],
+			["0", "address", "geo"],
+			["1", "address", "geo"]
+		];
 		expect(diff(d.nodePaths(testObjects["Multidimensional Acyclic"]), expectedPaths)).toBe(false);
+		expectedPaths = [
+			["0"],
+			["1"],
+			["0", "address"],
+			["0", "company"],
+			["1", "address"],
+			["1", "company"],
+			["0", "address", "geo"],
+			["1", "address", "geo"],
+			["0", "otherUser"],
+			["1", "otherUser"]
+		];
 		expect(diff(d.nodePaths(testObjects["Multidimensional Cyclic"]), expectedPaths)).toBe(false);
 	});
 });
