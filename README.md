@@ -15,9 +15,12 @@ This library provides a basic suite of Object/Array focused functions. They are 
   - [diff](#diff)
   - [deepFreeze](#deepfreeze)
   - [deepSeal](#deepseal)
+  - [nodePaths](#nodepaths)
   - [paths](#paths)
-  - [pathFind](#pathfind)
-  - [diffpaths](#diffpaths)
+  - [findPath](#findpath)
+  - [findPaths](#findpaths)
+  - [findShortestPath](#findshortestpath)
+  - [diffPaths](#diffpaths)
 - [Higher-Order Functions](#higher-order-functions)
   - [forEach](#foreach)
   - [find](#find)
@@ -552,13 +555,13 @@ differentia.deepSeal(subject);
 
 ___
 
-### `paths`
+### `nodePaths`
 
 *Function*
 ```JavaScript
-paths( subject [, search = null ] );
+nodePaths( subject [, search = null ] );
 ```
-Traverses and enumerates `subject`, returning an array listing all paths of the tree.
+Traverses and enumerates `subject`, returning an array listing all paths of the tree, ignoring primitive data types.
 
 #### Parameters
 - **`subject`** Object/Array
@@ -586,9 +589,7 @@ var paths = differentia.paths(subject);
 console.log(paths);
 /* Logs:
 [
-  ["searchRoot", "string1"],
-  ["searchRoot", "array1", "0"],
-  ["searchRoot", "array1", "1"]
+  ["array1"]
 ]
 */
 ```
@@ -596,13 +597,57 @@ console.log(paths);
 
 ___
 
-### `pathFind`
+### `paths`
 
 *Function*
 ```JavaScript
-pathFind( subject, findValue [, search = null ] );
+paths( subject [, search = null ] );
 ```
-Traverses and enumerates `subject`, searching for `findValue`. Returns an Array containing the path of `findValue`, or `null` if it was not found.
+Traverses and enumerates `subject`, returning an array listing all paths of the tree, including primitive data types.
+
+#### Parameters
+- **`subject`** Object/Array
+
+  The Object or Array to search.
+
+- **`search`** (*Optional*) Object/Array
+
+  An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
+
+#### Examples
+<details><summary>Example 1: Using `paths` to record the paths/branches in an Object:</summary>
+
+```JavaScript
+var subject = {
+  string1: "Pretty",
+  array1: [
+    "Little Clouds",
+    "Little Trees"
+  ]
+};
+
+var paths = differentia.paths(subject);
+
+console.log(paths);
+/* Logs:
+[
+  ["string1"],
+  ["array1", "0"],
+  ["array1", "1"]
+]
+*/
+```
+</details>
+
+___
+
+### `findPath`
+
+*Function*
+```JavaScript
+findPath( subject, findValue [, search = null ] );
+```
+Traverses and enumerates `subject`, searching for `findValue`. Returns an Array containing the first found path to `findValue`, or `null` if it was not found.
 
 #### Parameters
 - **`subject`** Object/Array
@@ -629,13 +674,106 @@ var subject = {
   ]
 };
 
-var path = differentia.pathFind(subject, "Little Trees");
+var path = differentia.findPath(subject, "Little Trees");
 
 console.log(path);
 /* Logs:
 [
-  ["searchRoot", "array1", "1"]
+  ["array1", "1"]
 ]
+*/
+```
+</details>
+
+---
+
+### `findPaths`
+
+*Function*
+```JavaScript
+findPaths( subject, findValue [, search = null ] );
+```
+Traverses and enumerates `subject`, searching for `findValue`. Returns an Array containing all found paths to `findValue`, or `null` if it was not found.
+
+#### Parameters
+- **`subject`** Object/Array
+
+  The Object or Array to search.
+
+- **`findValue`** Object/Array
+
+  The value to find the path of.
+
+- **`search`** (*Optional*) Object/Array
+
+  An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
+
+#### Examples
+<details><summary>Example 1: Using `paths` to record the paths/branches to a value in an Object:</summary>
+
+```JavaScript
+var subject = {
+  string1: "Pretty",
+  string2: "Little Trees",
+  array1: [
+    "Little Clouds",
+    "Little Trees"
+  ]
+};
+
+var paths = differentia.findPaths(subject, "Little Trees");
+
+console.log(paths);
+/* Logs:
+[
+  ["string2"],
+  ["array1", "1"]
+]
+*/
+```
+</details>
+
+---
+
+### `findShortestPath`
+
+*Function*
+```JavaScript
+findShortestPath( subject, findValue [, search = null ] );
+```
+Traverses and enumerates `subject`, searching for `findValue`. Returns an Array containing the shortest found path to `findValue`, or `null` if it was not found.
+
+#### Parameters
+- **`subject`** Object/Array
+
+  The Object or Array to search.
+
+- **`findValue`** Object/Array
+
+  The value to find the path of.
+
+- **`search`** (*Optional*) Object/Array
+
+  An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
+
+#### Examples
+<details><summary>Example 1: Using `findShortestPath` to record the shortest path/branch to a value in an Object:</summary>
+
+```JavaScript
+var subject = {
+  string1: "Pretty",
+  string2: "Little Trees",
+  array1: [
+    "Little Clouds",
+    "Little Trees"
+  ]
+};
+
+var path = differentia.findShortestPath(subject, "Little Trees");
+
+console.log(path);
+/* Logs:
+["string2"]
 */
 ```
 </details>
@@ -688,9 +826,9 @@ var differingPaths = differentia.diffPaths(subject, compare);
 console.log(differingPaths);
 /* Logs:
 [
-  ["searchRoot","string1"],
-  ["searchRoot","array1","0"],
-  ["searchRoot","array1","1"]
+  ["string1"],
+  ["array1","0"],
+  ["array1","1"]
 ]
 */
 ```
@@ -1053,6 +1191,7 @@ A simple IOC wrapper to the [bfs](#bfs) iterator. Constructs a structural copy o
 
 ```JavaScript
 var subject = {
+  peopleCount: 3,
   people: [
     {
       name: "Jon Snow",
@@ -1064,10 +1203,9 @@ var subject = {
     },
     {
       name: "Jimmy Neutron",
-      number: 0001112222
+      number: 1112223333
     }
-  ],
-  peopleCount: 3
+  ]
 };
 
 // Will clone all numbers and their paths into a new Object
@@ -1088,7 +1226,7 @@ console.log(copy);
       "number": 1231231234
     },
     {
-      "number": 300178
+      "number": 1112223333
     }
   ]
 }
