@@ -2,7 +2,7 @@
 
 [![NPM](https://www.nodei.co/npm/differentia.png?compact=true)](https://www.npmjs.com/package/differentia)
 ===
-This library provides a basic suite of Object/Array focused functions. They are all "deep" algorithms, and fully traverse all child Objects/Arrays/properties unless given a search index object with specifies otherwise.
+Differentia is a library which provides an advanced suite of Object/Array focused functions. They are all "deep" algorithms, and fully traverse all child Objects/Arrays/properties unless given a search index object with specifies otherwise. Differentia is fully compatible with Node and the browser.
 
 # :closed_book: Documentation
 
