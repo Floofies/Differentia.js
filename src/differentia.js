@@ -370,7 +370,7 @@ var differentia = (function () {
 			if ("done" in strategy) {
 				var doneReturnValue = strategy.done(state, returnValue);
 				if (doneReturnValue !== undefined) {
-					return doneReturnValue;
+					returnValue = doneReturnValue;
 				}
 			}
 		} catch (error) {
