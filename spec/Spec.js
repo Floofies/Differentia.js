@@ -1,5 +1,5 @@
 if (typeof require !== "undefined") {
-	var differentia = require('../src/differentia.js');
+	var differentia = require('../prod-build/dist/differentia.js');
 }
 
 describe("differentia", function () {
@@ -657,4 +657,97 @@ describe("filter", function () {
 		var clone = d.filter(testObjects["Multidimensional Acyclic"], value => value === "This value does not exist!");
 		expect(Array.isArray(clone) && clone.length === 0).toBe(true);
 	});
+});
+
+describe("OffsetArray", function () {
+	it("Should contain elements added via push", function () {
+		const source = [1, 2, 3, 4, 5];
+		const oa = new d.structs.OffsetArray();
+		for (var number in source) {
+			oa.push(number);
+		}
+		for (var number in source) {
+			expect(oa.item(number - 1)).toBe(number);
+		}
+	});
+	it("Should contain elements added from an iterable", function () {
+		const source = [1, 2, 3, 4, 5];
+		const oa = new d.structs.OffsetArray(source);
+		for (var number in source) {
+			expect(oa.item(number - 1)).toBe(number);
+		}
+	})
+	it("Should remove and return the last element via pop", function () {
+		const source = [1, 2, 3, 4, 5];
+		const expected = [5, 4, 3, 2, 1];
+		const oa = new d.structs.OffsetArray(source);
+		for (var number in expected) {
+			expect(oa.pop()).toBe(number);
+		}
+	});
+	it("Should remove and return the first element via shift", function () {
+		const source = [1, 2, 3, 4, 5];
+		const oa = new d.structs.OffsetArray(source);
+		for (var number in source) {
+			expect(oa.shift()).toBe(number);
+		}
+	});
+});
+
+describe("LinkedList", function () {
+	it("should contain elements added via push", function () {
+
+	});
+	it("should contain elements added from an iterable", function () {
+
+	});
+	it("should remove and return elements via remove", function () {
+
+	});
+	it("should remove and return the last element via pop", function () {
+		
+	});
+	it("should remove and return elements via shift", function () {
+		
+	});
+	it("should not add `prev` references to ListElements", function () {
+
+	});
+});
+
+describe("DoubleLinkedList", function () {
+	it("should contain elements added via push", function () {
+
+	});
+	it("should contain elements added from an iterable", function () {
+
+	});
+	it("should add `prev` references to ListElements", function () {
+
+	});
+});
+
+describe("CircularLinkedList", function () {
+	it("should contain elements added via push", function () {
+
+	});
+	it("should contain elements added from an iterable", function () {
+
+	});
+	it("should not add `prev` references to ListElements", function () {
+
+	});
+});
+
+describe("CircularDoubleLinkedList", function () {
+	it("should contain elements added via push", function () {
+
+	});
+	it("should contain elements added from an iterable", function () {
+
+	});
+	it("should not add `prev` references to ListElements", function () {
+
+	});
+
 });
