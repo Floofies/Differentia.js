@@ -1,5 +1,6 @@
 // Modules to Reveal
 var publicModules = {
+	structs: structs,
 	dfs: dfs,
 	bfs: bfs,
 	getContainerLength: getContainerLength,

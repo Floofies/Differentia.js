@@ -132,7 +132,7 @@ structs.RedBlackTree = function () {
 	this.leftBlackHeight = 0;
 	this.rightBlackHeight = 0;
 };
-structs.RedBlackTree.prototype = Object.create(structs.LinkedList.prototype);
+structs.RedBlackTree.prototype = Object.create(structs.BinaryTree.prototype);
 structs.RedBlackTree.prototype.swapColor = function (element1, element2) {
 	const color1 = element1.red;
 	const color2 = element2.red;
@@ -194,4 +194,4 @@ structs.RedBlackTree.prototype.delete = function (element) {
 	//TODO
 	return element;
 };
-structs.RedBlackTree.prototype.clear = this.constructor;
+structs.RedBlackTree.prototype.clear = structs.RedBlackTree.constructor;
