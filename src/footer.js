@@ -10,8 +10,6 @@ var publicModules = {
 for (var name in strategies) {
 	publicModules[name] = strategies[name].interface;
 }
-// Automatically Reveal Data Structures
-Object.assign(publicModules, structs);
 return publicModules;
 })();
 // NodeJS `require` compatibility
