@@ -1,33 +1,41 @@
-# :pencil2: Contributing
-Contributing to the project is very easy. Additions to the library are handled via a standard Strategy Pattern. Unit testing is handled with `jasmine`.
+# :postbox: Contributing
+Contributing to the project is very easy.
+- Search algorithms are contained in the `strategies` object.
+- Data structures are contained in the `structs` object.
+- Unit testing is handled via Jasmine.
+- Building is handled via GNU Make.
 
-# Testing & Building
-### Pre-requisites
-- `node`
-- `make`
+To contribute, simply fork the `master` repository and submit a pull request containing your changes. Your changes must be clearly outlined in the description.
 
-## Testing
+Documentation must be added/updated for every additon/change. If a pull request is submitted that lacks new/updated documentation, or contains new/updated documentation does not fit the format outlined here, then the request may be rejected for these reasons. See the Documentation section of this file for more information.
+
+# :hammer: Testing & Building
+
+Browser tests can be run by opening `SpecRunner.html` in a web browser.
+
+## Makefile
+
 > The makefile installs a local copy of `jasmine` to run tests.
 
-**Node Tests**: `make test`
-
-**Browser Tests**: Open `SpecRunner.html` in a web browser.
-
-## Production Build
 > The makefile installs a local copy of `uglify-es` for beautification/minification.
 
-**Production Build**: `make prod` or `make prod clean`
+### Pre-requisites
+- Node & NPM
+- GNU Make
 
-Creates a `prod-build` directory to build the production release into. Saves `src/differentia.js` into `prod-build/src`, then comment-less and minified versions into `prod-build/lib`. Also includes `package.json`, `README.md`, and `spec` in the root directory.
+Running `make prod` creates a `prod-build` directory, which is the production/npm release. Saves `src` into `prod-build/src`, comment-less and minified versions into `prod-build/dist`, the Jasmine unit test Spec into `prod-build/spec`. Also includes copies of `package.json`, and `README.md`.
 
-Add `clean` at the end to remove `node_modules`.
+### Makefile Options
+Build Option|Parameter
+---|---
+**Run Node Tests**|`test`
+**Production Build**|`prod`
+**Remove Temp Files**|`clean`
 
-# Adding Algorithms
-To add an algorithm to the library, you must use the Strategy Pattern together with `runStrategy`, which is the primary gateway for your algorithms to interact with a search iterator. Your algorithm will be tightly coupled to `searchIterator`, and you should make use of one of the many properties made available through it's shared state object. An algorithm may "steer" the search algorithm by directly mutating certain properties of `state`. See documentation for *Search Algorithm Iterators* in `README.md` for more information.
+*Example Command:* `make prod test clean`
 
-All strategies added to the `strategies` object will be automatically revealed to the end-user via their `interface` properties. Once you add a strategy, you should also include it's name in `spec/Spec.js` in the first unit test, as part of the `modules` array; the test will verify that your strategy is accessible.
-
-You should also write a unit test for your algorithm at the bottom of the file, using `describe`, `it`, and `expect` in nested order. There is a generic `diff` function available specifically for unit tests, in case you need to check one object against another. (Do not use the `diff` function provided by `differentia`, or any other function in the module, to do this verification).
+# :bug: Unit Tests
+Unit tests are performed with Jasmine, using `describe`, `it`, and `expect` in nested order. There is a generic `diff` function available specifically for unit tests, in case you need to check one object tree against another. (Do not use the `diff` function provided by `differentia`, or any other function in the module, to do this verification).
 
 Here is a basic example of a `jasmine` unit test:
 
@@ -39,7 +47,28 @@ describe("two plus two", function () {
 });
 ```
 
-## Creating a Strategy Object
+# :herb: Data Structures
+To add a data structure to the library, you must add a class constructor (usable with the `new` keyword) to the `structs` object. Your class must exist within it's own file in the `src/structs` directory, which should be named after the class. If your file contains multiple data structures which rely on each other, use the name of the class with the most dependents.
+
+## Example Data Structure Class
+Here is an example data structure constructor, showing how it is added to the `structs` object:
+```JavaScript
+structs.MyStruct = function () {
+	this.greeting = "Hello World!";
+}
+structs.MyStruct.prototype.sayGreeting = function () {
+	console.log(this.greeting);
+};
+```
+
+The class is named `MyStruct`, and thus exists in a file such as this: `src/structs/MyStruct.js`.
+
+# :mag: Search Algorithm Strategies
+To add an search algorithm to the library, you must use the Strategy Pattern together with `runStrategy`, which is the primary gateway for your algorithms to interact with a search iterator. Your algorithm will be tightly coupled to `searchIterator`, and you should make use of one of the many properties made available through it's shared state object. An algorithm may "steer" the search algorithm by directly mutating certain properties of `state`. See documentation for *Search Algorithm Iterators* in `README.md` for more information.
+
+All strategies added to the `strategies` object will be automatically revealed to the end-user via their `interface` properties. Once you add a strategy, you should also include it's name in `spec/Spec.js` in the first unit test, as part of the `modules` array; the test will verify that your strategy is accessible.
+
+## Creating a Search Algorithm Strategy Object
 A Strategy is an object with the following properties:
 
 Property|Data Type|Description
@@ -62,9 +91,9 @@ Your Strategy's `interface` function must call `runStrategy` if it needs to use 
 ```JavaScript
 runStrategy( strategy, searchAlg, parameters );
 ```
-An IOC wrapper for Generators/Iterators. `runStrategy` advances the iterator returned by `searchIterator` and executes Call-With-Current-State functions supplied in `strategy`. The state flyweight object is passed to `strategy.main`, which is executed for each element, and `strategy.entry`, which is only executed for the first element. If `strategy.main` returns something other than `undefined`, it will be returned to the caller. Once the iterator has reached the last element, `strategy.done` will be executed with the return value of `strategy.main` as it's second argument.
+An IOC wrapper for Iterators. `runStrategy` advances the iterator returned by `searchAlg` and executes Call-With-Current-State functions supplied in `strategy`. The state flyweight object is passed to `strategy.entry`, which is only executed for the first element, and `strategy.main` which is executed for every element. If `strategy.main` returns something other than `undefined`, it will be returned to the caller after passing through `done`. If the iterator has reached the last element then `strategy.done` will be executed, optionally with the return value of `strategy.main` as it's second argument.
 
-`searchAlg` is the search algorithm iterator to use; it can be `dfs` or `bfs`, or any Generator.
+`searchAlg` is the search algorithm iterator to use; it can be `dfs` or `bfs`, or any other Iterator.
 
 #### Parameters
 - **`strategy`** Object
@@ -160,3 +189,69 @@ console.log(greetings);
 ]"
 */
 ```
+# :blue_book: Documentation
+To add documentation to the library, two areas require your attention: `README.md` and the repository wiki. Additions to the wiki are not required for pull requests to be accepted. New or changed documentation must match the following format.
+
+## Documentation Template
+
+``````
+### `Entry Name`
+
+*Entry Type*
+```JavaScript
+// Basic Usage Example
+```
+Describe your entry here, including the return value (if any).
+
+#### Parameters
+- **`arg`** Type
+
+  Describe the above parameter here.
+
+#### Examples
+<details><summary>Example 1: Describe your example here:</summary>
+
+```JavaScript
+// Include all code needed to run the example.
+//
+```
+</details>
+
+---
+``````
+
+## Example Documentation
+
+``````
+### `myFunction`
+
+*Function*
+```JavaScript
+myFunction( arg [, optionalArg = null ] );
+```
+`myFunction` does Foo, and returns Bar.
+
+#### Parameters
+- **`arg`** Number
+
+  This argument is for X purpose.
+
+- **`optionalArg`** (*Optional*) Number
+
+  This argument is for Y purpose.
+
+#### Examples
+<details><summary>Example 1: How to use myFunction:</summary>
+
+```JavaScript
+// Here are some numbers.
+var arg = 123;
+var optionalArg = 456;
+
+// myFunction does X with the numbers.
+differentia.myFunction(arg, optionalArg);
+```
+</details>
+
+---
+``````
