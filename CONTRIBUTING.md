@@ -35,14 +35,31 @@ Build Option|Parameter
 *Example Command:* `make prod test clean`
 
 # :bug: Unit Tests
-Unit tests are performed with Jasmine, using `describe`, `it`, and `expect` in nested order. There is a generic `diff` function available specifically for unit tests, in case you need to check one object tree against another. (Do not use the `diff` function provided by `differentia`, or any other function in the module, to do this verification).
+Unit tests are performed with Jasmine, using `describe`, `it`, and `expect` in nested order. Unit tests must be added to `spec/Spec.js` at the bottom of the file.
+
+The `d` namespace is supplied as a shorthand to the `differentia` module.
+
+There is a generic `diff` function available specifically for unit tests, in case you need to check one object tree against another. Do not use any functions or classes provided by the `differentia` module to verify test results!
 
 Here is a basic example of a `jasmine` unit test:
 
 ```JavaScript
 describe("two plus two", function () {
 	it("should equal four", function () {
-		expect(2+2).toBe(4);
+		expect(2+2).toEqual(4);
+	});
+});
+```
+
+Here is a real example taken from `spec/Spec.js`:
+
+```JavaScript
+describe("getContainerLength", function () {
+	var array = [1, 2, 3, 4, 5];
+	var object = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 5 };
+	it("should count 5 items in each container", function () {
+		expect(d.getContainerLength(array)).toBe(5);
+		expect(d.getContainerLength(object)).toBe(5);
 	});
 });
 ```
