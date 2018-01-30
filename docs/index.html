@@ -4,11 +4,14 @@
 		flex-flow: row;
 		align-content: center;
 		justify-content: center;
+		width:100%;
 	}
 
 	.sidebar {
-		max-width:200px;
+		max-width:300px;
+		min-width:200px;
 		height:100%;
+		padding-right:10px;
 	}
 
 	.sidebarHeader {
@@ -30,15 +33,18 @@
 		border: 1px solid black;
 		color:dimgrey;
 	}
+	.content {
+		width:100%;
+	}
 </style>
 <div class="main">
 	<div class="sidebar">
 		<div class="sidebarHeader">
-			Header
+			Differentia.js
 		</div>
 		<div id="sidebarList" class="sidebarList"></div>
 	</div>
-	<iframe id="pageContainer" class="content"></iframe>
+	<iframe id="pageContainer" class="content" src="home"></iframe>
 </div>
 <script type="text/javascript">
 	window.addEventListener("load", function () {
