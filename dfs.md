@@ -1,6 +1,5 @@
     ### `dfs`
 
-
     *Generator*
     ```JavaScript
     dfs( subject, search = null ] );

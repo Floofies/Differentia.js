@@ -2,7 +2,7 @@
 
 * [Introduction](README.md)
 * [dfs](dfs.md)
-* bfs
+* [bfs](bfs.md)
 * clone
 * diffClone
 * diff
