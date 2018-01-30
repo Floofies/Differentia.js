@@ -9,7 +9,7 @@ Differentia is a library which provides an advanced suite of Object/Array focuse
 - [Search Algorithm Iterators](#search-algorithm-iterators)
   - [dfs](#dfs)
   - [bfs](#bfs)
-- [Main Functions](#main-functions)
+- [Search Algorithm Strategies](#main-functions)
   - [clone](#clone)
   - [diffClone](#diffclone)
   - [diff](#diff)
@@ -28,21 +28,13 @@ Differentia is a library which provides an advanced suite of Object/Array focuse
   - [every](#every)
   - [map](#map)
   - [filter](#filter)
-
----
-
-## :page_facing_up: Supported Data Types
-DataType|Clone|Diff
----|---|---
-Function|:x:|:x:
-Symbol|:x:|:x:
-Blob|:x:|:x:
-Object|:white_check_mark:|:white_check_mark:
-Array|:white_check_mark:|:white_check_mark:
-String|:white_check_mark:|:white_check_mark:
-Number|:white_check_mark:|:white_check_mark:
-Boolean|:white_check_mark:|:white_check_mark:
-RegExp|:white_check_mark:|:white_check_mark:
+- [Data Structures](#data-structures)
+  - [BinaryTree](#binarytree)
+  - [RedBlackTree](#redblacktree)
+  - [LinkedList](#linkedlist)
+  - [CircularLinkedList](#circularlinkedlist)
+  - [DoubleLinkedList](#doublelinkedlist)
+  - [CircularDoubleLinkedList](#circulardoublelinkedlist)
 
 ---
 
@@ -265,6 +257,19 @@ clone( subject [, search = null ] );
 ```
 Returns a clone of `subject`. If `search` is provided, the clone will only contain properties/paths that are present in `search`.
 
+#### Supported Data Types
+DataType|Supported
+---|---
+Function|:x:
+Symbol|:x:
+Blob|:x:
+Object|:white_check_mark:
+Array|:white_check_mark:
+String|:white_check_mark:
+Number|:white_check_mark:
+Boolean|:white_check_mark:
+RegExp|:white_check_mark:
+
 #### Parameters
 - **`subject`** Object/Array
 
@@ -316,6 +321,19 @@ console.log(clonedObject); // Logs {string2: "World!"}
 diffClone( subject , compared [, search = null ] );
 ```
 Returns a clone of `subject`, containing only the properties which differ from those contained within `compared`.
+
+#### Supported Data Types
+DataType|Supported
+---|---
+Function|:x:
+Symbol|:x:
+Blob|:x:
+Object|:white_check_mark:
+Array|:white_check_mark:
+String|:white_check_mark:
+Number|:white_check_mark:
+Boolean|:white_check_mark:
+RegExp|:white_check_mark:
 
 #### Parameters
 
@@ -404,6 +422,19 @@ Variable `clonedObject` is now this Object:
 diff( subject , compared [, search = null ] );
 ```
 Returns `true` if `compared`'s structure, properties, or values differ in any way from `subject`, or `false` if otherwsie.
+
+#### Supported Data Types
+DataType|Supported
+---|---
+Function|:x:
+Symbol|:x:
+Blob|:x:
+Object|:white_check_mark:
+Array|:white_check_mark:
+String|:white_check_mark:
+Number|:white_check_mark:
+Boolean|:white_check_mark:
+RegExp|:white_check_mark:
 
 #### Parameters
 - **`subject`** Object/Array
