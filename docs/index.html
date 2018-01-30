@@ -87,7 +87,7 @@
 				pageContainer.appendChild(document.createRange().createContextualFragment(mdParser.render(markdown)));
 			});
 		}
-		const mdParser = new MarkdownIt();
+		const mdParser = markdownit();
 		const pageContainer = document.getElementById("pageContainer");
 		const elementTemplate = document.createElement("div");
 		elementTemplate.setAttribute("class", "sidebarElement")
