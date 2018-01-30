@@ -7,7 +7,6 @@
 		width:100%;
 		background-color:#f2f2f2;
 	}
-
 	.sidebar {
 		width:300px;
 		height:100%;
@@ -17,6 +16,7 @@
 		background:-webkit-linear-gradient(top, #373737, #212121);
 		font-size:24px;
 		color:white;
+		padding:5px;
 		font-family:Courier New, Courier, monospace;
 	}
 	.sidebarElement {
@@ -42,12 +42,13 @@
 <div class="main">
 	<div class="sidebar">
 		<div class="sidebarHeader">
-			Differentia.js
+			Pages
 		</div>
 		<div id="sidebarList" class="sidebarList"></div>
 	</div>
-	<iframe id="pageContainer" class="content" src="home"></iframe>
+	<div id="pageContainer" class="content"></div>
 </div>
+<script type="text/javascript" src="https://simonwaldherr.github.io/micromarkdown.js/dist/micromarkdown.min.js"></script>
 <script type="text/javascript">
 	window.addEventListener("load", function () {
 		function ajax(url = "/", verb = "GET", data = null) {
@@ -68,17 +69,24 @@
 				req.send(data);
 			});
 		}
+		function loadPage(title) {
+			ajax(title + ".md").then(function () {
+				while(pageContainer.hasChildNodes()) pageContainer.removeChild(pageContainer.lastChild);
+				pageContainer.appendChild(document.createRange.createContextualFragment("<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css\"><\/script>" + micromarkdown.parse(markdown)));
+			});
+		}
 		const pageContainer = document.getElementById("pageContainer");
 		const elementTemplate = document.createElement("div");
 		elementTemplate.setAttribute("class", "sidebarElement")
 		const sidebarList = document.getElementById("sidebarList");
+		loadPage("home");
 		ajax("index.json").then(function (body) {
 			const titles = JSON.parse(body);
 			titles.forEach(function (title) {
 				const template = elementTemplate.cloneNode(true);
 				template.insertAdjacentText("afterbegin", title);
 				sidebarList.appendChild(template);
-				template.addEventListener("click", () => pageContainer.src = title);
+				template.addEventListener("click", () => loadPage(title));
 			});
 		});
 	});
