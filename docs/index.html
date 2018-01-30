@@ -86,7 +86,7 @@
 				ajax(title + ".md").then(function (markdown) {
 					while (pageContainer.hasChildNodes()) pageContainer.removeChild(pageContainer.lastChild);
 					pageContainer.appendChild(document.createRange().createContextualFragment(mdParser.render(markdown)));
-					pageContainer.querySelectorAll("code").forEach(element => hljs.highlightBlock("JavaScript", element));
+					pageContainer.querySelectorAll("code").forEach(element => hljs.highlightBlock(element));
 				});
 			}
 			const mdParser = markdownit();
