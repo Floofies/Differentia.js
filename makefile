@@ -17,20 +17,20 @@ node_modules/jasmine/bin/jasmine.js :
 prod-build :
 	@mkdir prod-build
 	@mkdir prod-build/dist
-prod-build/dist/differentia.js : prod-build src/header.js src/core.js src/strategies.js src/structs src/footer.js
+prod-build/dist/differentia.js : node_modules/uglify-es/bin/uglifyjs prod-build src/header.js src/core.js src/strategies.js src/structs src/footer.js
 	@printf "Building dist/differentia.js"
 	@rm -f prod-build/dist/differentia.js
 	@touch prod-build/dist/differentia.js
 	@cat src/header.js src/core.js src/strategies.js src/structs/*.js src/footer.js >> prod-build/dist/differentia.js
 	@node_modules/uglify-es/bin/uglifyjs -b -o prod-build/dist/differentia.js prod-build/dist/differentia.js
 	@printf "      \x1b[32;01m[OK]\x1b[0m\n"
-prod-build/dist/differentia.min.js : prod-build/dist/differentia.js
+prod-build/dist/differentia.min.js : node_modules/uglify-es/bin/uglifyjs prod-build/dist/differentia.js
 	@printf "Building dist/differentia.min.js"
 	@rm -f prod-build/dist/differentia.min.js
 	@touch prod-build/dist/differentia.min.js
 	@node_modules/uglify-es/bin/uglifyjs -o prod-build/dist/differentia.min.js prod-build/dist/differentia.js
 	@printf "      \x1b[32;01m[OK]\x1b[0m\n"
-prod : node_modules/uglify-es/bin/uglifyjs src/header.js src/core.js src/strategies.js src/structs src/footer.js prod-build/dist/differentia.js prod-build/dist/differentia.min.js
+prod : src/header.js src/core.js src/strategies.js src/structs src/footer.js prod-build/dist/differentia.js prod-build/dist/differentia.min.js
 	@rm -drf prod-build/src
 	@rm -drf prod-build/spec
 	@cp -r src prod-build/src
