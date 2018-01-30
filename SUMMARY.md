@@ -1,7 +1,7 @@
 # Summary
 
 * [Introduction](README.md)
-* dfs
+* [dfs](dfs.md)
 * bfs
 * clone
 * diffClone
