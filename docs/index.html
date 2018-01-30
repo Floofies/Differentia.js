@@ -14,7 +14,7 @@
 		</div>
 		<div class="sidebarList"></div>
 	</div>
-	<iframe id="contentContainer" class="content"></iframe>
+	<iframe id="pageContainer" class="content"></iframe>
 </div>
 <script type="text/javascript">
 	window.addEventListener("load", function () {
@@ -36,7 +36,7 @@
 				req.send(data);
 			});
 		}
-		const pageContainer = document.getElementById();
+		const pageContainer = document.getElementById("pageContainer");
 		const elementTemplate = document.createElement("a");
 		elementTemplate.setAttribute("class", "sidebarTemplate")
 		const sidebarList = document.getElementById("sidebarList");
