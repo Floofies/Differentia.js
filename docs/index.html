@@ -70,7 +70,7 @@
 			});
 		}
 		function loadPage(title) {
-			ajax(title + ".md").then(function () {
+			ajax(title + ".md").then(function (markdown) {
 				while(pageContainer.hasChildNodes()) pageContainer.removeChild(pageContainer.lastChild);
 				pageContainer.appendChild(document.createRange.createContextualFragment("<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css\"><\/script>" + micromarkdown.parse(markdown)));
 			});
