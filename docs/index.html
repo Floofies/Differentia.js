@@ -73,7 +73,7 @@
 		function loadPage(title) {
 			ajax(title + ".md").then(function (markdown) {
 				while(pageContainer.hasChildNodes()) pageContainer.removeChild(pageContainer.lastChild);
-				pageContainer.appendChild(document.createRange.createContextualFragment(micromarkdown.parse(markdown)));
+				pageContainer.appendChild(document.createRange().createContextualFragment(micromarkdown.parse(markdown)));
 			});
 		}
 		const pageContainer = document.getElementById("pageContainer");
