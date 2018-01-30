@@ -1,11 +1,16 @@
 <style type="text/css">
+	html {
+		background-color:#f2f2f2;
+	}
+	body {
+		background-color:#f2f2f2;
+	}
 	.main {
 		display: flex;
 		flex-flow: row;
 		align-content: center;
 		justify-content: center;
 		width:100%;
-		background-color:#f2f2f2;
 	}
 	.sidebar {
 		width:300px;
@@ -18,6 +23,10 @@
 		color:white;
 		padding:5px;
 		font-family:Courier New, Courier, monospace;
+	}
+	.sidebarList {
+		overflow-x:scroll;
+		background-color:#f2f2f2;
 	}
 	.sidebarElement {
 		border: 1px solid lightgrey;
@@ -42,13 +51,15 @@
 <div class="main">
 	<div class="sidebar">
 		<div class="sidebarHeader">
-			Pages
+			Differentia.js
+			<br>
+			Documentation
 		</div>
 		<div id="sidebarList" class="sidebarList"></div>
 	</div>
 	<div id="pageContainer" class="content"></div>
 </div>
-<script type="text/javascript" src="https://simonwaldherr.github.io/micromarkdown.js/dist/micromarkdown.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.0/markdown-it.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css"></script>
 <script type="text/javascript">
 	window.addEventListener("load", function () {
@@ -73,9 +84,10 @@
 		function loadPage(title) {
 			ajax(title + ".md").then(function (markdown) {
 				while(pageContainer.hasChildNodes()) pageContainer.removeChild(pageContainer.lastChild);
-				pageContainer.appendChild(document.createRange().createContextualFragment(micromarkdown.parse(markdown)));
+				pageContainer.appendChild(document.createRange().createContextualFragment(mdParser.render(markdown)));
 			});
 		}
+		const mdParser = new MarkdownIt();
 		const pageContainer = document.getElementById("pageContainer");
 		const elementTemplate = document.createElement("div");
 		elementTemplate.setAttribute("class", "sidebarElement")
