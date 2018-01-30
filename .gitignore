@@ -25,3 +25,8 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Directories created by makefile
+prod-build
+node_modules
+package_lock.json
