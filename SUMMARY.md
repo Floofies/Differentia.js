@@ -3,7 +3,7 @@
 * [Introduction](README.md)
 * [dfs](dfs.md)
 * [bfs](bfs.md)
-* clone
+* [clone](clone.md)
 * diffClone
 * diff
 * deepFreeze
