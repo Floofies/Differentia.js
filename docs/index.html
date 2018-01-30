@@ -37,14 +37,13 @@
 			});
 		}
 		const pageContainer = document.getElementById("pageContainer");
-		const elementTemplate = document.createElement("a");
+		const elementTemplate = document.createElement("div");
 		elementTemplate.setAttribute("class", "sidebarTemplate")
 		const sidebarList = document.getElementById("sidebarList");
 		ajax("index.json").then(function (body) {
 			const titles = JSON.parse(body);
 			titles.forEach(function (title) {
 				const template = elementTemplate.cloneNode(true);
-				template.setAttribute("href", title + ".md");
 				template.insertAdjacentText("afterbegin", title);
 				sidebarList.appendChild(template);
 				template.addEventListener("click", () => pageContainer.location(title + ".md"));
