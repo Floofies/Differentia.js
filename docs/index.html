@@ -5,20 +5,20 @@
 		align-content: center;
 		justify-content: center;
 		width:100%;
+		background-color:#f2f2f2;
 	}
 
 	.sidebar {
-		max-width:300px;
-		min-width:200px;
+		width:300px;
 		height:100%;
 		padding-right:10px;
 	}
-
 	.sidebarHeader {
+		background:-webkit-linear-gradient(top, #373737, #212121);
 		font-size:24px;
+		color:white;
 		font-family:Courier New, Courier, monospace;
 	}
-
 	.sidebarElement {
 		border: 1px solid lightgrey;
 		border-radius: 5px;
@@ -28,10 +28,12 @@
 		font-family: monospace;
 		font-weight: bold;
 		color:black;
+		user-select:none;
 	}
 	.sidebarElement:hover {
 		border: 1px solid black;
 		color:dimgrey;
+		background-color:lightgrey;
 	}
 	.content {
 		width:100%;
@@ -76,7 +78,7 @@
 				const template = elementTemplate.cloneNode(true);
 				template.insertAdjacentText("afterbegin", title);
 				sidebarList.appendChild(template);
-				template.addEventListener("click", () => pageContainer.location = title + ".md");
+				template.addEventListener("click", () => pageContainer.src = title + ".md");
 			});
 		});
 	});
