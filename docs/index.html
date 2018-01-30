@@ -1,0 +1,54 @@
+<style type="text/css">
+	.main {}
+
+	.sidebar {}
+
+	.sidebarHeader {}
+
+	.sidebarElement {}
+</style>
+<div class="main">
+	<div class="sidebar">
+		<div class="sidebarHeader">
+			Header
+		</div>
+		<div class="sidebarList"></div>
+	</div>
+	<iframe id="contentContainer" class="content"></iframe>
+</div>
+<script type="text/javascript">
+	window.addEventListener("load", function () {
+		function ajax(url = "/", verb = "GET", data = null) {
+			return new Promise(function (resolve, reject) {
+				const req = new XMLHttpRequest();
+				req.onreadystatechange = function () {
+					if (req.readyState === 4) {
+						if (req.status >= 200 && req.status < 400) {
+							resolve(req.response);
+						} else {
+							reject(new Error("XHR HTTP Error " + req.status + ": " + req.statusText));
+						}
+					}
+				};
+				req.open(verb, url);
+				req.responseType = "text";
+				req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+				req.send(data);
+			});
+		}
+		const pageContainer = document.getElementById();
+		const elementTemplate = document.createElement("a");
+		elementTemplate.setAttribute("class", "sidebarTemplate")
+		const sidebarList = document.getElementById("sidebarList");
+		ajax("index.json").then(function (body) {
+			const titles = JSON.parse(body);
+			titles.forEach(function (title) {
+				const template = elementTemplate.cloneNode(true).childNodes.item(0);
+				template.setAttribute("href", title + ".md");
+				template.insertAdjacentText("afterbegin", title);
+				sidebarList.appendChild(template);
+				template.addEventListener("click", () => pageContainer.location(title + ".md"));
+			});
+		});
+	});
+</script>
