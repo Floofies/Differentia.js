@@ -41,9 +41,9 @@ strategies.clone = {
 			// Clone a Primitive.
 			state.tuple.clone[state.accessor] = state.currentValue;
 		}
-		if (state.isLast) {
-			return state.cloneRoot;
-		}
+	},
+	done: function (state) {
+		return state.cloneRoot;
 	}
 };
 /**
@@ -119,8 +119,11 @@ strategies.diffClone = {
 	},
 	main: function (state) {
 		if (strategies.diff.main(state)) {
-			return strategies.clone.main(state);
+			strategies.clone.main(state);
 		}
+	},
+	done: function (state) {
+		return state.cloneRoot;
 	}
 };
 /**
@@ -143,9 +146,9 @@ strategies.deepFreeze = {
 		if (state.isContainer && state.existing === null) {
 			Object.freeze(state.currentValue);
 		}
-		if (state.isLast) {
-			return state.subjectRoot;
-		}
+	},
+	done: function (state) {
+		return state.subjectRoot;
 	}
 };
 /**
@@ -168,9 +171,9 @@ strategies.deepSeal = {
 		if (state.isContainer && state.existing === null) {
 			Object.seal(state.currentValue);
 		}
-		if (state.isLast) {
-			return state.subjectRoot;
-		}
+	},
+	done: function (state) {
+		return state.subjectRoot;
 	}
 };
 /**
@@ -178,9 +181,9 @@ strategies.deepSeal = {
 * @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
 * @param  {callback} callback                  The function to invoke per-property of all objects in `subject`.
 	* @callback callback
-	* @param {Mixed} value                 Equal to `subject[accessor]`.
-	* @param {Mixed} accessor              Used to access `subject`.
-	* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
+		* @param {Mixed} value                 Equal to `subject[accessor]`.
+		* @param {Mixed} accessor              Used to access `subject`.
+		* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
 * @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 * @returns  {Mixed}                            Will return anything `callback` returns.
 */
@@ -200,9 +203,9 @@ strategies.forEach = {
 * @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
 * @param  {callback} callback                  Must return `true` if value passes the test.
 	* @callback callback
-	* @param {Mixed} value                 Equal to `subject[accessor]`.
-	* @param {Mixed} accessor              Used to access `subject`.
-	* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
+		* @param {Mixed} value                 Equal to `subject[accessor]`.
+		* @param {Mixed} accessor              Used to access `subject`.
+		* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
 * @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 * @returns  {Boolean}                          A value that passes the test in `callback`.
 */
@@ -226,9 +229,9 @@ strategies.find = {
 * @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
 * @param  {callback} callback                  Must return `true` if value passes the test.
 	* @callback callback
-	* @param {Mixed} value                 Equal to `subject[accessor]`.
-	* @param {Mixed} accessor              Used to access `subject`.
-	* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
+		* @param {Mixed} value                 Equal to `subject[accessor]`.
+		* @param {Mixed} accessor              Used to access `subject`.
+		* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
 * @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 * @returns  {Boolean}                          Indicates if at least one value passed the test.
 */
@@ -255,9 +258,9 @@ strategies.some = {
 * @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
 * @param  {callback} callback                  Must return `true` if value passes the test.
 	* @callback callback
-	* @param {Mixed} value                 Equal to `subject[accessor]`.
-	* @param {Mixed} accessor              Used to access `subject`.
-	* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
+		* @param {Mixed} value                 Equal to `subject[accessor]`.
+		* @param {Mixed} accessor              Used to access `subject`.
+		* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
 * @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 * @returns  {Boolean}                          Indicates if all values passed the test.
 */
@@ -284,9 +287,9 @@ strategies.every = {
 * @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
 * @param  {callback} callback                  The callback with which to process values.
 	* @callback callback
-	* @param {Mixed} value                 Equal to `subject[accessor]`.
-	* @param {Mixed} accessor              Used to access `subject`.
-	* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
+		* @param {Mixed} value                 Equal to `subject[accessor]`.
+		* @param {Mixed} accessor              Used to access `subject`.
+		* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
 * @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 * @returns  {(Object|Array)}                     A clone of `subject`.
 */
@@ -306,9 +309,9 @@ strategies.map = {
 		} else {
 			state.tuple.clone[state.accessor] = runCallback(state);
 		}
-		if (state.isLast) {
-			return state.cloneRoot;
-		}
+	},
+	done: function (state) {
+		return state.cloneRoot;
 	}
 };
 /**
@@ -354,9 +357,9 @@ strategies.nodePaths = {
 			newPath.push(state.accessor);
 			state.nonTraversedNodePaths.push(newPath);
 		}
-		if (state.isLast) {
-			return state.nodePaths.concat(state.nonTraversedNodePaths);
-		}
+	},
+	done: function (state) {
+		return state.nodePaths.concat(state.nonTraversedNodePaths);
 	}
 };
 /**
@@ -381,9 +384,9 @@ strategies.paths = {
 		strategies.nodePaths.main(state);
 		state.paths.push(Array.from(state.currentPath));
 		state.paths[state.paths.length - 1].push(state.accessor);
-		if (state.isLast) {
-			return state.paths;
-		}
+	},
+	done: function (state) {
+		return state.paths;
 	}
 };
 /**
@@ -434,9 +437,9 @@ strategies.findPaths = {
 		if (state.currentValue === state.parameters.findValue) {
 			state.foundPaths.push(state.paths[state.paths.length > 0 ? state.paths.length - 1 : 0]);
 		}
-		if (state.isLast) {
-			return state.foundPaths.length > 0 ? state.foundPaths : null;
-		}
+	},
+	done: function (state) {
+		return state.foundPaths.length > 0 ? state.foundPaths : null;
 	}
 };
 /**
@@ -471,9 +474,9 @@ strategies.findShortestPath = {
 				state.shortestPath = state.paths[state.paths.length - 1];
 			}
 		}
-		if (state.isLast) {
-			return state.shortestPath;
-		}
+	},
+	done: function (state) {
+		return state.shortestPath;
 	}
 };
 /**
@@ -511,9 +514,9 @@ strategies.diffPaths = {
 * @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
 * @param  {callback} callback                  Must return `true` if value passes the test.
 	* @callback callback
-	* @param {Mixed} value                 Equal to `subject[accessor]`.
-	* @param {Mixed} accessor              Used to access `subject`.
-	* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
+		* @param {Mixed} value                 Equal to `subject[accessor]`.
+		* @param {Mixed} accessor              Used to access `subject`.
+		* @param {(Object|Array)} subject        The Object/Array being travered/enumerated.
 * @param  {(Object|Array|null)} [search = null]  An optional search index, acting as a traversal whitelist.
 * @returns  {(Object|Array)}                     A clone of `subject`, only containing values which pass the test.
 */
@@ -541,35 +544,38 @@ strategies.filter = {
 			}
 			state.pendingPaths[state.pendingPaths.length - 1].push(state.accessor);
 		}
-		if (state.isLast) {
-			while (state.pendingPaths.length > 0) {
-				var path = state.pendingPaths.shift();
-				var nodeQueue = new structs.Queue();
-				nodeQueue.push({
-					subject: state.subjectRoot,
-					clone: state.cloneRoot
-				});
-				while (path.length > 0 && nodeQueue.length > 0) {
-					var accessor = path.shift();
-					var tuple = nodeQueue.shift();
-					if (!(accessor in tuple.clone)) {
-						if (path.length === 0) {
-							tuple.clone[accessor] = tuple.subject[accessor];
-						} else {
-							tuple.clone[accessor] = createContainer(tuple.subject[accessor]);
-						}
-					}
-					if (path.length === 0) {
-						continue;
-					}
-					var nextTuple = {};
-					for (var unit in tuple) {
-						nextTuple[unit] = tuple[unit][accessor];
-					}
-					nodeQueue.push(nextTuple);
-				}
-			}
+	},
+	done: function (state) {
+		if (state.pendingPaths.length === 0) {
 			return state.cloneRoot;
 		}
+		while (state.pendingPaths.length > 0) {
+			var path = state.pendingPaths.shift();
+			var nodeQueue = new structs.Queue();
+			nodeQueue.push({
+				subject: state.subjectRoot,
+				clone: state.cloneRoot
+			});
+			while (nodeQueue.length > 0) {
+				var accessor = path.shift();
+				var tuple = nodeQueue.shift();
+				if (!(accessor in tuple.clone)) {
+					if (path.length === 0) {
+						tuple.clone[accessor] = tuple.subject[accessor];
+					} else {
+						tuple.clone[accessor] = createContainer(tuple.subject[accessor]);
+					}
+				}
+				if (path.length === 0) {
+					continue;
+				}
+				var nextTuple = {};
+				for (var unit in tuple) {
+					nextTuple[unit] = tuple[unit][accessor];
+				}
+				nodeQueue.push(nextTuple);
+			}
+		}
+		return state.cloneRoot;
 	}
 };
