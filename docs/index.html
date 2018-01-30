@@ -1,11 +1,35 @@
 <style type="text/css">
-	.main {}
+	.main {
+		display: flex;
+		flex-flow: row;
+		align-content: center;
+		justify-content: center;
+	}
 
-	.sidebar {}
+	.sidebar {
+		max-width:200px;
+		height:100%;
+	}
 
-	.sidebarHeader {}
+	.sidebarHeader {
+		font-size:24px;
+		font-family:Courier New, Courier, monospace;
+	}
 
-	.sidebarElement {}
+	.sidebarElement {
+		border: 1px solid lightgrey;
+		border-radius: 5px;
+		cursor: pointer;
+		padding: 5px;
+		font-size: 15px;
+		font-family: monospace;
+		font-weight: bold;
+		color:black;
+	}
+	.sidebarElement:hover {
+		border: 1px solid black;
+		color:dimgrey;
+	}
 </style>
 <div class="main">
 	<div class="sidebar">
@@ -46,7 +70,7 @@
 				const template = elementTemplate.cloneNode(true);
 				template.insertAdjacentText("afterbegin", title);
 				sidebarList.appendChild(template);
-				template.addEventListener("click", () => pageContainer.location(title + ".md"));
+				template.addEventListener("click", () => pageContainer.location = title + ".md"));
 			});
 		});
 	});
