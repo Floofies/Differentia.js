@@ -62,7 +62,7 @@
 		}
 		const pageContainer = document.getElementById("pageContainer");
 		const elementTemplate = document.createElement("div");
-		elementTemplate.setAttribute("class", "sidebarTemplate")
+		elementTemplate.setAttribute("class", "sidebarElement")
 		const sidebarList = document.getElementById("sidebarList");
 		ajax("index.json").then(function (body) {
 			const titles = JSON.parse(body);
