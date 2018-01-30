@@ -49,6 +49,7 @@
 	<div id="pageContainer" class="content"></div>
 </div>
 <script type="text/javascript" src="https://simonwaldherr.github.io/micromarkdown.js/dist/micromarkdown.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css"></script>
 <script type="text/javascript">
 	window.addEventListener("load", function () {
 		function ajax(url = "/", verb = "GET", data = null) {
@@ -72,7 +73,7 @@
 		function loadPage(title) {
 			ajax(title + ".md").then(function (markdown) {
 				while(pageContainer.hasChildNodes()) pageContainer.removeChild(pageContainer.lastChild);
-				pageContainer.appendChild(document.createRange.createContextualFragment("<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css\"><\/script>" + micromarkdown.parse(markdown)));
+				pageContainer.appendChild(document.createRange.createContextualFragment(micromarkdown.parse(markdown)));
 			});
 		}
 		const pageContainer = document.getElementById("pageContainer");
