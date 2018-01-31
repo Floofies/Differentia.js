@@ -1,5 +1,7 @@
 <html>
+
 <head>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
 	<style type="text/css">
 		html {
 			background-color: #f2f2f2;
@@ -29,6 +31,8 @@
 			color: white;
 			padding: 5px;
 			font-family: Courier New, Courier, monospace;
+			cursor: pointer;
+			user-select: none;
 		}
 
 		.sidebarList {
@@ -57,14 +61,58 @@
 		.content {
 			width: 100%;
 		}
+
+		.dimmer {
+			height: 100%;
+			width: 100%;
+			position: fixed;
+			background-color: rgba(0, 0, 0, 0.8);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.loadIndicator {
+			margin: 0 auto;
+			width: 30px;
+			height: 30px;
+			background-color: grey;
+			border-radius: 50%;
+			box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);
+			-webkit-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+			-moz-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+			-ms-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+			animation: pulse 0.8s infinite cubic-bezier(0.66, 0, 0, 1);
+		}
+
+		.error {
+			padding-top: 24px;
+			font-size: 24px;
+			text-align: center;
+			width: 100%;
+		}
+
+		.hidden {
+			display: none;
+		}
+		.hljs {
+			display:inline-block;
+			padding: .2em .5em;
+			overflow-x:visible;
+		}
+		pre > code {
+			display:block;
+		}
 	</style>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github-gist.min.css">
 	<script defer type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.0/markdown-it.js"></script>
 	<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 	<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/javascript.min.js"></script>
 	<script type="text/javascript">
 		window.addEventListener("load", function () {
+			function empty(element) {
+				while (element.hasChildNodes()) element.removeChild(element.lastChild);
+			}
 			function ajax(url = "/", verb = "GET", data = null) {
 				return new Promise(function (resolve, reject) {
 					const req = new XMLHttpRequest();
@@ -73,7 +121,7 @@
 							if (req.status >= 200 && req.status < 400) {
 								resolve(req.response);
 							} else {
-								reject(new Error("XHR HTTP Error " + req.status + ": " + req.statusText));
+								reject(new Error("HTTP Error " + req.status + ": " + req.statusText));
 							}
 						}
 					};
@@ -84,17 +132,56 @@
 				});
 			}
 			function loadPage(title) {
-				ajax(title + ".md").then(function (markdown) {
-					while (pageContainer.hasChildNodes()) pageContainer.removeChild(pageContainer.lastChild);
-					pageContainer.appendChild(document.createRange().createContextualFragment(mdParser.render(markdown)));
-					pageContainer.querySelectorAll("code").forEach(element => hljs.highlightBlock(element));
-				});
+				showIndicator();
+				hideError();
+				const cached = cache.get(title);
+				if (cached !== undefined) {
+					empty(pageContainer);
+					showIndicator(false);
+					pageContainer.appendChild(cached.cloneNode(true));
+				} else {
+					ajax(title + ".md").then(function (markdown) {
+						empty(pageContainer);
+						showIndicator(false);
+						const page = document.createRange().createContextualFragment(mdParser.render(markdown));
+						page.querySelectorAll("code").forEach(element => hljs.highlightBlock(element));
+						pageContainer.appendChild(page.cloneNode(true));
+						cache.set(title, page);
+					}).catch(showError);
+				}
 			}
-			const mdParser = markdownit();
+			var showingError = false;
+			function showError(error) {
+				empty(errorContainer);
+				errorContainer.insertAdjacentText("afterbegin", error.message);
+				pageContainer.classList.add("hidden");
+				showIndicator(false);
+				errorContainer.classList.remove("hidden");
+				showingError = true;
+			}
+			function hideError() {
+				if (!showingError) return;
+				errorContainer.classList.add("hidden");
+				pageContainer.classList.remove("hidden");
+				showingError = false;
+			}
+			var loading = true;
+			function showIndicator(show = true) {
+				if (show && loading || !show && !loading) return;
+				const action = show ? "remove" : "add";
+				dimmer.classList[action]("hidden");
+				indicator.classList[action]("hidden");
+				loading = show;
+			}
+			const dimmer = document.getElementById("dimmer");
+			const indicator = document.getElementById("loadIndicator")
 			const pageContainer = document.getElementById("pageContainer");
+			const errorContainer = document.getElementById("errorContainer");
 			const elementTemplate = document.createElement("div");
-			elementTemplate.setAttribute("class", "sidebarElement")
 			const sidebarList = document.getElementById("sidebarList");
+			const mdParser = markdownit();
+			const cache = new Map();
+			elementTemplate.setAttribute("class", "sidebarElement")
 			document.getElementById("sidebarHeader").addEventListener("click", () => loadPage("home"));
 			loadPage("home");
 			ajax("index.json").then(function (body) {
@@ -105,10 +192,11 @@
 					sidebarList.appendChild(template);
 					template.addEventListener("click", () => loadPage(title));
 				});
-			});
+			}).catch(showError);
 		});
 	</script>
 </head>
+
 <body>
 	<div class="main">
 		<div class="sidebar">
@@ -118,7 +206,11 @@
 			</div>
 			<div id="sidebarList" class="sidebarList"></div>
 		</div>
-		<div id="pageContainer" class="content"></div>
+		<div id="pageContainer" class="content container"></div>
+		<div id="dimmer" class="dimmer"></div>
+		<div id="loadIndicator" class="loadIndicator"></div>
+		<div id="errorContainer" class="error hidden"></div>
 	</div>
 </body>
+
 </html>
