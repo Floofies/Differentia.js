@@ -1,0 +1,108 @@
+html {
+	background-color: #f2f2f2;
+}
+
+body {
+	background-color: #f2f2f2;
+}
+
+.main {
+	display: flex;
+	flex-flow: row;
+	align-content: center;
+	justify-content: center;
+	width: 100%;
+}
+
+.sidebar {
+	width: 300px;
+	height: 100%;
+	padding-right: 10px;
+}
+
+.sidebarHeader {
+	background: -webkit-linear-gradient(top, #373737, #212121);
+	font-size: 24px;
+	color: white;
+	padding: 10px;
+	font-family: Courier New, Courier, monospace;
+	cursor: pointer;
+	user-select: none;
+	text-align:center;
+}
+
+.sidebarList {
+	overflow-x: scroll;
+	background-color: #f2f2f2;
+}
+
+.sidebarElement {
+	background-color: #c9c9c9;
+	cursor: pointer;
+	padding: 10px;
+	font-size: 15px;
+	font-family: monospace;
+	font-weight: bold;
+	color: black;
+	user-select: none;
+	text-align:center;
+	margin-top:5px;
+}
+.sidebarElement:hover {
+	color:#f2f2f2;
+	background-color: dimgrey;
+}
+
+.content {
+	width: 100%;
+}
+
+.dimmer {
+	height: 100%;
+	width: 100%;
+	position: fixed;
+	background-color: rgba(0, 0, 0, 0.8);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.loadIndicator {
+	margin: 0 auto;
+	width: 30px;
+	height: 30px;
+	background-color: grey;
+	border-radius: 50%;
+	box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);
+	-webkit-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+	-moz-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+	-ms-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+	animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+.error {
+	padding-top: 24px;
+	font-size: 24px;
+	text-align: center;
+	width: 100%;
+}
+
+.hidden {
+	display: none;
+}
+
+.hljs {
+	display: inline-block;
+	padding: .2em .5em;
+	overflow-x: visible;
+}
+
+pre>code {
+	display: block;
+}
+
+ul {
+	list-style: circle;
+}
+
+		@media (min-width: 860px) {}
