@@ -80,6 +80,39 @@ body {
 	animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
 }
 
+@-webkit-keyframes pulse {
+	0% {background-color:white;}
+	20% {background-color: lightgrey;}
+	30% {background-color:white;}
+	40% {background-color:lightgrey; width:39px; height:39px;}
+	50% {box-shadow: 0 0 20px 20px rgba(255, 255, 255, 0.3);background-color:white;}
+	100% {box-shadow: 0 0 0px 200px rgba(0,0,0,0); background-color:grey;}
+}
+@-moz-keyframes pulse {
+	0% {background-color:white;}
+	20% {background-color: lightgrey;}
+	30% {background-color:white;}
+	40% {background-color:lightgrey; width:39px; height:39px;}
+	50% {box-shadow: 0 0 20px 20px rgba(255, 255, 255, 0.3);background-color:white;}
+	100% {box-shadow: 0 0 0px 200px rgba(0,0,0,0); background-color:grey;}
+}
+@-ms-keyframes pulse {
+	0% {background-color:white;}
+	20% {background-color: lightgrey;}
+	30% {background-color:white;}
+	40% {background-color:lightgrey; width:39px; height:39px;}
+	50% {box-shadow: 0 0 20px 20px rgba(255, 255, 255, 0.3);background-color:white;}
+	100% {box-shadow: 0 0 0px 200px rgba(0,0,0,0); background-color:grey;}
+}
+@keyframes pulse {
+	0% {background-color:white;}
+	20% {background-color: lightgrey;}
+	30% {background-color:white;}
+	40% {background-color:lightgrey; width:39px; height:39px;}
+	50% {box-shadow: 0 0 20px 20px rgba(255, 255, 255, 0.3);background-color:white;}
+	100% {box-shadow: 0 0 0px 200px rgba(0,0,0,0); background-color:grey;}
+}
+
 .error {
 	padding-top: 24px;
 	font-size: 24px;

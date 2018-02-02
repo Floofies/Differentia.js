@@ -68,12 +68,10 @@
 			function showIndicator(show = true) {
 				if (show && loading || !show && !loading) return;
 				const action = show ? "remove" : "add";
-				dimmer.classList[action]("hidden");
 				indicator.classList[action]("hidden");
 				loading = show;
 			}
-			const dimmer = document.getElementById("dimmer");
-			const indicator = document.getElementById("loadIndicator")
+			const indicator = document.getElementById("dimmer")
 			const pageContainer = document.getElementById("pageContainer");
 			const errorContainer = document.getElementById("errorContainer");
 			const elementTemplate = document.createElement("div");
@@ -82,7 +80,7 @@
 			const cache = new Map();
 			elementTemplate.setAttribute("class", "sidebarElement")
 			document.getElementById("sidebarHeader").addEventListener("click", () => loadPage("home"));
-			loadPage("home");
+			setTimeout(() => loadPage("home"), 2000);
 			ajax("index.json").then(function (body) {
 				const titles = JSON.parse(body);
 				titles.forEach(function (title) {
@@ -106,7 +104,7 @@
 			<div id="sidebarList" class="sidebarList"></div>
 		</div>
 		<div id="pageContainer" class="content container"></div>
-		<div id="dimmer" class="dimmer"><div id="loadIndicator" class="loadIndicator"></div></div>
+		<div id="dimmer" class="dimmer"><div class="loadIndicator"></div></div>
 		<div id="errorContainer" class="error hidden"></div>
 	</div>
 </body>
