@@ -1,27 +1,35 @@
-[
-  "dfs",
-  "bfs",
-  "clone",
-  "diffClone",
-  "diff",
-  "deepFreeze",
-  "deepSeal",
-  "nodePaths",
-  "paths",
-  "findPath",
-  "findPaths",
-  "findShortestPath",
-  "diffPaths",
-  "forEach",
-  "find",
-  "some",
-  "every",
-  "map",
-  "filter",
-  "BinaryTree",
-  "RedBlackTree",
-  "LinkedList",
-  "CircularLinkedList",
-  "DoubleLinkedList",
-  "CircularDoubleLinkedList"
-]
+{
+	"Search Algorithm Iterators": [
+		"dfs",
+		"bfs"
+	],
+	"Search Algorithm Strategies": [
+		"clone",
+		"diffClone",
+		"diff",
+		"deepFreeze",
+		"deepSeal",
+		"nodePaths",
+		"paths",
+		"findPath",
+		"findPaths",
+		"findShortestPath",
+		"diffPaths"
+	],
+	"Higher-Order Functions": [
+		"forEach",
+		"find",
+		"some",
+		"every",
+		"map",
+		"filter"
+	],
+	"Data Structures": [
+		"BinaryTree",
+		"RedBlackTree",
+		"LinkedList",
+		"CircularLinkedList",
+		"DoubleLinkedList",
+		"CircularDoubleLinkedList"
+	]
+}

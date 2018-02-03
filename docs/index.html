@@ -3,7 +3,242 @@
 <head>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
-	<link rel="stylesheet" href="style.css">
+	<style type="text/css">
+		html {
+			background-color: #f2f2f2;
+		}
+
+		body {
+			background-color: #f2f2f2;
+		}
+
+		.main {
+			display: flex;
+			flex-flow: row;
+			align-content: center;
+			justify-content: center;
+			width: 100%;
+		}
+
+		.sidebar {
+			width: 100%;
+			height: 100%;
+			position: fixed;
+			max-height: 100%;
+			overflow-y: scroll;
+			z-index: 99;
+		}
+
+		.sidebarHeader {
+			background: -webkit-linear-gradient(top, #373737, #212121);
+			font-size: 24px;
+			color: white;
+			padding: 10px;
+			font-family: Courier New, Courier, monospace;
+			cursor: pointer;
+			user-select: none;
+			text-align: center;
+		}
+
+		.sidebarList {
+			background-color: #f2f2f2;
+		}
+
+		.sidebarElement {
+			background-color: #c9c9c9;
+			cursor: pointer;
+			padding: 10px;
+			font-size: 15px;
+			font-family: monospace;
+			font-weight: bold;
+			color: black;
+			user-select: none;
+			text-align: center;
+			margin-top: 5px;
+		}
+
+		.sidebarSection {
+			border:3px solid lightgrey;
+			cursor: pointer;
+			padding: 7px;
+			font-size: 15px;
+			font-family: monospace;
+			color: black;
+			user-select: none;
+			text-align: center;
+			margin-top: 5px;
+		}
+
+		.sidebarElement:hover {
+			color: #f2f2f2;
+			background-color: dimgrey;
+		}
+
+		.content {
+			width: 100%;
+		}
+
+		.dimmer {
+			height: 100%;
+			width: 100%;
+			position: fixed;
+			background-color: rgba(0, 0, 0, 0.8);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.loadIndicator {
+			margin: 0 auto;
+			width: 30px;
+			height: 30px;
+			background-color: grey;
+			border-radius: 50%;
+			box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);
+			-webkit-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+			-moz-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+			-ms-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+			animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+		}
+
+		@-webkit-keyframes pulse {
+			0% {
+				background-color: white;
+			}
+			20% {
+				background-color: lightgrey;
+			}
+			30% {
+				background-color: white;
+			}
+			40% {
+				background-color: lightgrey;
+				width: 39px;
+				height: 39px;
+			}
+			50% {
+				box-shadow: 0 0 20px 20px rgba(255, 255, 255, 0.3);
+				background-color: white;
+			}
+			100% {
+				box-shadow: 0 0 0px 200px rgba(0, 0, 0, 0);
+				background-color: grey;
+			}
+		}
+
+		@-moz-keyframes pulse {
+			0% {
+				background-color: white;
+			}
+			20% {
+				background-color: lightgrey;
+			}
+			30% {
+				background-color: white;
+			}
+			40% {
+				background-color: lightgrey;
+				width: 39px;
+				height: 39px;
+			}
+			50% {
+				box-shadow: 0 0 20px 20px rgba(255, 255, 255, 0.3);
+				background-color: white;
+			}
+			100% {
+				box-shadow: 0 0 0px 200px rgba(0, 0, 0, 0);
+				background-color: grey;
+			}
+		}
+
+		@-ms-keyframes pulse {
+			0% {
+				background-color: white;
+			}
+			20% {
+				background-color: lightgrey;
+			}
+			30% {
+				background-color: white;
+			}
+			40% {
+				background-color: lightgrey;
+				width: 39px;
+				height: 39px;
+			}
+			50% {
+				box-shadow: 0 0 20px 20px rgba(255, 255, 255, 0.3);
+				background-color: white;
+			}
+			100% {
+				box-shadow: 0 0 0px 200px rgba(0, 0, 0, 0);
+				background-color: grey;
+			}
+		}
+
+		@keyframes pulse {
+			0% {
+				background-color: white;
+			}
+			20% {
+				background-color: lightgrey;
+			}
+			30% {
+				background-color: white;
+			}
+			40% {
+				background-color: lightgrey;
+				width: 39px;
+				height: 39px;
+			}
+			50% {
+				box-shadow: 0 0 20px 20px rgba(255, 255, 255, 0.3);
+				background-color: white;
+			}
+			100% {
+				box-shadow: 0 0 0px 200px rgba(0, 0, 0, 0);
+				background-color: grey;
+			}
+		}
+
+		.error {
+			padding-top: 24px;
+			font-size: 24px;
+			text-align: center;
+			width: 100%;
+		}
+
+		.hidden {
+			display: none;
+		}
+
+		.hljs {
+			display: inline-block;
+			padding: .2em .5em;
+			overflow-x: visible;
+		}
+
+		pre>code {
+			display: block;
+		}
+
+		ul {
+			list-style: circle;
+		}
+
+		@media (min-width: 860px) {
+			.sidebar {
+				width: 300px;
+				position: static;
+				overflow-y: visible;
+				max-height: auto;
+				padding-right: 10px;
+			}
+			.sidebarList {
+				overflow-y: visible;
+			}
+		}
+	</style>
 	<script defer type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.0/markdown-it.js"></script>
 	<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 	<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/javascript.min.js"></script>
@@ -11,6 +246,9 @@
 		window.addEventListener("load", function () {
 			function empty(element) {
 				while (element.hasChildNodes()) element.removeChild(element.lastChild);
+			}
+			function parseFragment(tagString) {
+				return document.createRange().createContextualFragment(tagString);
 			}
 			function ajax(url = "/", verb = "GET", data = null) {
 				return new Promise(function (resolve, reject) {
@@ -30,29 +268,81 @@
 					req.send(data);
 				});
 			}
+			const pageContainer = document.getElementById("pageContainer");
+			const mdParser = markdownit();
+			const cache = new Map();
 			function loadPage(title) {
 				showIndicator();
 				hideError();
 				const cached = cache.get(title);
 				if (cached !== undefined) {
 					empty(pageContainer);
-					showIndicator(false);
 					pageContainer.appendChild(cached.cloneNode(true));
+					showIndicator(false);
 				} else {
 					ajax(title + ".md").then(function (markdown) {
-						empty(pageContainer);
-						showIndicator(false);
 						const page = document.createRange().createContextualFragment(mdParser.render(markdown));
 						page.querySelectorAll("code").forEach(element => hljs.highlightBlock(element));
+						empty(pageContainer);
 						pageContainer.appendChild(page.cloneNode(true));
+						showIndicator(false);
 						cache.set(title, page);
 					}).catch(showError);
 				}
 			}
+			const sidebarList = document.getElementById("sidebarList");
+			const elementTemplate = document.getElementById("elementTemplate").content;
+			const sectionTemplate = document.getElementById("sectionTemplate").content;
+			const sections = {};
+			function loadIndex() {
+				ajax("index.json").then(function (body) {
+					const titles = JSON.parse(body);
+					var rootSections = !Array.isArray(titles);
+					for (var title in titles) {
+						if (rootSections && Array.isArray(titles[title])) {
+							var section = sectionTemplate.cloneNode(true);
+							section.querySelector(".sectionTitle").insertAdjacentText("afterbegin", title);
+							var sectionPages = section.querySelector(".sectionPages");
+							sections[title] = {
+								section: section,
+								pages: sectionPages
+							};
+							for (var subTitle of titles[title]) {
+								var page = elementTemplate.cloneNode(true);
+								page.querySelector(".sidebarElement").insertAdjacentText("afterbegin", subTitle);
+								sectionPages.appendChild(page);
+								page.addEventListener("click", () => loadPage(title));
+							}
+							listen(section.querySelector(".sidebarSection"), "click", showSection, title); 
+							sidebarList.appendChild(section);
+						} else {
+							var page = elementTemplate.cloneNode(true);
+							page.insertAdjacentText("afterbegin", title);
+							sidebarList.appendChild(page);
+							page.addEventListener("click", () => loadPage(title));
+						}
+					}
+				}).catch(showError);
+			}
+			function listen(node, event, listener, data = null) {
+				node.addEventListener(event, () => listener(data));
+			}
+			var curSection = null;
+			function showSection(title) {
+				if (curSection !== null) sections[curSection].pages.classList.add("hidden");
+				if (curSection !== title) {
+					sections[title].pages.classList.remove("hidden");
+					curSection = title;
+				} else {
+					curSection = null;
+				}
+			}
 			var showingError = false;
+			const errorContainer = document.getElementById("errorContainer");
 			function showError(error) {
+				console.error(error);
 				empty(errorContainer);
-				errorContainer.insertAdjacentText("afterbegin", error.message);
+				errorContainer.insertAdjacentText("afterbegin", "Error: " + error.message);
 				pageContainer.classList.add("hidden");
 				showIndicator(false);
 				errorContainer.classList.remove("hidden");
@@ -65,36 +355,29 @@
 				showingError = false;
 			}
 			var loading = true;
+			const indicator = document.getElementById("dimmer");
 			function showIndicator(show = true) {
 				if (show && loading || !show && !loading) return;
-				const action = show ? "remove" : "add";
-				indicator.classList[action]("hidden");
+				indicator.classList[show ? "remove" : "add"]("hidden");
 				loading = show;
 			}
-			const indicator = document.getElementById("dimmer")
-			const pageContainer = document.getElementById("pageContainer");
-			const errorContainer = document.getElementById("errorContainer");
-			const elementTemplate = document.createElement("div");
-			const sidebarList = document.getElementById("sidebarList");
-			const mdParser = markdownit();
-			const cache = new Map();
-			elementTemplate.setAttribute("class", "sidebarElement")
 			document.getElementById("sidebarHeader").addEventListener("click", () => loadPage("home"));
-			setTimeout(() => loadPage("home"), 2000);
-			ajax("index.json").then(function (body) {
-				const titles = JSON.parse(body);
-				titles.forEach(function (title) {
-					const template = elementTemplate.cloneNode(true);
-					template.insertAdjacentText("afterbegin", title);
-					sidebarList.appendChild(template);
-					template.addEventListener("click", () => loadPage(title));
-				});
-			}).catch(showError);
+			loadPage("home");
+			loadIndex();
 		});
 	</script>
 </head>
 
 <body>
+	<template id="elementTemplate">
+		<div class="sidebarElement"></div>
+	</template>
+	<template id="sectionTemplate">
+		<div class="sidebarSection">
+			<div class="sectionTitle"></div>
+			<div class="sectionPages hidden"></div>
+		</div>
+	</template>
 	<div class="main">
 		<div class="sidebar">
 			<div id="sidebarHeader" class="sidebarHeader">
@@ -104,7 +387,9 @@
 			<div id="sidebarList" class="sidebarList"></div>
 		</div>
 		<div id="pageContainer" class="content container"></div>
-		<div id="dimmer" class="dimmer"><div class="loadIndicator"></div></div>
+		<div id="dimmer" class="dimmer">
+			<div class="loadIndicator"></div>
+		</div>
 		<div id="errorContainer" class="error hidden"></div>
 	</div>
 </body>
