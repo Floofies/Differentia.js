@@ -1,6 +1,9 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
+	<meta charset="utf-8">
+	<title>Differentia.js Documentation</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
 	<style type="text/css">
@@ -27,6 +30,7 @@
 			max-height: 100%;
 			overflow-y: scroll;
 			z-index: 99;
+			background-color:#f2f2f2;
 		}
 
 		.sidebarHeader {
@@ -58,15 +62,20 @@
 		}
 
 		.sidebarSection {
-			border:3px solid lightgrey;
-			cursor: pointer;
-			padding: 7px;
-			font-size: 15px;
-			font-family: monospace;
-			color: black;
+			border:1px solid grey;
 			user-select: none;
 			text-align: center;
 			margin-top: 5px;
+		}
+		.sectionTitle {
+			cursor: pointer;
+			font-size: 15px;
+			color: black;
+			padding:7px;
+		}
+		.sectionTitle:hover {
+			color: #f2f2f2;
+			background-color: dimgrey;
 		}
 
 		.sidebarElement:hover {
@@ -202,7 +211,7 @@
 		}
 
 		.error {
-			padding-top: 24px;
+			padding-top: 100px;
 			font-size: 24px;
 			text-align: center;
 			width: 100%;
@@ -290,6 +299,15 @@
 					}).catch(showError);
 				}
 			}
+			function sidebarElement(title) {
+				const template = elementTemplate.cloneNode(true);
+				const element = template.querySelector(".sidebarElement");
+				element.insertAdjacentText("afterbegin", title);
+				element.addEventListener("click", function (event) {
+					loadPage(title);
+				});
+				return template;
+			}
 			const sidebarList = document.getElementById("sidebarList");
 			const elementTemplate = document.getElementById("elementTemplate").content;
 			const sectionTemplate = document.getElementById("sectionTemplate").content;
@@ -298,44 +316,47 @@
 				ajax("index.json").then(function (body) {
 					const titles = JSON.parse(body);
 					var rootSections = !Array.isArray(titles);
-					for (var title in titles) {
+					for (const title in titles) {
 						if (rootSections && Array.isArray(titles[title])) {
 							var section = sectionTemplate.cloneNode(true);
-							section.querySelector(".sectionTitle").insertAdjacentText("afterbegin", title);
+							var sectionTitle = section.querySelector(".sectionTitle")
+							sectionTitle.insertAdjacentText("afterbegin", "▸ " + title);
+							sectionTitle.addEventListener("click", () => showSection(title));
 							var sectionPages = section.querySelector(".sectionPages");
 							sections[title] = {
 								section: section,
+								title: sectionTitle,
 								pages: sectionPages
 							};
-							for (var subTitle of titles[title]) {
-								var page = elementTemplate.cloneNode(true);
-								page.querySelector(".sidebarElement").insertAdjacentText("afterbegin", subTitle);
-								sectionPages.appendChild(page);
-								page.addEventListener("click", () => loadPage(title));
+							for (const subTitle of titles[title]) {
+								sectionPages.appendChild(sidebarElement(subTitle));
 							}
-							listen(section.querySelector(".sidebarSection"), "click", showSection, title); 
 							sidebarList.appendChild(section);
 						} else {
 							var page = elementTemplate.cloneNode(true);
-							page.insertAdjacentText("afterbegin", title);
-							sidebarList.appendChild(page);
-							page.addEventListener("click", () => loadPage(title));
+							sidebarList.appendChild(sidebarElement(title));
 						}
 					}
 				}).catch(showError);
 			}
-			function listen(node, event, listener, data = null) {
-				node.addEventListener(event, () => listener(data));
-			}
 			var curSection = null;
 			function showSection(title) {
-				if (curSection !== null) sections[curSection].pages.classList.add("hidden");
+				if (curSection !== null) hideSection(curSection);
 				if (curSection !== title) {
+					const section = sections[title];
+					empty(section.title);
+					section.title.insertAdjacentText("afterbegin", "▾ " + title);
 					sections[title].pages.classList.remove("hidden");
 					curSection = title;
 				} else {
 					curSection = null;
 				}
+			}
+			function hideSection(title) {
+				const section = sections[title];
+				section.pages.classList.add("hidden");
+				empty(section.title);
+				section.title.insertAdjacentText("afterbegin", "▸ " + title);
 			}
 			var showingError = false;
 			const errorContainer = document.getElementById("errorContainer");
@@ -390,7 +411,7 @@
 		<div id="dimmer" class="dimmer">
 			<div class="loadIndicator"></div>
 		</div>
-		<div id="errorContainer" class="error hidden"></div>
+		<div id="errorContainer" class="error container hidden"></div>
 	</div>
 </body>
 
