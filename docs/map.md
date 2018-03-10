@@ -4,7 +4,7 @@
 ```JavaScript
 map( subject , callback [, search = null ] );
 ```
-A simple IOC wrapper to the [dfs](#dfs) iterator. Constructs a structural copy of `subject` using the return values of `callback`, which is executed once for each primitive element.
+A simple IOC wrapper to the [dfs](http://differentia.io/?p=dfs) iterator. Constructs a structural copy of `subject` using the return values of `callback`, which is executed once for each primitive element.
 
 ## Parameters
 - **`subject`** Object/Array

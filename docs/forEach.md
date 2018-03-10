@@ -4,7 +4,7 @@
 ```JavaScript
 forEach( subject , callback [, search = null ] );
 ```
-A simple IOC wrapper to the [dfs](#dfs) iterator. `callback` is executed for each element. Unlike `Array.prototype.forEach`, this implementation allows a return value of any type, which will be returned to the caller.
+A simple IOC wrapper to the [dfs](http://differentia.io/?p=dfs) iterator. `callback` is executed for each element. Unlike `Array.prototype.forEach`, this implementation allows a return value of any type, which will be returned to the caller.
 
 ## Parameters
 - **`subject`** Object/Array

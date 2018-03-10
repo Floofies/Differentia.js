@@ -4,7 +4,7 @@
 ```JavaScript
 every( subject , callback [, search = null ] );
 ```
-A simple IOC wrapper to the [dfs](#dfs) iterator. `callback` is executed for each element. If `callback` returns `false` (or a non-truthy value) at any time, then `false` is immediately returned. If `callback` returns `true` for every element, then `true` is returned. You can use this function to test if all elements of the Object tree pass a test.
+A simple IOC wrapper to the [dfs](http://differentia.io/?p=dfs) iterator. `callback` is executed for each element. If `callback` returns `false` (or a non-truthy value) at any time, then `false` is immediately returned. If `callback` returns `true` for every element, then `true` is returned. You can use this function to test if all elements of the Object tree pass a test.
 
 ## Parameters
 - **`subject`** Object/Array

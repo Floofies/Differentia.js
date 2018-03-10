@@ -4,7 +4,7 @@
 ```JavaScript
 find( subject , callback [, search = null ] );
 ```
-A simple IOC wrapper to the [dfs](#dfs) iterator. `callback` is executed for each element. If `callback` returns `true` at any time, then `currentValue` is immediately returned. If `callback` never returns `true`, then `undefined` is returned.
+A simple IOC wrapper to the [dfs](http://differentia.io/?p=dfs) iterator. `callback` is executed for each element. If `callback` returns `true` at any time, then `currentValue` is immediately returned. If `callback` never returns `true`, then `undefined` is returned.
 
 ## Parameters
 - **`subject`** Object/Array

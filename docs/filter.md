@@ -4,7 +4,7 @@
 ```JavaScript
 filter( subject , callback [, search = null ] );
 ```
-A simple IOC wrapper to the [bfs](#bfs) iterator. Constructs a structural copy of `subject` using only values/paths which pass the test in `callback`, which is executed once for each primitive element.
+A simple IOC wrapper to the [bfs](http://differentia.io/?p=bfs) iterator. Constructs a structural copy of `subject` using only values/paths which pass the test in `callback`, which is executed once for each primitive element.
 
 ## Parameters
 - **`subject`** Object/Array
