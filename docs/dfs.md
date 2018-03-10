@@ -1,4 +1,4 @@
-### `dfs`
+# `dfs`
 
 *Generator*
 ```JavaScript
@@ -8,7 +8,7 @@ An implementation of Depth-First Search. Enumerates properties/elements in `subj
 
 Upon calling `next()`, the `dfs` iterator exposes a single `value` object which encapsulates the state of iteration/traversal at the time of being returned. The object is a flyweight and is thus mutated between every iteration/traversal; because of this, do not attempt to store or otherwise rely on values contained within it.
 
-#### Parameters
+## Parameters
 - **`subject`** Object/Array
 
   The root Object or Array to enumerate & traverse.
@@ -17,9 +17,9 @@ Upon calling `next()`, the `dfs` iterator exposes a single `value` object which 
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
-#### Examples
+## Examples
 
-##### Example 1: Using `dfs` to traverse and enumerate an Object:
+### Example 1: Using `dfs` to traverse and enumerate an Object:
 
 ```JavaScript
 var subject = {
@@ -53,7 +53,7 @@ console.log(iteration.value.currentValue); // Logs "Hello World!"
 
 ---
 
-##### Example 2: Using `dfs` with a search index to traverse and enumerate an Object's *specific* properties:
+### Example 2: Using `dfs` with a search index to traverse and enumerate an Object's *specific* properties:
 
 ```JavaScript
 var subject = {

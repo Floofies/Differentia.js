@@ -1,0 +1,7 @@
+- [Higher-Order Functions](#higher-order-functions)
+  - [forEach](#foreach)
+  - [find](#find)
+  - [some](#some)
+  - [every](#every)
+  - [map](#map)
+  - [filter](#filter)

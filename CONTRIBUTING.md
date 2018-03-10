@@ -108,7 +108,7 @@ Your Strategy's `interface` function must call `runStrategy` if it needs to use 
 ```JavaScript
 runStrategy( strategy, searchAlg, parameters );
 ```
-An IOC wrapper for Iterators. `runStrategy` advances the iterator returned by `searchAlg` and executes Call-With-Current-State functions supplied in `strategy`. The state flyweight object is passed to `strategy.entry`, which is only executed for the first element, and `strategy.main` which is executed for every element. If `strategy.main` returns something other than `undefined`, it will be returned to the caller after passing through `done`. If the iterator has reached the last element then `strategy.done` will be executed, optionally with the return value of `strategy.main` as it's second argument.
+An IOC wrapper for the Search Iterators. `runStrategy` advances the iterator returned by `searchAlg` and executes Call-With-Current-State functions supplied in `strategy`. The state flyweight object is passed to `strategy.entry`, which is only executed for the first element, and `strategy.main` which is executed for every element. If `strategy.main` returns something other than `undefined`, it will be returned to the caller after passing through `done`. If the iterator has reached the last element then `strategy.done` will be executed, optionally with the return value of `strategy.main` as it's second argument.
 
 `searchAlg` is the search algorithm iterator to use; it can be `dfs` or `bfs`, or any other Iterator.
 
@@ -207,7 +207,7 @@ console.log(greetings);
 */
 ```
 # :blue_book: Documentation
-To add documentation to the library, two areas require your attention: `README.md` and the repository wiki. Additions to the wiki are not required for pull requests to be accepted. New or changed documentation must match the following format.
+To add documentation to the library, two areas require your attention: Markdown files in the `/docs` directory, and the [documentation website](http://www.dufferentia.io) which serves to display it. Additions to documentation are not required for pull requests to be accepted. New or changed documentation must match the following format:
 
 ## Documentation Template
 

@@ -1,0 +1,7 @@
+- [Data Structures](#data-structures)
+  - [BinaryTree](#binarytree)
+  - [RedBlackTree](#redblacktree)
+  - [LinkedList](#linkedlist)
+  - [CircularLinkedList](#circularlinkedlist)
+  - [DoubleLinkedList](#doublelinkedlist)
+  - [CircularDoubleLinkedList](#circulardoublelinkedlist)

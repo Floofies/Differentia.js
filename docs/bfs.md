@@ -1,4 +1,4 @@
-### `bfs`
+# `bfs`
 
 *Generator*
 ```JavaScript
@@ -6,7 +6,7 @@ bfs( subject [, search = null ] );
 ```
 An implementation of Breadth-First Search. Enumerates properties/elements in `subject`, traversing into any Objects/Arrays, using `search` as a search index. Any properties/nodes present in `search` will be used to enumerate, traverse, and access the properties/nodes of `subject`. If a property/node exists in `search` that does not exist in `subject`, or vice versa, it will be skipped.
 
-#### Parameters
+## Parameters
 - **`subject`** Object/Array
 
   The root Object or Array to enumerate & traverse.
@@ -15,9 +15,9 @@ An implementation of Breadth-First Search. Enumerates properties/elements in `su
 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
-#### Examples
+## Examples
 
-##### Example 1: Using `bfs` to traverse and enumerate an Object:
+### Example 1: Using `bfs` to traverse and enumerate an Object:
 
 ```JavaScript
 var subject = {
@@ -51,7 +51,7 @@ console.log(iteration.value.currentValue); // Logs "Good Morning"
 
 --- 
 
-##### Example 2: Using `bfs` with a search index to traverse and enumerate an Object's *specific* properties:
+### Example 2: Using `bfs` with a search index to traverse and enumerate an Object's *specific* properties:
 
 ```JavaScript
 var subject = {
