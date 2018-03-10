@@ -17,7 +17,7 @@ An implementation of Breadth-First Search. Enumerates properties/elements in `su
 
 ## Examples
 
-### Example 1: Using `bfs` to traverse and enumerate an Object:
+Example 1: Using `bfs` to traverse and enumerate an Object:
 
 ```JavaScript
 var subject = {
@@ -51,7 +51,7 @@ console.log(iteration.value.currentValue); // Logs "Good Morning"
 
 --- 
 
-### Example 2: Using `bfs` with a search index to traverse and enumerate an Object's *specific* properties:
+Example 2: Using `bfs` with a search index to traverse and enumerate an Object's *specific* properties:
 
 ```JavaScript
 var subject = {

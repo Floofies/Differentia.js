@@ -33,7 +33,7 @@ A simple IOC wrapper to the [dfs](#dfs) iterator. `callback` is executed for eac
   The Object/Array being enumerated.
 
 ## Examples
-<details><summary>Example 1: Using `forEach` to traverse and enumerate an Object:</summary>
+Example 1: Using `forEach` to traverse and enumerate an Object:
 
 ```JavaScript
 var subject = {
@@ -63,5 +63,3 @@ differentia.forEach(subject, function (currentValue, accessor, subject) {
 // Logs 0
 // Logs "Hello World!"
 ```
-
-</details>

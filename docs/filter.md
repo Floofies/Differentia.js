@@ -33,7 +33,7 @@ A simple IOC wrapper to the [bfs](#bfs) iterator. Constructs a structural copy o
   The Object/Array being enumerated.
 
 ## Examples
-<details><summary>Example 1: Using `filter` to only clone Numbers:</summary>
+Example 1: Using `filter` to only clone Numbers:
 
 ```JavaScript
 var subject = {
@@ -78,5 +78,3 @@ console.log(copy);
 }
 */
 ```
-
-</details>

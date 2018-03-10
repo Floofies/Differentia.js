@@ -19,7 +19,7 @@ Upon calling `next()`, the `dfs` iterator exposes a single `value` object which 
 
 ## Examples
 
-### Example 1: Using `dfs` to traverse and enumerate an Object:
+Example 1: Using `dfs` to traverse and enumerate an Object:
 
 ```JavaScript
 var subject = {
@@ -53,7 +53,7 @@ console.log(iteration.value.currentValue); // Logs "Hello World!"
 
 ---
 
-### Example 2: Using `dfs` with a search index to traverse and enumerate an Object's *specific* properties:
+Example 2: Using `dfs` with a search index to traverse and enumerate an Object's *specific* properties:
 
 ```JavaScript
 var subject = {

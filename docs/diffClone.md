@@ -34,7 +34,7 @@ RegExp|:white_check_mark:
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
 ## Examples
-<details><summary>Example 1: Using `diffClone` to clone an object's differing properties:</summary>
+Example 1: Using `diffClone` to clone an object's differing properties:
 
 ```JavaScript
 // The Object to clone from:
@@ -60,9 +60,8 @@ var compared = {
  }
  */
  ```
-</details>
 
-<details><summary>Example 2: Using `diffClone` with the `search` parameter to clone an object's *specific* differing properties:</summary>
+Example 2: Using `diffClone` with the `search` parameter to clone an object's *specific* differing properties:
 
 ```JavaScript
 var subject = {
@@ -95,4 +94,3 @@ Variable `clonedObject` is now this Object:
 }
 */
 ```
-</details>

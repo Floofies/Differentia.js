@@ -16,7 +16,7 @@ Traverses and enumerates `subject`, returning an array listing all paths of the 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
 ## Examples
-<details><summary>Example 1: Using `paths` to record the paths/branches in an Object:</summary>
+Example 1: Using `paths` to record the paths/branches in an Object:
 
 ```JavaScript
 var subject = {
@@ -38,4 +38,3 @@ console.log(paths);
 ]
 */
 ```
-</details>

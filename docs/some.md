@@ -33,7 +33,7 @@ A simple IOC wrapper to the [dfs](#dfs) iterator. `callback` is executed for eac
   The Object/Array being enumerated.
 
 ## Examples
-<details><summary>Example 1: Using `some` to verify if at least one element in an Object passes a test:</summary>
+Example 1: Using `some` to verify if at least one element in an Object passes a test:
 
 ```JavaScript
 var subject = [100, 200, 300, 400, 500];
@@ -50,5 +50,3 @@ passed = differentia.some(subject, function (currentValue, accessor, subject) {
 });
 console.log(passed); // Logs false, all tests failed.
 ```
-
-</details>

@@ -20,7 +20,7 @@ Traverses and enumerates `subject`, searching for `findValue`. Returns an Array 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
 ## Examples
-<details><summary>Example 1: Using `findShortestPath` to record the shortest path/branch to a value in an Object:</summary>
+Example 1: Using `findShortestPath` to record the shortest path/branch to a value in an Object:
 
 ```JavaScript
 var subject = {
@@ -39,4 +39,3 @@ console.log(path);
 ["string2"]
 */
 ```
-</details>

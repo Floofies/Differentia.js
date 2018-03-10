@@ -20,7 +20,7 @@ Traverses and enumerates `subject`, returning an array listing all paths of the 
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
 ## Examples
-<details><summary>Example 1: Using `paths` to find differing paths/branches:</summary>
+Example 1: Using `paths` to find differing paths/branches:
 
 ```JavaScript
 var subject = {
@@ -50,4 +50,3 @@ console.log(differingPaths);
 ]
 */
 ```
-</details>

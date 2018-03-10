@@ -16,7 +16,7 @@ Traverses and enumerates `subject`, sealing it and and it's children. Uses `Obje
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
 ## Examples
-<details><summary>Example 1: Using `deepSeal` to seal all Objects/Arrays:</summary>
+Example 1: Using `deepSeal` to seal all Objects/Arrays:
 
 ```JavaScript
 var subject = {
@@ -30,4 +30,3 @@ var subject = {
 differentia.deepSeal(subject);
 // All Objects/Arrays within subject, and all it's children, are now sealed.
 ```
-</details>

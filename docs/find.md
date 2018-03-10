@@ -33,7 +33,7 @@ A simple IOC wrapper to the [dfs](#dfs) iterator. `callback` is executed for eac
   The Object/Array being enumerated.
 
 ## Examples
-<details><summary>Example 1: Using `find` to find a value in an Object:</summary>
+Example 1: Using `find` to find a value in an Object:
 
 ```JavaScript
 var subject = {
@@ -57,5 +57,3 @@ foundValue = differentia.find(subject, function (currentValue, accessor, subject
 });
 console.log(foundValue); // Logs undefined;
 ```
-
-</details>

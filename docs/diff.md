@@ -33,7 +33,7 @@ RegExp|:white_check_mark:
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
 ## Examples
-<details><summary>Example 1: Using `diff` to see if an Object's enumerable properties differ from another:</summary>
+Example 1: Using `diff` to see if an Object's enumerable properties differ from another:
 
 ```JavaScript
 //
@@ -58,9 +58,10 @@ var doTheyDiffer = differentia.diff(subject, compared);
 `doTheyDiffer` is now `true`.
 */
 ```
-</details>
 
-<details><summary>Example 2: Using `diff` with the `search` parameter to diff an object's *specific* differing properties:</summary>
+---
+
+Example 2: Using `diff` with the `search` parameter to diff an object's *specific* differing properties:
 
 ```JavaScript
 var subject = {
@@ -92,4 +93,3 @@ var doTheyDiffer = differentia.diff(subject, compared, search);
 `doTheyDiffer` is now `false`.
 */
 ```
-</details>

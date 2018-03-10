@@ -33,7 +33,7 @@ A simple IOC wrapper to the [dfs](#dfs) iterator. Constructs a structural copy o
   The Object/Array being enumerated.
 
 ## Examples
-<details><summary>Example 1: Using `map` to increment all numbers:</summary>
+Example 1: Using `map` to increment all numbers:
 
 ```JavaScript
 var subject = {
@@ -59,5 +59,3 @@ console.log(copy);
 };
 */
 ```
-
-</details>

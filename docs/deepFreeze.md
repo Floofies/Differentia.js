@@ -16,7 +16,7 @@ Traverses and enumerates `subject`, freezing it and it's children. Uses `Object.
   An Object or Array specifying the properties to traverse and enumerate. All other properties are ignored.
 
 ## Examples
-<details><summary>Example 1: Using `deepFreeze` to freeze all Objects/Arrays:</summary>
+Example 1: Using `deepFreeze` to freeze all Objects/Arrays:
 
 ```JavaScript
 //
@@ -31,4 +31,3 @@ var subject = {
 differentia.deepFreeze(subject);
 // All Objects/Arrays within subject, and all it's children, are now frozen.
 ```
-</details>
