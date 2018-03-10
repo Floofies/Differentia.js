@@ -4,7 +4,7 @@
 ===
 Differentia is a library which provides a basic suite of Graph Theory focused algorithms, functions, and data structures.
 
-## :closed_book: Documentation
+## Documentation
 
 [Browse the Documentation Site](http://www.differentia.io)
 
