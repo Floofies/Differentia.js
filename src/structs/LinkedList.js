@@ -10,7 +10,9 @@ structs.LinkedList = function (iterable = null) {
 	this.double = false;
 	this.circular = false;
 	this.size = 0;
-	this.fromIterable(iterable);
+	if (iterable !== null) {
+		this.fromIterable(iterable);
+	}
 };
 structs.LinkedList.prototype[Symbol.iterator] = function* () {
 	var curElement = this.head;
@@ -84,13 +86,11 @@ structs.LinkedList.prototype.clear = function () {
 	}
 };
 /**
- * fromIterable - Builds a new LinkedList from an iterable.
- * @param {Iterable} payload  The iterable to populate the LinkedList with.
+ * fromIterable - Populates the LinkedList from an iterable.
+ * @param {Iterable} iterable  The iterable to populate the LinkedList with.
  */
 structs.LinkedList.prototype.fromIterable = function (iterable) {
-	if (iterable === null) {
-		return;
-	}
+	assert.argType(iterable !== null && Symbol.iterator in iterable, "iterable", 1);
 	const thisIterator = this.values();
 	var curState;
 	for (var value of iterable[Symbol.iterator]()) {
