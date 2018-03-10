@@ -1,8 +1,8 @@
 # Search Algorithm Iterators
 
-- [Search Algorithm Iterators](#search-algorithm-iterators)
-  - [dfs](#dfs)
-  - [bfs](#bfs)
+- [Search Algorithm Iterators](http://differentia.io/?p=search-algorithm-iterators)
+  - [dfs](http://differentia.io/?p=dfs)
+  - [bfs](http://differentia.io/?p=bfs)
 
 The search iterators, `bfs` and `dfs`, are actually both the same `searchIterator` algorithm (See CONTRIBUTING.md for more details about `searchIterator`) with differing traversal scheduling data structures (Queue VS Stack).
 
