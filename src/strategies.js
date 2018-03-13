@@ -90,6 +90,8 @@ strategies.diff = {
 				// Object index/property count does not match, they are different.
 				return true;
 			}
+		} else if (Number.isNaN(subjectProp) !== Number.isNaN(compareProp)) {
+			return true;
 		} else if (subjectProp !== compareProp) {
 			return true;
 		}
