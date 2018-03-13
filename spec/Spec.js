@@ -30,6 +30,9 @@ describe("differentia", function () {
 		'diffPaths',
 		'filter'
 	];
+	it("should contain at least " + modules.length + " properties", function () {
+		expect(Object.keys(differentia).length).not.toBeLessThan(modules.length);
+	});
 	it("should contain \"" + modules.join("\", \"") + "\"", function () {
 		modules.forEach(moduleName => expect(moduleName in differentia).toBe(true));
 	});
@@ -154,7 +157,7 @@ function testLength(obj) {
 	throw new TypeError("The given parameter must be an Object or Array");
 }
 
-function diff(subject, compare, search = null) {
+function testDiff(subject, compare, search = null) {
 	var noIndex = search === null;
 	if (noIndex && testLength(subject) !== testLength(compare)) {
 		return true;
@@ -165,7 +168,7 @@ function diff(subject, compare, search = null) {
 	var tuple = { subject, search, compare };
 	var map = new Map();
 	map.set(search, tuple);
-	if (diff.test(tuple, map, noIndex) === true) {
+	if (testDiff.test(tuple, map, noIndex) === true) {
 		return true;
 	}
 	return false;
@@ -178,8 +181,7 @@ var supportedRegExpProps = {
 	flags: "flags" in RegExp.prototype
 };
 
-//FIXME: I can't traverse nested arrays.
-diff.test = function (tuple, map, noIndex) {
+testDiff.test = function (tuple, map, noIndex) {
 	for (var accessor in tuple.search) {
 		if (!(accessor in tuple.subject)) {
 			continue;
@@ -227,7 +229,7 @@ diff.test = function (tuple, map, noIndex) {
 				}
 			}
 			map.set(searchProp, nextTuple);
-			if (diff.test(nextTuple, map, noIndex) === true) {
+			if (testDiff.test(nextTuple, map, noIndex) === true) {
 				return true;
 			}
 		} else if (subjectProp !== compareProp) {
@@ -247,18 +249,18 @@ describe("testLength", function () {
 
 describe("testDiff", function () {
 	it("should return true when two objects differ", function () {
-		expect(diff(testObjects["Linear Acyclic"], testObjects["Linear Cyclic"])).toBe(true);
-		expect(diff(testObjects["Multidimensional Cyclic"], testObjects["Multidimensional Acyclic"])).toBe(true);
-		expect(diff(testObjects["Linear Cyclic"], testObjects["Multidimensional Acyclic"])).toBe(true);
-		expect(diff(testObjects["Nested Cyclic"], testObjects["Nested Acyclic"])).toBe(true);
+		expect(testDiff(testObjects["Linear Acyclic"], testObjects["Linear Cyclic"])).toBe(true);
+		expect(testDiff(testObjects["Multidimensional Cyclic"], testObjects["Multidimensional Acyclic"])).toBe(true);
+		expect(testDiff(testObjects["Linear Cyclic"], testObjects["Multidimensional Acyclic"])).toBe(true);
+		expect(testDiff(testObjects["Nested Cyclic"], testObjects["Nested Acyclic"])).toBe(true);
 	});
 	it("should return false when two objects are the same", function () {
-		expect(diff(testObjects["Linear Acyclic"], testObjects["Linear Acyclic"])).toBe(false);
-		expect(diff(testObjects["Linear Cyclic"], testObjects["Linear Cyclic"])).toBe(false);
-		expect(diff(testObjects["Multidimensional Acyclic"], testObjects["Multidimensional Acyclic"])).toBe(false);
-		expect(diff(testObjects["Multidimensional Cyclic"], testObjects["Multidimensional Cyclic"])).toBe(false);
-		expect(diff(testObjects["Nested Cyclic"], testObjects["Nested Cyclic"])).toBe(false);
-		expect(diff(testObjects["Nested Acyclic"], testObjects["Nested Acyclic"])).toBe(false);
+		expect(testDiff(testObjects["Linear Acyclic"], testObjects["Linear Acyclic"])).toBe(false);
+		expect(testDiff(testObjects["Linear Cyclic"], testObjects["Linear Cyclic"])).toBe(false);
+		expect(testDiff(testObjects["Multidimensional Acyclic"], testObjects["Multidimensional Acyclic"])).toBe(false);
+		expect(testDiff(testObjects["Multidimensional Cyclic"], testObjects["Multidimensional Cyclic"])).toBe(false);
+		expect(testDiff(testObjects["Nested Cyclic"], testObjects["Nested Cyclic"])).toBe(false);
+		expect(testDiff(testObjects["Nested Acyclic"], testObjects["Nested Acyclic"])).toBe(false);
 	});
 });
 
@@ -378,16 +380,16 @@ describe("diff", function () {
 describe("clone", function () {
 	it("should make an exact copy of the subject", function () {
 		var clone = d.clone(testObjects["Linear Acyclic"]);
-		expect(diff(clone, testObjects["Linear Acyclic"])).toBe(false);
+		expect(testDiff(clone, testObjects["Linear Acyclic"])).toBe(false);
 		clone = d.clone(testObjects["Linear Cyclic"]);
-		expect(diff(clone, testObjects["Linear Cyclic"])).toBe(false);
+		expect(testDiff(clone, testObjects["Linear Cyclic"])).toBe(false);
 		clone = d.clone(testObjects["Multidimensional Cyclic"]);
-		expect(diff(clone, testObjects["Multidimensional Cyclic"])).toBe(false);
+		expect(testDiff(clone, testObjects["Multidimensional Cyclic"])).toBe(false);
 	});
 	it("should clone properties using the search index", function () {
 		var clone = d.clone(testObjects["Linear Acyclic"], { 2: null });
 		var search = { 2: Number };
-		expect(diff(clone, testObjects["Linear Acyclic"], search)).toBe(false);
+		expect(testDiff(clone, testObjects["Linear Acyclic"], search)).toBe(false);
 		search = [{
 			address: {
 				geo: {
@@ -396,7 +398,7 @@ describe("clone", function () {
 			}
 		}];
 		clone = d.clone(testObjects["Multidimensional Cyclic"], search);
-		expect(diff(clone, testObjects["Multidimensional Cyclic"], search)).toBe(false);
+		expect(testDiff(clone, testObjects["Multidimensional Cyclic"], search)).toBe(false);
 	});
 });
 
@@ -405,11 +407,11 @@ describe("diffClone", function () {
 	var compare = { "hello": "world", "whats": "up?", "have a": "good night" };
 	it("should clone properties that differ", function () {
 		var clone = d.diffClone(subject, compare);
-		expect(diff(clone, { "how": "are you?", "have a": "good day" })).toBe(false);
+		expect(testDiff(clone, { "how": "are you?", "have a": "good day" })).toBe(false);
 	});
 	it("should clone properties that differ using the search index", function () {
 		var clone = d.diffClone(subject, compare, { "how": null });
-		expect(diff(clone, { "how": "are you?" })).toBe(false);
+		expect(testDiff(clone, { "how": "are you?" })).toBe(false);
 	});
 });
 
@@ -476,7 +478,7 @@ describe("map", function () {
 	it("should map all elements", function () {
 		var start = [2, 4, 6, 8, 10, 12];
 		var mapped = [3, 5, 7, 9, 11, 13];
-		expect(diff(d.map(start, value => value + 1), mapped)).toBe(false);
+		expect(testDiff(d.map(start, value => value + 1), mapped)).toBe(false);
 	});
 });
 
@@ -492,7 +494,7 @@ describe("nodePaths", function () {
 			["0", "address", "geo"],
 			["1", "address", "geo"]
 		];
-		expect(diff(d.nodePaths(testObjects["Multidimensional Acyclic"]), expectedPaths)).toBe(false);
+		expect(testDiff(d.nodePaths(testObjects["Multidimensional Acyclic"]), expectedPaths)).toBe(false);
 		expectedPaths = [
 			["0"],
 			["1"],
@@ -505,7 +507,7 @@ describe("nodePaths", function () {
 			["0", "otherUser"],
 			["1", "otherUser"]
 		];
-		expect(diff(d.nodePaths(testObjects["Multidimensional Cyclic"]), expectedPaths)).toBe(false);
+		expect(testDiff(d.nodePaths(testObjects["Multidimensional Cyclic"]), expectedPaths)).toBe(false);
 	});
 });
 
@@ -553,16 +555,16 @@ describe("paths", function () {
 		["1", "address", "geo", "lng"]
 	];
 	it("should return an array of all node/object/primitive paths", function () {
-		expect(diff(d.paths(testObjects["Multidimensional Acyclic"]), expectedPaths)).toBe(false);
+		expect(testDiff(d.paths(testObjects["Multidimensional Acyclic"]), expectedPaths)).toBe(false);
 	});
 });
 
 describe("findPath", function () {
 	it("should return the path of the input if found", function () {
 		var expectedPath = ["0", "address", "geo", "lng"];
-		expect(diff(d.findPath(testObjects["Multidimensional Acyclic"], 81.1496), expectedPath)).toBe(false);
+		expect(testDiff(d.findPath(testObjects["Multidimensional Acyclic"], 81.1496), expectedPath)).toBe(false);
 		expectedPath = ["1", "company", "name"];
-		expect(diff(d.findPath(testObjects["Multidimensional Acyclic"], "Deckow-Crist"), expectedPath)).toBe(false);
+		expect(testDiff(d.findPath(testObjects["Multidimensional Acyclic"], "Deckow-Crist"), expectedPath)).toBe(false);
 	});
 	it("should return null if input is not found", function () {
 		expect(d.findPath(testObjects["Multidimensional Acyclic"], "This value does not exist!")).toBe(null);
@@ -572,7 +574,7 @@ describe("findPath", function () {
 describe("findShortestPath", function () {
 	it("should find the shortest path to the value", function () {
 		var expectedPath = ["path2", "path22", "2"];
-		expect(diff(d.findShortestPath(testObjects["Multipath"], 2), expectedPath)).toBe(false)
+		expect(testDiff(d.findShortestPath(testObjects["Multipath"], 2), expectedPath)).toBe(false)
 	});
 });
 
@@ -622,7 +624,7 @@ describe("diffPaths", function () {
 			["1", "address", "geo", "lat"],
 			["1", "address", "geo", "lng"]
 		];
-		expect(diff(differentia.diffPaths(testObjects["Multidimensional Cyclic"], testObjects["Linear Acyclic"]), expectedPaths)).toBe(false);
+		expect(testDiff(d.diffPaths(testObjects["Multidimensional Cyclic"], testObjects["Linear Acyclic"]), expectedPaths)).toBe(false);
 	});
 });
 
@@ -651,7 +653,7 @@ describe("filter", function () {
 				}
 			}
 		];
-		expect(diff(d.filter(testObjects["Multidimensional Acyclic"], value => typeof value === "number"), expectedObject)).toBe(false);
+		expect(testDiff(d.filter(testObjects["Multidimensional Acyclic"], value => typeof value === "number"), expectedObject)).toBe(false);
 	});
 	it("should return an empty array if no values pass the test", function () {
 		var clone = d.filter(testObjects["Multidimensional Acyclic"], value => value === "This value does not exist!");
@@ -660,7 +662,7 @@ describe("filter", function () {
 });
 
 describe("OffsetArray", function () {
-	it("Should contain elements added via push", function () {
+	it("should contain elements added via push", function () {
 		const source = [1, 2, 3, 4, 5];
 		const oa = new d.structs.OffsetArray();
 		for (var number of source) {
@@ -670,14 +672,14 @@ describe("OffsetArray", function () {
 			expect(oa.item(number - 1)).toEqual(number);
 		}
 	});
-	it("Should contain elements added from an iterable", function () {
+	it("should contain elements added from an iterable", function () {
 		const source = [1, 2, 3, 4, 5];
 		const oa = new d.structs.OffsetArray(source);
 		for (var number of source) {
 			expect(oa.item(number - 1)).toEqual(number);
 		}
 	})
-	it("Should remove and return the last element via pop", function () {
+	it("should remove and return the last element via pop", function () {
 		const source = [1, 2, 3, 4, 5];
 		const expected = [5, 4, 3, 2, 1];
 		const oa = new d.structs.OffsetArray(source);
@@ -685,7 +687,7 @@ describe("OffsetArray", function () {
 			expect(oa.pop()).toEqual(number);
 		}
 	});
-	it("Should remove and return the first element via shift", function () {
+	it("should remove and return the first element via shift", function () {
 		const source = [1, 2, 3, 4, 5];
 		const oa = new d.structs.OffsetArray(source);
 		for (var number of source) {
