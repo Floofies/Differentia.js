@@ -20,12 +20,14 @@ structs.LinkedList.prototype[Symbol.iterator] = function* () {
 	while (curElement !== null && this.size > 0) {
 		nextElement = curElement.next;
 		if (curElement !== this.head && curElement !== this.tail) {
-			continue;
+			yield curElement;
 		}
-		yield curElement;
 		curElement = nextElement;
 	}
 };
+/**
+ * values - A simple Iterator which returns a `ListElement` for every call to `next()`
+ */
 structs.LinkedList.prototype.values = structs.LinkedList.prototype[Symbol.iterator];
 /**
  * ListElement - LinkedList Element
@@ -48,7 +50,7 @@ structs.LinkedList.prototype.ListElement.prototype.fromElement = function (eleme
 };
 /**
  * coerceElement - Creates a new ListElement using `value` if `value` it is not already a ListElement.
- * @param {any} value  A ListElement, or a value to create a new ListElement with.
+ * @param {any} value      A ListElement, or a value to create a new ListElement with.
  * @returns {ListElement}  The new ListElement, or `value` if it is already a ListElement.
  */
 structs.LinkedList.prototype.coerceElement = function (value) {
@@ -56,7 +58,7 @@ structs.LinkedList.prototype.coerceElement = function (value) {
 };
 /**
  * get - Returns the first ListElement encountered that contains a payload matching `value`. Returns `null` if one was not found.
- * @param {any} value  A value to search for in the LinkedList.
+ * @param {any} value             A value to search for in the LinkedList.
  * @returns {(ListElement|null)}  The found ListElement, or `null` if it was not found.
  */
 structs.LinkedList.prototype.get = function (value) {
@@ -115,7 +117,7 @@ structs.LinkedList.prototype.concat = function (...joinLists) {
 	});
 };
 /**
- * remove - Removes an element from the LinkedList.
+ * remove - Removes and returns an element from the LinkedList.
  * @param {ListElement} element  A ListElement object to remove from the LinkedList.
  * @returns {ListElement}        The removed ListElement.
  */
@@ -147,9 +149,10 @@ structs.LinkedList.prototype.remove = function (element) {
 	return element;
 };
 /**
- * insertBefore - Inserts a new node containing `value` before `element`
- * @param {ListElement} element     A ListElement object to prepend with newElement.
- * @param {(ListElement|any)} newElement  A ListElement object to add to the LinkedList before `element`.
+ * insertBefore - Inserts a ListElement before `element`
+ * @param {ListElement} element           A ListElement object to prepend with newElement.
+ * @param {(ListElement|any)} newElement  A ListElement or arbitrary value to add to the LinkedList before `element`.
+ * @returns {ListElement}                 A new ListElement, or `newElement` if it is already a ListElement.
  */
 structs.LinkedList.prototype.insertBefore = function (element, newElement) {
 	assert.argType(element instanceof this.ListElement, "ListElement", 1);
@@ -187,9 +190,10 @@ structs.LinkedList.prototype.insertBefore = function (element, newElement) {
 	return foundElement;
 };
 /**
- * insertAfter - Inserts a new node containing `value` after `element`
+ * insertAfter - Inserts a ListElement after `element`
  * @param {ListElement} element     A ListElement object to append with newElement.
  * @param {ListElement} newElement  A ListElement object to add to the LinkedList after `element`.
+ * @returns {ListElement}           A new ListElement, or `newElement` if it is already a ListElement.
  */
 structs.LinkedList.prototype.insertAfter = function (element, newElement) {
 	assert.argType(element instanceof this.ListElement, "ListElement", 1);
@@ -208,6 +212,7 @@ structs.LinkedList.prototype.insertAfter = function (element, newElement) {
 /**
  * prepend - Inserts a ListElement at the beginning of the LinkedList.
  * @param {ListElement} newElement  A ListElement object to add to the beginning of the LinkedList.
+ * @returns {ListElement}           A new ListElement, or `newElement` if it is already a ListElement.
  */
 structs.LinkedList.prototype.prepend = function (newElement) {
 	return this.insertAfter(this.head, newElement);
@@ -215,6 +220,7 @@ structs.LinkedList.prototype.prepend = function (newElement) {
 /**
  * prepend - Inserts a ListElement at the end of the LinkedList.
  * @param {ListElement} newElement  A ListElement object to add to the end of the LinkedList.
+ * @returns {ListElement}           A new ListElement, or `newElement` if it is already a ListElement.
  */
 structs.LinkedList.prototype.append = function (newElement) {
 	return this.insertBefore(this.tail, newElement);
@@ -222,23 +228,25 @@ structs.LinkedList.prototype.append = function (newElement) {
 /**
  * push - Inserts a ListElement at the end of the LinkedList.
  * @param {ListElement} newElement  A ListElement object to add to the end of the LinkedList.
+ * @returns {ListElement}           A new ListElement, or `newElement` if it is already a ListElement.
  */
 structs.LinkedList.prototype.push = structs.LinkedList.prototype.append;
 /**
  * unshift - Inserts a ListElement at the beginning of the LinkedList.
  * @param {ListElement} newElement  A ListElement object to add to the beginning of the LinkedList.
+ * @returns {ListElement}           A new ListElement, or `newElement` if it is already a ListElement.
  */
 structs.LinkedList.prototype.unshift = structs.LinkedList.prototype.prepend;
 /**
  * remove - Removes an element from the beginning of the LinkedList and returns it.
- * @returns {ListElement}        The removed ListElement.
+ * @returns {ListElement}  The removed ListElement.
  */
 structs.LinkedList.prototype.shift = function () {
 	return this.remove(this.head.next);
 };
 /**
  * pushBack - Moves a ListElement to the end of the LinkedList.
- * @param {ListElement} newElement  A ListElement object to move to the end of the LinkedList.
+ * @param {ListElement} element  A ListElement object to move to the end of the LinkedList.
  */
 structs.LinkedList.prototype.pushBack = function (element) {
 	this.remove(element);
