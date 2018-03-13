@@ -58,7 +58,7 @@ structs.BinaryTree.prototype.coerceElement = function (value) {
 * Values which are integers will also be used as the weights for their TreeElements.
 * @param {Iterable} iterable  The iterable to populate the BinaryTree with.
 */
-structs.LinkedList.prototype.fromIterable = function (iterable) {
+structs.BinaryTree.prototype.fromIterable = function (iterable) {
 	assert.argType(iterable !== null && Symbol.iterator in iterable, "iterable", 1);
 	for (var value of iterable[Symbol.iterator]()) {
 		this.add(value);
