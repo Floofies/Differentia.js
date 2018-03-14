@@ -6,6 +6,8 @@ new CircularDoubleLinkedList( [ iterable = null ] );
 ```
 > Inherits from [LinkedList](http://differentia.io/?p=LinkedList)
 
+> Uses [ListElement](http://differentia.io/?p=ListElement) to represent the list structure.
+
 Circular Doubly Linked List. Elements have references to previous elements, making some operations faster.
 
 ## Constructor Parameters

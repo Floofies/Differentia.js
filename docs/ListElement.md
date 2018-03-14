@@ -4,7 +4,7 @@
 ```JavaScript
 new LinkedList.ListElement( [ payload = null ], [ next = null ], [ prev = null ] );
 ```
-The object used internally by `LinkedList` to represent an element of the Linked List.
+The class used internally by [LinkedList](http://differentia.io/?p=LinkedList) to represent an element of the Linked List.
 
 #### Parameters
 - **`payload`** (*Optional*) Any

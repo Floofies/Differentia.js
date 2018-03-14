@@ -4,6 +4,8 @@
 ```JavaScript
 new LinkedList( [ iterable = null ] );
 ```
+> Uses [ListElement](http://differentia.io/?p=ListElement) to represent the list structure.
+
 Acyclic Singly Linked List.
 
 ## Constructor Parameters
