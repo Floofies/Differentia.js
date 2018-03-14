@@ -212,7 +212,7 @@ To add documentation to the library, two areas require your attention: Markdown 
 ## Documentation Template
 
 ``````
-### `Entry Name`
+# `Entry Name`
 
 *Entry Type*
 ```JavaScript
@@ -220,12 +220,12 @@ To add documentation to the library, two areas require your attention: Markdown 
 ```
 Describe your entry here, including the return value (if any).
 
-#### Parameters
+## Parameters
 - **`arg`** Type
 
   Describe the above parameter here.
 
-#### Examples
+## Examples
 <details><summary>Example 1: Describe your example here:</summary>
 
 ```JavaScript
@@ -240,7 +240,7 @@ Describe your entry here, including the return value (if any).
 ## Example Documentation
 
 ``````
-### `myFunction`
+# `myFunction`
 
 *Function*
 ```JavaScript
@@ -248,7 +248,7 @@ myFunction( arg [, optionalArg = null ] );
 ```
 `myFunction` does Foo, and returns Bar.
 
-#### Parameters
+## Parameters
 - **`arg`** Number
 
   This argument is for X purpose.
@@ -257,8 +257,8 @@ myFunction( arg [, optionalArg = null ] );
 
   This argument is for Y purpose.
 
-#### Examples
-<details><summary>Example 1: How to use myFunction:</summary>
+## Examples
+Example 1: How to use myFunction:
 
 ```JavaScript
 // Here are some numbers.
@@ -268,7 +268,6 @@ var optionalArg = 456;
 // myFunction does X with the numbers.
 differentia.myFunction(arg, optionalArg);
 ```
-</details>
 
 ---
 ``````
