@@ -125,11 +125,11 @@ var element = differentia.LinkedList.coerceElement(numbers);
 
 ---
 
-### `get`
+### `find`
 
 *Function*
 ```JavaScript
-LinkedList.get( value );
+LinkedList.find( value );
 ```
 Returns the first ListElement encountered that contains a payload matching `value`, or `null` if one was not found.
 
@@ -149,7 +149,7 @@ var arr = [1,2,3,4,5];
 var list = new differentia.LinkedList(arr);
 
 // Returns the ListElement containing "3".
-var foundElement = list.get(3);
+var foundElement = list.find(3);
 ```
 
 ---
