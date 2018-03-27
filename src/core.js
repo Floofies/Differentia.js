@@ -7,12 +7,11 @@
 * @param  {Error} errorType = null  If not `null`, throws a new error of `errorType`.
 */
 function assert(boolean, message, errorType = null) {
-	if (!boolean) {
-		if (errorType !== null && (errorType === Error || Error.isPrototypeOf(errorType))) {
-			throw new errorType(message);
-		} else {
-			console.error(message);
-		}
+	if (boolean) return;
+	if (errorType !== null && (errorType === Error || Error.isPrototypeOf(errorType))) {
+		throw new errorType(message);
+	} else {
+		console.error(message);
 	}
 }
 // Thunks to `assert` for method argument type checking.
@@ -23,6 +22,8 @@ assert.props = function (input, props, argName) {
 };
 assert.argType = (boolean, typeString, argName) => assert(boolean, "Argument " + argName + " must be " + typeString, TypeError);
 assert.string = (input, argName) => assert.argType(typeof input === "string", "a String", argName);
+assert.number = (input, argName) => assert.argType(typeof input === "number", "a Number", argName);
+assert.boolean = (input, argName) => assert.argType(typeof input === "boolean", "a Boolean", argName);
 assert.function = (input, argName) => assert.argType(typeof input === "function", "a Function", argName);
 assert.object = (input, argName) => assert.argType(isObject(input), "an Object", argName);
 assert.array = (input, argName) => assert.argType(Array.isArray(input), "an Array", argName);
@@ -145,16 +146,16 @@ function* searchIterator(subject, targetTuples, search = null) {
 		// Traverse `search`, iterating through it's properties.
 		_iterate: for (
 			// onFirst:
-				state.tuple = state.targetTuples.take(),
-				state.iterations = 0,
-				state.accessors = Object.keys(state.tuple.search);
+			state.tuple = state.targetTuples.take(),
+			state.iterations = 0,
+			state.accessors = Object.keys(state.tuple.search);
 			// onEvery:
-				state.accessor = state.accessors[state.iterations],
-				state.length = state.accessors.length,
-				// breakOnFalse:
-					state.iterations < state.length;
+			state.accessor = state.accessors[state.iterations],
+			state.length = state.accessors.length,
+			// breakOnFalse:
+			state.iterations < state.length;
 			// onAfterEvery:
-				state.iterations++
+			state.iterations++
 		) {
 			// Indicates if iterated property is a container
 			state.isContainer = isContainer(state.tuple.search[state.accessor]);

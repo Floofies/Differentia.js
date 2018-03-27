@@ -24,6 +24,42 @@ structs.BinaryTree.prototype[Symbol.iterator] = function* (bfs = false, startEle
 		}
 	}
 };
+/**
+ * values - Depth-First Search iterator.
+ * @returns {GeneratorObject}  Returns a `TreeElement` for every call to `next()`.
+ */
+structs.BinaryTree.values = function* () {
+	for (var element in this[Symbol.iterator]()) {
+		yield element.payload;
+	}
+};
+/**
+* bfs - Breadth-First Search Iterator.
+* @returns {GeneratorObject}  Returns a `TreeElement` for every call to `next()`.
+*/
+structs.BinaryTree.prototype.bfs = function (startElement = null) {
+	return this[Symbol.iterator](true, startElement);
+};
+/**
+* dfs - Depth-First Search Iterator.
+* @returns {GeneratorObject}  Returns a `TreeElement` for every call to `next()`.
+*/
+structs.BinaryTree.prototype.dfs = function (startElement = null) {
+	return this[Symbol.iterator](false, startElement);
+};
+/**
+* forEach - Simple IOC wrapper for LinkedList.values
+* @callback callback  A callback function to run for every TreeElement.
+	* @param {TreeElement}  element
+*/
+structs.BinaryTree.prototype.forEach = function (callback) {
+	for (const element of this.values()) {
+		callback(element);
+	}
+};
+/**
+ * clear - Removes all elements from the BinaryTree.
+ */
 structs.BinaryTree.prototype.clear = function () {
 	this.constructor();
 };
@@ -59,25 +95,10 @@ structs.BinaryTree.prototype.coerceElement = function (value) {
 * @param {Iterable} iterable  The iterable to populate the BinaryTree with.
 */
 structs.BinaryTree.prototype.fromIterable = function (iterable) {
-	assert.argType(iterable !== null && Symbol.iterator in iterable, "iterable", 1);
+	if (iterable === null) return;
+	assert.argType(Symbol.iterator in iterable, "iterable", 1);
 	for (var value of iterable[Symbol.iterator]()) {
 		this.add(value);
-	}
-};
-structs.BinaryTree.prototype.bfs = function (startElement = null) {
-	return this[Symbol.iterator](true, startElement);
-};
-structs.BinaryTree.prototype.dfs = function (startElement = null) {
-	return this[Symbol.iterator](false, startElement);
-};
-structs.BinaryTree.values = function* () {
-	for (var element in this[Symbol.iterator]()) {
-		yield element.payload;
-	}
-};
-structs.BinaryTree.prototype.forEach = function (func) {
-	for (var element of this[Symbol.iterator]()) {
-		func(element);
 	}
 };
 structs.BinaryTree.prototype.findClosestWeight = function (findWeight, startElement = null) {

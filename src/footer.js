@@ -1,6 +1,5 @@
 // Modules to Reveal
 var publicModules = {
-	structs: structs,
 	dfs: dfs,
 	bfs: bfs,
 	getContainerLength: getContainerLength,
@@ -9,6 +8,10 @@ var publicModules = {
 // Automatically Reveal Strategy Interfaces
 for (var name in strategies) {
 	publicModules[name] = strategies[name].interface;
+}
+// Automatically Reveal Data Structures
+for (var name in structs) {
+	publicModules[name] = structs[name];
 }
 return publicModules;
 })();
