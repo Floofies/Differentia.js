@@ -97,7 +97,7 @@ structs.LinkedList.prototype.forEach = function (callback) {
 };
 /**
  * item - Returns the ListElement at the specified 0-indexed offset, or `null` if it was not found.
- * @param {number} index          An 0-indexed offset, starting from the head, to look for a ListElement at.
+ * @param {number} index          A 0-indexed offset, starting from the head, to look for a ListElement at.
  * @returns {(ListElement|null)}  The found ListElement, or `null` if it was not found.
  */
 structs.LinkedList.prototype.item = function (index) {
