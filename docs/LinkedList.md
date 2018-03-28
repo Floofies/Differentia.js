@@ -38,6 +38,38 @@ for (const element of list) {
 }
 ```
 
+## Instance Properties
+
+### `head`
+
+*ListElement*
+```JavaScript
+LinkedList.head
+```
+A ListElement which is considered the head/start of the list, and is used to begin enumeration of subsequent ListElements.
+
+---
+
+### `tail`
+
+*ListElement*
+```JavaScript
+LinkedList.tail
+```
+A ListElement which is considered the tail/end of the list, and is used to end enumeration of preceding ListElements.
+
+---
+
+### `size`
+
+*Number*
+```JavaScript
+LinkedList.size
+```
+A number representing the quantity of ListElements within the LinkedList, not counting the head and tail elements.
+
+---
+
 ## Member Methods
 
 ### `values`
@@ -46,7 +78,7 @@ for (const element of list) {
 ```JavaScript
 LinkedList.values();
 ```
-A simple Iterator which returns a `ListElement` for every call to `next()`
+An iterator which yields the value of each ListElement in the LinkedList.
 
 #### Examples
 Example 1: Basic Usage:
@@ -58,14 +90,76 @@ var arr = [1,2,3,4,5];
 // New LinkedList is created using the contents of `arr`.
 var list = new differentia.LinkedList(arr);
 
-// Instantiates the GeneratorFunction.
-var iterator = list.values();
+// Logs 1, 2, 3, 4, and 5.
+for (const value of list.values()) console.log(value);
+```
+
+---
+
+### `elements`
+
+*Iterator*
+```JavaScript
+LinkedList.elements();
+```
+An iterator which yields each ListElement in the LinkedList, except for the head and tail elements.
+
+#### Examples
+Example 1: Basic Usage:
+
+```JavaScript
+// Array of arbitrary numbers.
+var arr = [1,2,3,4,5];
+
+// New LinkedList is created using the contents of `arr`.
+var list = new differentia.LinkedList(arr);
 
 // Logs 1, 2, 3, 4, and 5.
-do {
-	var state = iterator.next();
-	console.log(state.value);
-} while (!state.done);
+for (const value of list.values()) console.log(value);
+```
+
+---
+
+# `forEach`
+
+*Higher-Order Function*
+```JavaScript
+LinkedList.forEach( callback );
+```
+Calls `callback` with the value of each ListElement.
+
+## Parameters
+- **`callback`** Function
+
+  The callback function to execute for each ListElement value.
+
+### Callback Parameters
+- **`value`**
+
+  The value of the current ListElement being enumerated over.
+
+- **`index`**
+
+  The index (Starting at zero) of the current ListElement being enumerated over.
+
+- **`list`**
+
+  The target LinkedList being iterated through.
+
+## Examples
+Example 1: Basic Usage:
+
+```JavaScript
+// Array of arbitrary numbers.
+var arr = [1,2,3,4,5];
+
+// New LinkedList is created using the contents of `arr`.
+var list = new differentia.LinkedList(arr);
+
+// Logs 1, 2, 3, 4, and 5.
+list.forEach(function (value, index, list) {
+  console.log(value);
+});
 ```
 
 ---
@@ -121,6 +215,35 @@ var numbers = 123;
 
 // Returns a new ListElement with `numbers` assigned to `element.payload`.
 var element = differentia.LinkedList.coerceElement(numbers);
+```
+
+---
+
+### `item`
+
+*Function*
+```JavaScript
+LinkedList.item( index );
+```
+Returns the ListElement at the specified 0-indexed offset from the head element, or `null` if it was not found.
+
+#### Parameters
+- **`index`** Number
+
+  An offset from the head element, starting at zero, to look for a ListElement at.
+
+#### Examples
+Example 1: Basic Usage:
+
+```JavaScript
+// Array of arbitrary numbers.
+var arr = [1,2,3,4,5];
+
+// New LinkedList is created using the contents of `arr`.
+var list = new differentia.LinkedList(arr);
+
+// Returns the ListElement at index 4, the last element in the list, which contains "5".
+var foundElement = list.item(4);
 ```
 
 ---
