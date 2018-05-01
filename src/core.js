@@ -1,3 +1,11 @@
+var structs = require('./structs');
+
+// Checks if certain RegExp props are supported.
+var supportedRegExpProps = {
+	sticky: "sticky" in RegExp.prototype,
+	unicode: "unicode" in RegExp.prototype,
+	flags: "flags" in RegExp.prototype
+};
 /**
 * assert - Logs or throws an Error if `boolean` is false,
 *  If `boolean` is `true`, nothing happens.
@@ -288,3 +296,18 @@ function runStrategy(strategy, searchAlg, parameters) {
 	}
 	return returnValue;
 }
+
+module.exports.supportedRegExpProps = supportedRegExpProps;
+module.exports.assert = assert;
+module.exports.isContainer = isContainer;
+module.exports.isObject = isObject;
+module.exports.isPrimitive = isPrimitive;
+module.exports.primitives = primitives;
+module.exports.createContainer = createContainer;
+module.exports.getContainerLength = getContainerLength;
+module.exports.runCallback = runCallback;
+module.exports.createIterationState = createIterationState;
+module.exports.searchIterator = searchIterator;
+module.exports.dfs = dfs;
+module.exports.bfs = bfs;
+module.exports.runStrategy = runStrategy;
