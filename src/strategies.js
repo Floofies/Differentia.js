@@ -1,3 +1,8 @@
+var core = require('./core');
+var structs = require('./structs');
+
+var strategies = {};
+
 /**
 * clone - Creates a deep clone of `subject`.
 * @param  {(Object|Array)} subject               The Object/Array to clone.
@@ -6,13 +11,13 @@
 */
 strategies.clone = {
 	interface: function (subject, search = null) {
-		return runStrategy(strategies.clone, dfs, {
+		return core.runStrategy(strategies.clone, core.dfs, {
 			subject: subject,
 			search: search
 		});
 	},
 	entry: function (state) {
-		state.cloneRoot = createContainer(state.tuple.subject);
+		state.cloneRoot = core.createContainer(state.tuple.subject);
 		state.tuple.clone = state.cloneRoot;
 	},
 	main: function (state) {
@@ -20,24 +25,24 @@ strategies.clone = {
 			if (state.currentValue instanceof RegExp) {
 				// Clone a Regular Expression
 				var flags = "";
-				if (supportedRegExpProps.flags) {
+				if (core.supportedRegExpProps.flags) {
 					flags = state.currentValue.flags;
 				} else {
 					if (state.currentValue.global) flags += "g";
 					if (state.currentValue.ignorecase) flags += "i";
 					if (state.currentValue.multiline) flags += "m";
-					if (supportedRegExpProps.sticky && state.currentValue.sticky) flags += "y";
-					if (supportedRegExpProps.unicode && state.currentValue.unicode) flags += "u";
+					if (core.supportedRegExpProps.sticky && state.currentValue.sticky) flags += "y";
+					if (core.supportedRegExpProps.unicode && state.currentValue.unicode) flags += "u";
 				}
 				state.tuple.clone[state.accessor] = new RegExp(state.currentValue.source, flags);
 			} else {
 				if (state.existing !== null) {
 					state.tuple.clone[state.accessor] = state.existing.clone;
 				} else {
-					state.tuple.clone[state.accessor] = createContainer(state.currentValue);
+					state.tuple.clone[state.accessor] = core.createContainer(state.currentValue);
 				}
 			}
-		} else if (isPrimitive(state.currentValue)) {
+		} else if (core.isPrimitive(state.currentValue)) {
 			// Clone a Primitive.
 			state.tuple.clone[state.accessor] = state.currentValue;
 		}
@@ -55,10 +60,10 @@ strategies.clone = {
 */
 strategies.diff = {
 	interface: function (subject, compare, search = null) {
-		if (search === null && getContainerLength(subject) !== getContainerLength(compare)) {
+		if (search === null && core.getContainerLength(subject) !== core.getContainerLength(compare)) {
 			return true;
 		}
-		return runStrategy(strategies.diff, dfs, {
+		return core.runStrategy(strategies.diff, core.dfs, {
 			subject: subject,
 			compare: compare,
 			search: search
@@ -68,25 +73,25 @@ strategies.diff = {
 		state.tuple.compare = state.parameters.compare;
 	},
 	main: function (state) {
-		if (!("compare" in state.tuple) && !isContainer(state.tuple.compare) || !(state.accessor in state.tuple.compare)) {
+		if (!("compare" in state.tuple) && !core.isContainer(state.tuple.compare) || !(state.accessor in state.tuple.compare)) {
 			return true;
 		}
 		var subjectProp = state.currentValue;
 		var compareProp = state.tuple.compare[state.accessor];
-		if (((state.noIndex && state.isContainer) || isContainer(subjectProp)) && isContainer(compareProp)) {
+		if (((state.noIndex && state.isContainer) || core.isContainer(subjectProp)) && core.isContainer(compareProp)) {
 			if (subjectProp instanceof RegExp && compareProp instanceof RegExp) {
 				if (
 					subjectProp.source !== compareProp.source
 					|| subjectProp.ignoreCase !== compareProp.ignoreCase
 					|| subjectProp.global !== compareProp.global
 					|| subjectProp.multiline !== compareProp.multiline
-					|| (supportedRegExpProps.sticky && subjectProp.sticky !== compareProp.sticky)
-					|| (supportedRegExpProps.unicode && subjectProp.unicode !== compareProp.unicode)
-					|| (supportedRegExpProps.flags && subjectProp.flags !== compareProp.flags)
+					|| (core.supportedRegExpProps.sticky && subjectProp.sticky !== compareProp.sticky)
+					|| (core.supportedRegExpProps.unicode && subjectProp.unicode !== compareProp.unicode)
+					|| (core.supportedRegExpProps.flags && subjectProp.flags !== compareProp.flags)
 				) {
 					return true;
 				}
-			} else if (state.noIndex && getContainerLength(compareProp) !== getContainerLength(subjectProp)) {
+			} else if (state.noIndex && core.getContainerLength(compareProp) !== core.getContainerLength(subjectProp)) {
 				// Object index/property count does not match, they are different.
 				return true;
 			}
@@ -109,7 +114,7 @@ strategies.diff = {
 */
 strategies.diffClone = {
 	interface: function (subject, compare, search = null) {
-		return runStrategy(strategies.diffClone, dfs, {
+		return core.runStrategy(strategies.diffClone, core.dfs, {
 			subject: subject,
 			compare: compare,
 			search: search
@@ -136,7 +141,7 @@ strategies.diffClone = {
 */
 strategies.deepFreeze = {
 	interface: function (subject, search = null) {
-		return runStrategy(strategies.deepFreeze, dfs, {
+		return core.runStrategy(strategies.deepFreeze, core.dfs, {
 			subject: subject,
 			search: search
 		});
@@ -161,7 +166,7 @@ strategies.deepFreeze = {
 */
 strategies.deepSeal = {
 	interface: function (subject, search = null) {
-		return runStrategy(strategies.deepSeal, dfs, {
+		return core.runStrategy(strategies.deepSeal, core.dfs, {
 			subject: subject,
 			search: search
 		});
@@ -191,14 +196,14 @@ strategies.deepSeal = {
 */
 strategies.forEach = {
 	interface: function (subject, callback, search = null) {
-		assert.function(callback, 2);
-		return runStrategy(strategies.forEach, dfs, {
+		core.assert.function(callback, 2);
+		return core.runStrategy(strategies.forEach, core.dfs, {
 			subject: subject,
 			search: search,
 			callback: callback
 		});
 	},
-	main: runCallback
+	main: core.runCallback
 };
 /**
 * find - Returns a value if it passes the test, otherwise returns `undefined`.
@@ -213,15 +218,15 @@ strategies.forEach = {
 */
 strategies.find = {
 	interface: function (subject, callback, search = null) {
-		assert.function(callback, 2);
-		return runStrategy(strategies.find, dfs, {
+		core.assert.function(callback, 2);
+		return core.runStrategy(strategies.find, core.dfs, {
 			subject: subject,
 			search: search,
 			callback: callback
 		});
 	},
 	main: function (state) {
-		if (runCallback(state)) {
+		if (core.runCallback(state)) {
 			return state.currentValue;
 		}
 	}
@@ -239,15 +244,15 @@ strategies.find = {
 */
 strategies.some = {
 	interface: function (subject, callback, search = null) {
-		assert.function(callback, 2);
-		return runStrategy(strategies.some, dfs, {
+		core.assert.function(callback, 2);
+		return core.runStrategy(strategies.some, core.dfs, {
 			subject: subject,
 			search: search,
 			callback: callback
 		});
 	},
 	main: function (state) {
-		if (runCallback(state)) {
+		if (core.runCallback(state)) {
 			return true;
 		}
 		if (state.isLast) {
@@ -268,15 +273,15 @@ strategies.some = {
 */
 strategies.every = {
 	interface: function (subject, callback, search = null) {
-		assert.function(callback, 2);
-		return runStrategy(strategies.every, dfs, {
+		core.assert.function(callback, 2);
+		return core.runStrategy(strategies.every, core.dfs, {
 			subject: subject,
 			search: search,
 			callback: callback
 		});
 	},
 	main: function (state) {
-		if (!runCallback(state)) {
+		if (!core.runCallback(state)) {
 			return false;
 		}
 		if (state.isLast) {
@@ -297,8 +302,8 @@ strategies.every = {
 */
 strategies.map = {
 	interface: function (subject, callback, search = null) {
-		assert.function(callback, 2);
-		return runStrategy(strategies.map, dfs, {
+		core.assert.function(callback, 2);
+		return core.runStrategy(strategies.map, core.dfs, {
 			subject: subject,
 			search: search,
 			callback: callback
@@ -309,7 +314,7 @@ strategies.map = {
 		if (state.isContainer) {
 			strategies.clone.main(state);
 		} else {
-			state.tuple.clone[state.accessor] = runCallback(state);
+			state.tuple.clone[state.accessor] = core.runCallback(state);
 		}
 	},
 	done: function (state) {
@@ -324,7 +329,7 @@ strategies.map = {
 */
 strategies.nodePaths = {
 	interface: function (subject, search = null) {
-		return runStrategy(strategies.nodePaths, bfs, {
+		return core.runStrategy(strategies.nodePaths, core.bfs, {
 			subject: subject,
 			search, search
 		});
@@ -372,7 +377,7 @@ strategies.nodePaths = {
 */
 strategies.paths = {
 	interface: function (subject, search = null) {
-		return runStrategy(strategies.paths, bfs, {
+		return core.runStrategy(strategies.paths, core.bfs, {
 			subject: subject,
 			search, search
 		});
@@ -399,7 +404,7 @@ strategies.paths = {
 */
 strategies.findPath = {
 	interface: function (subject, findValue, search = null) {
-		return runStrategy(strategies.findPath, bfs, {
+		return core.runStrategy(strategies.findPath, core.bfs, {
 			subject: subject,
 			search: search,
 			findValue: findValue
@@ -424,7 +429,7 @@ strategies.findPath = {
 */
 strategies.findPaths = {
 	interface: function (subject, findValue, search = null) {
-		return runStrategy(strategies.findPaths, bfs, {
+		return core.runStrategy(strategies.findPaths, core.bfs, {
 			subject: subject,
 			search: search,
 			findValue: findValue
@@ -452,7 +457,7 @@ strategies.findPaths = {
 */
 strategies.findShortestPath = {
 	interface: function (subject, findValue, search = null) {
-		return runStrategy(strategies.findShortestPath, bfs, {
+		return core.runStrategy(strategies.findShortestPath, core.bfs, {
 			subject: subject,
 			search: search,
 			findValue: findValue
@@ -490,7 +495,7 @@ strategies.findShortestPath = {
 */
 strategies.diffPaths = {
 	interface: function (subject, compare, search = null) {
-		return runStrategy(strategies.diffPaths, bfs, {
+		return core.runStrategy(strategies.diffPaths, core.bfs, {
 			subject: subject,
 			compare: compare,
 			search: search
@@ -524,8 +529,8 @@ strategies.diffPaths = {
 */
 strategies.filter = {
 	interface: function (subject, callback, search = null) {
-		assert.function(callback, 2);
-		return runStrategy(strategies.filter, bfs, {
+		core.assert.function(callback, 2);
+		return core.runStrategy(strategies.filter, core.bfs, {
 			subject: subject,
 			search: search,
 			callback: callback
@@ -538,7 +543,7 @@ strategies.filter = {
 	},
 	main: function (state) {
 		strategies.paths.main(state);
-		if (!state.isContainer && runCallback(state)) {
+		if (!state.isContainer && core.runCallback(state)) {
 			if (state.isSecond) {
 				state.pendingPaths.push([]);
 			} else if (!state.isFirst) {
@@ -565,7 +570,7 @@ strategies.filter = {
 					if (path.length === 0) {
 						tuple.clone[accessor] = tuple.subject[accessor];
 					} else {
-						tuple.clone[accessor] = createContainer(tuple.subject[accessor]);
+						tuple.clone[accessor] = core.createContainer(tuple.subject[accessor]);
 					}
 				}
 				if (path.length === 0) {
@@ -581,3 +586,5 @@ strategies.filter = {
 		return state.cloneRoot;
 	}
 };
+
+module.exports = strategies;
