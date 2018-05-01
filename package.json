@@ -33,8 +33,11 @@
     "uglify-es": "github:mishoo/UglifyJS2#harmony"
   },
   "scripts": {
-    "build": "browserify ./src/index.js -o ./dist/differentia.js",
-    "test": "jasmine spec/Spec.js"
+    "build": "browserify ./src/index.js -o ./dist/differentia.js -s differentia",
+    "minify": "uglifyjs ./dist/differentia.js -o ./dist/differentia.js",
+    "build:prod": "npm run build && npm run minify",
+    "test": "npm run build && jasmine",
+    "prepublish": "npm run build:prod && npm test"
   },
   "main": "dist/differentia.js",
   "author": "Dani Glore",
