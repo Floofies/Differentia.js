@@ -28,13 +28,18 @@
     "url": "https://github.com/Floofies/Differentia.js/issues"
   },
   "devDependencies": {
-    "jasmine": "^2.8.0",
+    "browserify": "^16.2.0",
+    "jasmine": "^2.99.0",
     "uglify-es": "github:mishoo/UglifyJS2#harmony"
   },
   "scripts": {
+    "build": "browserify ./src/index.js -o ./dist/differentia.js",
     "test": "jasmine spec/Spec.js"
   },
   "main": "dist/differentia.js",
   "author": "Dani Glore",
+  "contributors": [
+    "Muthu Kumar @MKRhere"
+  ],
   "license": "MIT"
 }
