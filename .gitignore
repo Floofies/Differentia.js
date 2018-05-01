@@ -26,7 +26,6 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# Directories created by makefile
-prod-build
+# Ignore built files and node_modules
+dist
 node_modules
-package_lock.json
