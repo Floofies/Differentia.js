@@ -1,3 +1,5 @@
+var structs = {};
+
 /**
 * OffsetArray - An Array wrapper which maintains an offset view of an Array.
 * @param {Iterable} [iterable = null]  A source iterable to populate the Array with.
@@ -86,3 +88,5 @@ structs.Stack = function (iterable = null) {
 	this.take = structs.OffsetArray.prototype.pop;
 };
 structs.Stack.prototype = structs.OffsetArray.prototype;
+
+module.exports = structs;

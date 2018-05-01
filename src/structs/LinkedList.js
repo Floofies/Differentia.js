@@ -1,3 +1,7 @@
+var core = require('../core');
+
+var structs = {};
+
 /**
  * LinkedList - Linear Acyclic Linked List
  * @param {Iterable} [iterable=null]  Optional iterable to populate the new LinkedList.
@@ -58,7 +62,7 @@ structs.LinkedList.prototype.coerceElement = function (value) {
  */
 structs.LinkedList.prototype.fromIterable = function (iterable) {
 	if (iterable === null) return;
-	assert.argType((typeof iterable === "object") && Symbol.iterator in iterable, "iterable", 1);
+	core.assert.argType((typeof iterable === "object") && Symbol.iterator in iterable, "iterable", 1);
 	var lastElement = this.head;
 	for (const value of iterable) {
 		lastElement = this.insertAfter(lastElement, value);
@@ -87,7 +91,7 @@ structs.LinkedList.prototype.values = function* () {
 		* @param {LinkedList} list	The target LinkedList.
 */
 structs.LinkedList.prototype.forEach = function (callback) {
-	assert.function(callback, 1);
+	core.assert.function(callback, 1);
 	var index = 0;
 	for (const value of this.values()) {
 		callback(value, index, this);
@@ -101,7 +105,7 @@ structs.LinkedList.prototype.forEach = function (callback) {
  * @returns {(ListElement|null)}  The found ListElement, or `null` if it was not found.
  */
 structs.LinkedList.prototype.item = function (index) {
-	assert.number(index, 1);
+	core.assert.number(index, 1);
 	if (this.size === 0 || index <= -1 || index + 1 > this.size) return null;
 	var loc = 0;
 	for (const element of this) {
@@ -136,7 +140,7 @@ structs.LinkedList.prototype.includes = function (value) {
  * @returns {(ListElement|null)}  The found ListElement, or `null` if it was not found.
  */
 structs.LinkedList.prototype.getPrev = function (element) {
-	assert.argType(element instanceof this.ListElement, "ListElement", 1);
+	core.assert.argType(element instanceof this.ListElement, "ListElement", 1);
 	if (element.parent !== this) return null;
 	if (this.double) return element.prev;
 	for (const node of this[Symbol.iterator](true)) {
@@ -166,7 +170,7 @@ structs.LinkedList.prototype.clear = function () {
  * @param {Array} joinLists  An argument list of LinkedLists to concatenate.
  */
 structs.LinkedList.prototype.concat = function (...joinLists) {
-	assert.argType(joinLists.every(v => v instanceof structs.LinkedList), "LinkedList(s)", "list");
+	core.assert.argType(joinLists.every(v => v instanceof structs.LinkedList), "LinkedList(s)", "list");
 	for (const list of joinLists) {
 		for (const element of list.elements()) this.append(element.payload);
 	}
@@ -177,7 +181,7 @@ structs.LinkedList.prototype.concat = function (...joinLists) {
  * @returns {(ListElement|null)}  The removed ListElement, or `null` if it was not found.
  */
 structs.LinkedList.prototype.remove = function (element) {
-	assert.argType(element instanceof this.ListElement, "ListElement", 1);
+	core.assert.argType(element instanceof this.ListElement, "ListElement", 1);
 	if (element.parent !== this) return null;
 	const prevElement = this.getPrev(element);
 	if (prevElement === null) return null;
@@ -196,7 +200,7 @@ structs.LinkedList.prototype.remove = function (element) {
  * @returns {(ListElement|null)}    The newly inserted ListElement, or `null` if the target element was not found.
  */
 structs.LinkedList.prototype.insertAfter = function (element, newElement) {
-	assert.argType(element instanceof this.ListElement, "ListElement", 1);
+	core.assert.argType(element instanceof this.ListElement, "ListElement", 1);
 	if (element.parent !== this) return null;
 	newElement = this.coerceElement(newElement);
 	newElement.next = element.next;
@@ -216,7 +220,7 @@ structs.LinkedList.prototype.insertAfter = function (element, newElement) {
  * @returns {(ListElement|null)}          The newly inserted ListElement, or `null` if the target element was not found.
  */
 structs.LinkedList.prototype.insertBefore = function (element, newElement) {
-	assert.argType(element instanceof this.ListElement, "ListElement", 1);
+	core.assert.argType(element instanceof this.ListElement, "ListElement", 1);
 	if (element.parent !== this) return null;
 	newElement = this.coerceElement(newElement);
 	const prevElement = this.getPrev(element);
@@ -375,3 +379,5 @@ structs.ArrayList.prototype.handler = {
 		});
 	}
 };
+
+module.exports = structs;

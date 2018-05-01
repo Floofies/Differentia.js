@@ -1,3 +1,7 @@
+var core = require('../core');
+
+var structs = {};
+
 /**
  * BinaryTree - Order-2 Binary Tree, stores nodes by integer weight.
  * @param {Iterable} [iterable=null]  Optional iterable to populate the new BinaryTree.
@@ -96,7 +100,7 @@ structs.BinaryTree.prototype.coerceElement = function (value) {
 */
 structs.BinaryTree.prototype.fromIterable = function (iterable) {
 	if (iterable === null) return;
-	assert.argType(Symbol.iterator in iterable, "iterable", 1);
+	core.assert.argType(Symbol.iterator in iterable, "iterable", 1);
 	for (var value of iterable[Symbol.iterator]()) {
 		this.add(value);
 	}
@@ -304,3 +308,5 @@ structs.RedBlackTree.prototype.delete = function (element) {
 	}
 	return newRoot;
 };
+
+module.exports = structs;
