@@ -8,6 +8,8 @@ new CircularLinkedList( [ iterable = null ] );
 
 > Uses [ListElement](http://differentia.io/?p=ListElement) to represent the list structure.
 
+> Refer to the [LinkedList](http://differentia.io/?p=LinkedList) documentation for member methods & properties.
+
 Circular Singly Linked List. The tail and head elements are connected to create a cycle. Iterators will infinitely loop through this list unless they are either interrupted or the list structure becomes broken.
 
 ## Constructor Parameters
@@ -39,5 +41,3 @@ for (const element of list) {
 	console.log(element.payload);
 }
 ```
-
-> Refer to the [LinkedList](http://differentia.io/?p=LinkedList) documentation for member methods & properties.

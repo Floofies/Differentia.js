@@ -70,7 +70,77 @@ A number representing the quantity of ListElements within the LinkedList, not co
 
 ---
 
+### `double`
+
+*Boolean*
+```JavaScript
+LinkedList.double
+```
+Indicates if the LinkedList is doubly linked, linking every ListElement in both directions.
+
+---
+
+### `circular`
+
+*Boolean*
+```JavaScript
+LinkedList.circular
+```
+Indicates if the LinkedList is circular, linking the head and tail elements.
+
+---
+
+## Member Properties
+
+### `ListElement`
+
+[See the ListElement documentation.](http://differentia.io/?p=ListElement)
+
+---
+
 ## Member Methods
+
+### `@@iterator`
+
+*Iterator*
+```JavaScript
+LinkedList[Symbol.iterator]( [ ends = false ] );
+```
+An iterator which yields each ListElement in the LinkedList, except for the head and tail elements.
+
+#### Parameters
+- **`ends`** Boolean
+
+  If set to `true`, the iterator will include the head/tail ListElements in iteration. In a circular LinkedList, this will cause the iterator to infinitely loop through the list unless some user-supplied break condition is in place.
+
+#### Examples
+Example 1: Basic Usage:
+
+```JavaScript
+// Array of arbitrary numbers.
+var arr = [1,2,3,4,5];
+
+// New LinkedList is created using the contents of `arr`.
+var list = new differentia.LinkedList(arr);
+
+// Logs 1, 2, 3, 4, and 5.
+for (const value of list) console.log(element.payload);
+```
+
+Example 1: `ends` Usage:
+
+```JavaScript
+// Array of arbitrary numbers.
+var arr = [1,2,3,4,5];
+
+// New LinkedList is created using the contents of `arr`.
+var list = new differentia.LinkedList(arr);
+
+// Logs `null`, 1, 2, 3, 4, 5, and `null`.
+for (const value of list[Symbol.iterator](true)) console.log(element.payload);
+```
+
+---
 
 ### `values`
 
