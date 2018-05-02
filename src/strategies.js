@@ -1,3 +1,5 @@
+const utils = require("./utils");
+const strategies = {};
 /**
 * clone - Creates a deep clone of `subject`.
 * @param  {(Object|Array)} subject               The Object/Array to clone.
@@ -6,13 +8,13 @@
 */
 strategies.clone = {
 	interface: function (subject, search = null) {
-		return runStrategy(strategies.clone, dfs, {
+		return searchIterator.runStrategy(strategies.clone, searchIterator.dfs, {
 			subject: subject,
 			search: search
 		});
 	},
 	entry: function (state) {
-		state.cloneRoot = createContainer(state.tuple.subject);
+		state.cloneRoot = utils.createContainer(state.tuple.subject);
 		state.tuple.clone = state.cloneRoot;
 	},
 	main: function (state) {
@@ -34,10 +36,10 @@ strategies.clone = {
 				if (state.existing !== null) {
 					state.tuple.clone[state.accessor] = state.existing.clone;
 				} else {
-					state.tuple.clone[state.accessor] = createContainer(state.currentValue);
+					state.tuple.clone[state.accessor] = utils.createContainer(state.currentValue);
 				}
 			}
-		} else if (isPrimitive(state.currentValue)) {
+		} else if (utils.isPrimitive(state.currentValue)) {
 			// Clone a Primitive.
 			state.tuple.clone[state.accessor] = state.currentValue;
 		}
@@ -55,10 +57,10 @@ strategies.clone = {
 */
 strategies.diff = {
 	interface: function (subject, compare, search = null) {
-		if (search === null && getContainerLength(subject) !== getContainerLength(compare)) {
+		if (search === null && utils.getContainerLength(subject) !== utils.getContainerLength(compare)) {
 			return true;
 		}
-		return runStrategy(strategies.diff, dfs, {
+		return searchIterator.runStrategy(strategies.diff, searchIterator.dfs, {
 			subject: subject,
 			compare: compare,
 			search: search
@@ -68,12 +70,12 @@ strategies.diff = {
 		state.tuple.compare = state.parameters.compare;
 	},
 	main: function (state) {
-		if (!("compare" in state.tuple) && !isContainer(state.tuple.compare) || !(state.accessor in state.tuple.compare)) {
+		if (!("compare" in state.tuple) && !utils.isContainer(state.tuple.compare) || !(state.accessor in state.tuple.compare)) {
 			return true;
 		}
 		var subjectProp = state.currentValue;
 		var compareProp = state.tuple.compare[state.accessor];
-		if (((state.noIndex && state.isContainer) || isContainer(subjectProp)) && isContainer(compareProp)) {
+		if (((state.noIndex && state.isContainer) || utils.isContainer(subjectProp)) && utils.isContainer(compareProp)) {
 			if (subjectProp instanceof RegExp && compareProp instanceof RegExp) {
 				if (
 					subjectProp.source !== compareProp.source
@@ -86,7 +88,7 @@ strategies.diff = {
 				) {
 					return true;
 				}
-			} else if (state.noIndex && getContainerLength(compareProp) !== getContainerLength(subjectProp)) {
+			} else if (state.noIndex && utils.getContainerLength(compareProp) !== utils.getContainerLength(subjectProp)) {
 				// Object index/property count does not match, they are different.
 				return true;
 			}
@@ -109,7 +111,7 @@ strategies.diff = {
 */
 strategies.diffClone = {
 	interface: function (subject, compare, search = null) {
-		return runStrategy(strategies.diffClone, dfs, {
+		return searchIterator.runStrategy(strategies.diffClone, searchIterator.dfs, {
 			subject: subject,
 			compare: compare,
 			search: search
@@ -136,7 +138,7 @@ strategies.diffClone = {
 */
 strategies.deepFreeze = {
 	interface: function (subject, search = null) {
-		return runStrategy(strategies.deepFreeze, dfs, {
+		return searchIterator.runStrategy(strategies.deepFreeze, searchIterator.dfs, {
 			subject: subject,
 			search: search
 		});
@@ -161,7 +163,7 @@ strategies.deepFreeze = {
 */
 strategies.deepSeal = {
 	interface: function (subject, search = null) {
-		return runStrategy(strategies.deepSeal, dfs, {
+		return searchIterator.runStrategy(strategies.deepSeal, searchIterator.dfs, {
 			subject: subject,
 			search: search
 		});
@@ -179,7 +181,7 @@ strategies.deepSeal = {
 	}
 };
 /**
-* forEach - A simple IOC wrapper to the `dfs` search iterator.
+* forEach - A simple IOC wrapper to the `searchIterator.dfs` search iterator.
 * @param  {(Object|Array)} subject               The Object/Array to traverse/enumerate.
 * @param  {callback} callback                  The function to invoke per-property of all objects in `subject`.
 	* @callback callback
@@ -191,14 +193,14 @@ strategies.deepSeal = {
 */
 strategies.forEach = {
 	interface: function (subject, callback, search = null) {
-		assert.function(callback, 2);
-		return runStrategy(strategies.forEach, dfs, {
+		utils.assert.function(callback, 2);
+		return searchIterator.runStrategy(strategies.forEach, searchIterator.dfs, {
 			subject: subject,
 			search: search,
 			callback: callback
 		});
 	},
-	main: runCallback
+	main: (state) => utils.runCallback(state)
 };
 /**
 * find - Returns a value if it passes the test, otherwise returns `undefined`.
@@ -213,15 +215,15 @@ strategies.forEach = {
 */
 strategies.find = {
 	interface: function (subject, callback, search = null) {
-		assert.function(callback, 2);
-		return runStrategy(strategies.find, dfs, {
+		utils.assert.function(callback, 2);
+		return searchIterator.runStrategy(strategies.find, searchIterator.dfs, {
 			subject: subject,
 			search: search,
 			callback: callback
 		});
 	},
 	main: function (state) {
-		if (runCallback(state)) {
+		if (utils.runCllback(state)) {
 			return state.currentValue;
 		}
 	}
@@ -239,15 +241,15 @@ strategies.find = {
 */
 strategies.some = {
 	interface: function (subject, callback, search = null) {
-		assert.function(callback, 2);
-		return runStrategy(strategies.some, dfs, {
+		utils.assert.function(callback, 2);
+		return searchIterator.runStrategy(strategies.some, searchIterator.dfs, {
 			subject: subject,
 			search: search,
 			callback: callback
 		});
 	},
 	main: function (state) {
-		if (runCallback(state)) {
+		if (utils.runCllback(state)) {
 			return true;
 		}
 		if (state.isLast) {
@@ -268,15 +270,15 @@ strategies.some = {
 */
 strategies.every = {
 	interface: function (subject, callback, search = null) {
-		assert.function(callback, 2);
-		return runStrategy(strategies.every, dfs, {
+		utils.assert.function(callback, 2);
+		return searchIterator.runStrategy(strategies.every, searchIterator.dfs, {
 			subject: subject,
 			search: search,
 			callback: callback
 		});
 	},
 	main: function (state) {
-		if (!runCallback(state)) {
+		if (!utils.runCllback(state)) {
 			return false;
 		}
 		if (state.isLast) {
@@ -297,8 +299,8 @@ strategies.every = {
 */
 strategies.map = {
 	interface: function (subject, callback, search = null) {
-		assert.function(callback, 2);
-		return runStrategy(strategies.map, dfs, {
+		utils.assert.function(callback, 2);
+		return searchIterator.runStrategy(strategies.map, searchIterator.dfs, {
 			subject: subject,
 			search: search,
 			callback: callback
@@ -309,7 +311,7 @@ strategies.map = {
 		if (state.isContainer) {
 			strategies.clone.main(state);
 		} else {
-			state.tuple.clone[state.accessor] = runCallback(state);
+			state.tuple.clone[state.accessor] = utils.runCllback(state);
 		}
 	},
 	done: function (state) {
@@ -324,7 +326,7 @@ strategies.map = {
 */
 strategies.nodePaths = {
 	interface: function (subject, search = null) {
-		return runStrategy(strategies.nodePaths, bfs, {
+		return searchIterator.runStrategy(strategies.nodePaths, searchIterator.bfs, {
 			subject: subject,
 			search, search
 		});
@@ -372,7 +374,7 @@ strategies.nodePaths = {
 */
 strategies.paths = {
 	interface: function (subject, search = null) {
-		return runStrategy(strategies.paths, bfs, {
+		return searchIterator.runStrategy(strategies.paths, searchIterator.bfs, {
 			subject: subject,
 			search, search
 		});
@@ -399,7 +401,7 @@ strategies.paths = {
 */
 strategies.findPath = {
 	interface: function (subject, findValue, search = null) {
-		return runStrategy(strategies.findPath, bfs, {
+		return searchIterator.runStrategy(strategies.findPath, searchIterator.bfs, {
 			subject: subject,
 			search: search,
 			findValue: findValue
@@ -424,7 +426,7 @@ strategies.findPath = {
 */
 strategies.findPaths = {
 	interface: function (subject, findValue, search = null) {
-		return runStrategy(strategies.findPaths, bfs, {
+		return searchIterator.runStrategy(strategies.findPaths, searchIterator.bfs, {
 			subject: subject,
 			search: search,
 			findValue: findValue
@@ -452,7 +454,7 @@ strategies.findPaths = {
 */
 strategies.findShortestPath = {
 	interface: function (subject, findValue, search = null) {
-		return runStrategy(strategies.findShortestPath, bfs, {
+		return searchIterator.runStrategy(strategies.findShortestPath, searchIterator.bfs, {
 			subject: subject,
 			search: search,
 			findValue: findValue
@@ -490,7 +492,7 @@ strategies.findShortestPath = {
 */
 strategies.diffPaths = {
 	interface: function (subject, compare, search = null) {
-		return runStrategy(strategies.diffPaths, bfs, {
+		return searchIterator.runStrategy(strategies.diffPaths, searchIterator.bfs, {
 			subject: subject,
 			compare: compare,
 			search: search
@@ -524,8 +526,8 @@ strategies.diffPaths = {
 */
 strategies.filter = {
 	interface: function (subject, callback, search = null) {
-		assert.function(callback, 2);
-		return runStrategy(strategies.filter, bfs, {
+		utils.assert.function(callback, 2);
+		return searchIterator.runStrategy(strategies.filter, searchIterator.bfs, {
 			subject: subject,
 			search: search,
 			callback: callback
@@ -538,7 +540,7 @@ strategies.filter = {
 	},
 	main: function (state) {
 		strategies.paths.main(state);
-		if (!state.isContainer && runCallback(state)) {
+		if (!state.isContainer && utils.runCllback(state)) {
 			if (state.isSecond) {
 				state.pendingPaths.push([]);
 			} else if (!state.isFirst) {
@@ -565,7 +567,7 @@ strategies.filter = {
 					if (path.length === 0) {
 						tuple.clone[accessor] = tuple.subject[accessor];
 					} else {
-						tuple.clone[accessor] = createContainer(tuple.subject[accessor]);
+						tuple.clone[accessor] = utils.createContainer(tuple.subject[accessor]);
 					}
 				}
 				if (path.length === 0) {
@@ -581,3 +583,7 @@ strategies.filter = {
 		return state.cloneRoot;
 	}
 };
+// Automatically Reveal Strategy Interfaces
+for (const name in strategies) {
+	module.exports[name] = strategies[name].interface;
+}

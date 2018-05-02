@@ -2,14 +2,14 @@
  * BinaryTree - Order-2 Binary Tree, stores nodes by integer weight.
  * @param {Iterable} [iterable=null]  Optional iterable to populate the new BinaryTree.
  */
-structs.BinaryTree = function (iterable = null) {
+function BinaryTree(iterable = null) {
 	this.root = null;
 	this.size = 0;
 	if (iterable !== null) {
 		this.fromIterable(iterable);
 	}
 };
-structs.BinaryTree.prototype[Symbol.iterator] = function* (bfs = false, startElement = null) {
+BinaryTree.prototype[Symbol.iterator] = function* (bfs = false, startElement = null) {
 	const targets = [startElement !== null ? startElement : this.root];
 	var getMethod = bfs ? "shift" : "pop";
 	var element;
@@ -28,7 +28,7 @@ structs.BinaryTree.prototype[Symbol.iterator] = function* (bfs = false, startEle
  * values - Depth-First Search iterator.
  * @returns {GeneratorObject}  Returns a `TreeElement` for every call to `next()`.
  */
-structs.BinaryTree.values = function* () {
+BinaryTree.values = function* () {
 	for (var element in this[Symbol.iterator]()) {
 		yield element.payload;
 	}
@@ -37,14 +37,14 @@ structs.BinaryTree.values = function* () {
 * bfs - Breadth-First Search Iterator.
 * @returns {GeneratorObject}  Returns a `TreeElement` for every call to `next()`.
 */
-structs.BinaryTree.prototype.bfs = function (startElement = null) {
+BinaryTree.prototype.bfs = function (startElement = null) {
 	return this[Symbol.iterator](true, startElement);
 };
 /**
 * dfs - Depth-First Search Iterator.
 * @returns {GeneratorObject}  Returns a `TreeElement` for every call to `next()`.
 */
-structs.BinaryTree.prototype.dfs = function (startElement = null) {
+BinaryTree.prototype.dfs = function (startElement = null) {
 	return this[Symbol.iterator](false, startElement);
 };
 /**
@@ -52,7 +52,7 @@ structs.BinaryTree.prototype.dfs = function (startElement = null) {
 * @callback callback  A callback function to run for every TreeElement.
 	* @param {TreeElement}  element
 */
-structs.BinaryTree.prototype.forEach = function (callback) {
+BinaryTree.prototype.forEach = function (callback) {
 	for (const element of this.values()) {
 		callback(element);
 	}
@@ -60,7 +60,7 @@ structs.BinaryTree.prototype.forEach = function (callback) {
 /**
  * clear - Removes all elements from the BinaryTree.
  */
-structs.BinaryTree.prototype.clear = function () {
+BinaryTree.prototype.clear = function () {
 	this.constructor();
 };
 /**
@@ -70,7 +70,7 @@ structs.BinaryTree.prototype.clear = function () {
  * @param {any} [right=null]  The the righthand child of the TreeElement.
  * @param {any} [prev=null]   The previous element in the BinaryTree.
  */
-structs.BinaryTree.prototype.TreeElement = function (payload = null, parent = null, left = null, right = null) {
+BinaryTree.prototype.TreeElement = function (payload = null, parent = null, left = null, right = null) {
 	this.payload = payload;
 	if ((typeof payload) === "number") {
 		this.weight = payload;
@@ -86,7 +86,7 @@ structs.BinaryTree.prototype.TreeElement = function (payload = null, parent = nu
  * @param {any} value  A TreeElement, or a value to create a new TreeElement with.
  * @returns {TreeElement}  The new TreeElement, or `value` if it is already a TreeElement.
  */
-structs.BinaryTree.prototype.coerceElement = function (value) {
+BinaryTree.prototype.coerceElement = function (value) {
 	return (value instanceof this.TreeElement ? value : new this.TreeElement(value));
 };
 /**
@@ -94,14 +94,14 @@ structs.BinaryTree.prototype.coerceElement = function (value) {
 * Values which are integers will also be used as the weights for their TreeElements.
 * @param {Iterable} iterable  The iterable to populate the BinaryTree with.
 */
-structs.BinaryTree.prototype.fromIterable = function (iterable) {
+BinaryTree.prototype.fromIterable = function (iterable) {
 	if (iterable === null) return;
 	assert.argType(Symbol.iterator in iterable, "iterable", 1);
 	for (var value of iterable[Symbol.iterator]()) {
 		this.add(value);
 	}
 };
-structs.BinaryTree.prototype.findClosestWeight = function (findWeight, startElement = null) {
+BinaryTree.prototype.findClosestWeight = function (findWeight, startElement = null) {
 	if (this.size === 0) {
 		return null;
 	}
@@ -120,20 +120,20 @@ structs.BinaryTree.prototype.findClosestWeight = function (findWeight, startElem
 		return element;
 	}
 };
-structs.BinaryTree.prototype.getMax = function (startElement = null) {
+BinaryTree.prototype.getMax = function (startElement = null) {
 	return this.findClosestWeight(Infinity, startElement);
 };
-structs.BinaryTree.prototype.getMin = function (startElement = null) {
+BinaryTree.prototype.getMin = function (startElement = null) {
 	return this.findClosestWeight(-Infinity, startElement);
 };
-structs.BinaryTree.prototype.findWeight = function (weight, startElement = null) {
+BinaryTree.prototype.findWeight = function (weight, startElement = null) {
 	const foundElement = this.findClosestWeight(weight, startElement);
 	if (foundElement !== null && foundElement.weight === weight) {
 		return foundElement;
 	}
 	return null;
 };
-structs.BinaryTree.prototype.findValue = function (value, startElement = null) {
+BinaryTree.prototype.findValue = function (value, startElement = null) {
 	for (var element of this.dfs(startElement)) {
 		if (value === element.payload) {
 			return element;
@@ -141,13 +141,13 @@ structs.BinaryTree.prototype.findValue = function (value, startElement = null) {
 	}
 	return null;
 };
-structs.BinaryTree.prototype.hasValue = function (value) {
+BinaryTree.prototype.hasValue = function (value) {
 	return this.findValue(value) !== null;
 };
-structs.BinaryTree.prototype.hasWeight = function (weight) {
+BinaryTree.prototype.hasWeight = function (weight) {
 	return this.findWeight(value) !== null;
 };
-structs.BinaryTree.prototype.add = function (element) {
+BinaryTree.prototype.add = function (element) {
 	element = this.coerceElement(element);
 	if (this.root === null) {
 		this.root = element;
@@ -162,7 +162,7 @@ structs.BinaryTree.prototype.add = function (element) {
 	}
 	this.size++;
 };
-structs.BinaryTree.prototype.delete = function (element) {
+BinaryTree.prototype.delete = function (element) {
 	if (this.root === null) {
 		return null;
 	}
@@ -202,7 +202,7 @@ structs.BinaryTree.prototype.delete = function (element) {
 	}
 	return element;
 };
-structs.BinaryTree.prototype.rotate = function (element, direction) {
+BinaryTree.prototype.rotate = function (element, direction) {
 	var dir = direction ? "left" : "right";
 	var oppDir = direction ? "right" : "left";
 	const pivot = element[dir];
@@ -222,29 +222,29 @@ structs.BinaryTree.prototype.rotate = function (element, direction) {
 	pivot[dir] = element;
 	element.parent = pivot;
 };
-structs.BinaryTree.prototype.rotateRight = function (element) {
+BinaryTree.prototype.rotateRight = function (element) {
 	this.rotate(element, true);
 };
-structs.BinaryTree.prototype.rotateright = structs.BinaryTree.prototype.rotateRight;
-structs.BinaryTree.prototype.rotateLeft = function (element) {
+BinaryTree.prototype.rotateright = BinaryTree.prototype.rotateRight;
+BinaryTree.prototype.rotateLeft = function (element) {
 	this.rotate(element, false);
 };
-structs.BinaryTree.prototype.rotateleft = structs.BinaryTree.prototype.rotateLeft;
-structs.RedBlackTree = function () {
-	structs.BinaryTree.call(this);
+BinaryTree.prototype.rotateleft = BinaryTree.prototype.rotateLeft;
+function RedBlackTree() {
+	BinaryTree.call(this);
 };
-structs.RedBlackTree.prototype = Object.create(structs.BinaryTree.prototype);
-structs.RedBlackTree.prototype.TreeElement = function (...args) {
-	structs.BinaryTree.prototype.TreeElement.apply(this, args);
+RedBlackTree.prototype = Object.create(BinaryTree.prototype);
+RedBlackTree.prototype.TreeElement = function (...args) {
+	BinaryTree.prototype.TreeElement.apply(this, args);
 	this.red = true;
 };
-structs.RedBlackTree.prototype.swapColor = function (element1, element2) {
+RedBlackTree.prototype.swapColor = function (element1, element2) {
 	const color1 = element1.red;
 	const color2 = element2.red;
 	element1.red = color2;
 	element2.red = color1;
 };
-structs.RedBlackTree.prototype.validate = function (callbacks) {
+RedBlackTree.prototype.validate = function (callbacks) {
 	if (this.root === null) {
 		return true;
 	}
@@ -259,7 +259,7 @@ structs.RedBlackTree.prototype.validate = function (callbacks) {
 	}
 	return true;
 };
-structs.RedBlackTree.prototype.balance = function (element) {
+RedBlackTree.prototype.balance = function (element) {
 	if (this.size <= 1) {
 		return;
 	}
@@ -287,9 +287,9 @@ structs.RedBlackTree.prototype.balance = function (element) {
 	}
 	this.root.red = true;
 };
-structs.RedBlackTree.prototype.add = function (element) {
+RedBlackTree.prototype.add = function (element) {
 	element = this.coerceElement(element);
-	structs.BinaryTree.prototype.add.call(this, element);
+	BinaryTree.prototype.add.call(this, element);
 	if (this.size > 1 && element.parent.red) {
 		element.red = false;
 	} else {
@@ -297,10 +297,12 @@ structs.RedBlackTree.prototype.add = function (element) {
 	}
 	this.balance(element);
 };
-structs.RedBlackTree.prototype.delete = function (element) {
-	const newRoot = structs.BinaryTree.prototype.delete.call(this, element);
+RedBlackTree.prototype.delete = function (element) {
+	const newRoot = BinaryTree.prototype.delete.call(this, element);
 	if (newRoot !== null) {
 		this.balance(newRoot);
 	}
 	return newRoot;
 };
+module.exports.BinaryTree = BinaryTree;
+module.exports.RedBlackTree = RedBlackTree;
