@@ -1,4 +1,4 @@
-const LinkedList = require("./structs/LinkedList");
+var LinkedList = require("./LinkedList");
 /**
  * CircularDoubleLinkedList - A Doubly Linked Cyclic LinkedList with elements that have `prev` links, and connected head and tail elements.
  * @param {Iterable} [iterable=null]  Optional iterable to populate the new CircularDoubleLinkedList.
@@ -17,6 +17,6 @@ function CircularDoubleLinkedList(iterable = null) {
 };
 CircularDoubleLinkedList.prototype = Object.create(LinkedList.prototype);
 CircularDoubleLinkedList.prototype[Symbol.toStringTag] = "CircularDoubleLinkedList";
-// Adds ListElement to the CircularDoubleLinkedList constructor for convenience.
+// Adds ListElement to the CircularDoubleLinkedList varructor for convenience.
 CircularDoubleLinkedList.ListElement = LinkedList.prototype.ListElement;
 module.exports = CircularDoubleLinkedList;

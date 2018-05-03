@@ -1,4 +1,4 @@
-const BinaryTree = require("./structs/BinaryTree");
+var BinaryTree = require("./BinaryTree");
 function RedBlackTree() {
 	BinaryTree.call(this);
 };
@@ -8,8 +8,8 @@ RedBlackTree.prototype.TreeElement = function (...args) {
 	this.red = true;
 };
 RedBlackTree.prototype.swapColor = function (element1, element2) {
-	const color1 = element1.red;
-	const color2 = element2.red;
+	var color1 = element1.red;
+	var color2 = element2.red;
 	element1.red = color2;
 	element2.red = color1;
 };
@@ -38,8 +38,8 @@ RedBlackTree.prototype.balance = function (element) {
 		if (grandParent === null) {
 			return;
 		}
-		const dir = parent === grandParent.left ? "right" : "left";
-		const oppDir = dir === "right" ? "left" : "right";
+		var dir = parent === grandParent.left ? "right" : "left";
+		var oppDir = dir === "right" ? "left" : "right";
 		if (grandParent[dir] !== null && grandParent[dir].red) {
 			grandParent.red = true;
 			parent.red = false;
@@ -67,7 +67,7 @@ RedBlackTree.prototype.add = function (element) {
 	this.balance(element);
 };
 RedBlackTree.prototype.delete = function (element) {
-	const newRoot = BinaryTree.prototype.delete.call(this, element);
+	var newRoot = BinaryTree.prototype.delete.call(this, element);
 	if (newRoot !== null) {
 		this.balance(newRoot);
 	}

@@ -1,7 +1,7 @@
-const utils = require("./utils");
-const searchIterator = require("./searchIterator");
-const structs = require("./structs");
-const strategies = {};
+var utils = require("./utils");
+var searchIterator = require("./searchIterator");
+var structs = require("./structs");
+var strategies = {};
 /**
 * runCallback - Executes `state.parameters.callback` and returns whatever the callback does.
 * @param {Object} state  A reference to the state flyweight yielded by `searchIterator`.
@@ -32,14 +32,14 @@ strategies.clone = {
 			if (state.currentValue instanceof RegExp) {
 				// Clone a Regular Expression
 				var flags = "";
-				if (supportedRegExpProps.flags) {
+				if (utils.supportedRegExpProps.flags) {
 					flags = state.currentValue.flags;
 				} else {
 					if (state.currentValue.global) flags += "g";
 					if (state.currentValue.ignorecase) flags += "i";
 					if (state.currentValue.multiline) flags += "m";
-					if (supportedRegExpProps.sticky && state.currentValue.sticky) flags += "y";
-					if (supportedRegExpProps.unicode && state.currentValue.unicode) flags += "u";
+					if (utils.supportedRegExpProps.sticky && state.currentValue.sticky) flags += "y";
+					if (utils.supportedRegExpProps.unicode && state.currentValue.unicode) flags += "u";
 				}
 				state.tuple.clone[state.accessor] = new RegExp(state.currentValue.source, flags);
 			} else {
@@ -92,9 +92,9 @@ strategies.diff = {
 					|| subjectProp.ignoreCase !== compareProp.ignoreCase
 					|| subjectProp.global !== compareProp.global
 					|| subjectProp.multiline !== compareProp.multiline
-					|| (supportedRegExpProps.sticky && subjectProp.sticky !== compareProp.sticky)
-					|| (supportedRegExpProps.unicode && subjectProp.unicode !== compareProp.unicode)
-					|| (supportedRegExpProps.flags && subjectProp.flags !== compareProp.flags)
+					|| (utils.supportedRegExpProps.sticky && subjectProp.sticky !== compareProp.sticky)
+					|| (utils.supportedRegExpProps.unicode && subjectProp.unicode !== compareProp.unicode)
+					|| (utils.supportedRegExpProps.flags && subjectProp.flags !== compareProp.flags)
 				) {
 					return true;
 				}
@@ -593,7 +593,5 @@ strategies.filter = {
 		return state.cloneRoot;
 	}
 };
-// Automatically Reveal Strategy Interfaces
-for (const name in strategies) {
-	module.exports[name] = strategies[name].interface;
-}
+
+module.exports = strategies;

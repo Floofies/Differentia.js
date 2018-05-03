@@ -28,13 +28,21 @@
     "url": "https://github.com/Floofies/Differentia.js/issues"
   },
   "devDependencies": {
-    "jasmine": "^2.8.0",
+    "browserify": "^16.2.0",
+    "jasmine": "^2.99.0",
     "uglify-es": "github:mishoo/UglifyJS2#harmony"
   },
   "scripts": {
-    "test": "jasmine spec/Spec.js"
+    "build": "browserify ./src/index.js -o ./dist/differentia.js -s differentia",
+    "minify": "uglifyjs ./dist/differentia.js -o ./dist/differentia.js",
+    "build:prod": "npm run build && npm run minify",
+    "test": "npm run build:prod && jasmine",
+    "prepublish": "npm test"
   },
   "main": "dist/differentia.js",
   "author": "Dani Glore",
+  "contributors": [
+    "Muthu Kumar @MKRhere"
+  ],
   "license": "MIT"
 }

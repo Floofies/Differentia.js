@@ -1,4 +1,4 @@
-const LinkedList = require("./structs/LinkedList");
+var LinkedList = require("./LinkedList");
 /**
  * CircularLinkedList - A Cyclic LinkedList with connected head and tail elements.
  * @param {Iterable} [iterable=null]  Optional iterable to populate the new CircularLinkedList.
@@ -16,6 +16,6 @@ function CircularLinkedList(iterable = null) {
 };
 CircularLinkedList.prototype = Object.create(LinkedList.prototype);
 CircularLinkedList.prototype[Symbol.toStringTag] = "CircularLinkedList";
-// Adds ListElement to the CircularLinkedList constructor for convenience.
+// Adds ListElement to the CircularLinkedList varructor for convenience.
 CircularLinkedList.ListElement = LinkedList.prototype.ListElement;
 module.exports = CircularLinkedList;

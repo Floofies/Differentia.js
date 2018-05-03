@@ -26,7 +26,7 @@ OffsetArray.prototype.item = function (index) {
 * @returns {Number}  The new length of the view.
 */
 OffsetArray.prototype.set = function (index, value) {
-	const newIndex = this.index0 + Number(index);
+	var newIndex = this.index0 + Number(index);
 	if (newIndex >= this.length) {
 		this.length = newIndex + 1;
 	}
@@ -86,6 +86,7 @@ function Stack(iterable = null) {
 	this.take = OffsetArray.prototype.pop;
 };
 Stack.prototype = OffsetArray.prototype;
+
 module.exports.OffsetArray = OffsetArray;
 module.exports.Queue = Queue;
 module.exports.Stack = Stack;

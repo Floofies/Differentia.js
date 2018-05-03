@@ -1,5 +1,5 @@
 if (typeof require !== "undefined") {
-	var differentia = require('../prod-build/dist/differentia.js');
+	var differentia = require('../dist/differentia');
 }
 
 describe("differentia", function () {

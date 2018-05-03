@@ -1,5 +1,5 @@
 // Checks if certain RegExp props are supported.
-const supportedRegExpProps = {
+var supportedRegExpProps = {
 	sticky: "sticky" in RegExp.prototype,
 	unicode: "unicode" in RegExp.prototype,
 	flags: "flags" in RegExp.prototype
@@ -97,5 +97,4 @@ module.exports = {
 	isPrimitive,
 	createContainer,
 	getContainerLength,
-	runCallback
 };

@@ -1,5 +1,5 @@
-const utils = require("./utils");
-const structs = require("./structs");
+var utils = require("./utils");
+var structs = require("./structs");
 /**
 * searchIterator - An adaptable graph search algorithm
 *  Returns an Iterator usable with `next()`.
@@ -157,7 +157,7 @@ searchIterator.runStrategy = function (strategy, searchAlg, parameters) {
 	utils.assert.object(parameters, 3);
 	utils.assert.props(parameters, ["subject", "search"], 3);
 	// Initialize search algorithm.
-	const iterator = searchAlg(parameters.subject, parameters.search);
+	var iterator = searchAlg(parameters.subject, parameters.search);
 	var iteration = iterator.next();
 	var state = iteration.value;
 	// Save parameters in a prop the strategy can see

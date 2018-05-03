@@ -1,3 +1,4 @@
+var utils = require('../utils');
 /**
  * LinkedList - Linear Acyclic Linked List
  * @param {Iterable} [iterable=null]  Optional iterable to populate the new LinkedList.
@@ -35,7 +36,7 @@ LinkedList.prototype.ListElement = function (payload = null, next = null, prev =
 	this.next = next;
 	this.prev = prev;
 };
-// Adds ListElement to the LinkedList constructor for convenience.
+// Adds ListElement to the LinkedList varructor for convenience.
 LinkedList.ListElement = LinkedList.prototype.ListElement;
 /**
  * fromElement - Copies the payload of a ListElement into the callee ListElement.
@@ -58,9 +59,9 @@ LinkedList.prototype.coerceElement = function (value) {
  */
 LinkedList.prototype.fromIterable = function (iterable) {
 	if (iterable === null) return;
-	assert.argType((typeof iterable === "object") && Symbol.iterator in iterable, "iterable", 1);
+	utils.assert.argType((typeof iterable === "object") && Symbol.iterator in iterable, "iterable", 1);
 	var lastElement = this.head;
-	for (const value of iterable) {
+	for (var value of iterable) {
 		lastElement = this.insertAfter(lastElement, value);
 	}
 };
@@ -69,14 +70,14 @@ LinkedList.prototype.fromIterable = function (iterable) {
 * @returns {GeneratorObject}  Returns a ListElement for every call to `next()`.
 */
 LinkedList.prototype.elements = function* () {
-	for (const element of this) yield element;
+	for (var element of this) yield element;
 }
 /**
 * values - An iterator which yields the value of each ListElement.
 * @returns {GeneratorObject}  Returns the value of a ListElement for every call to `next()`.
 */
 LinkedList.prototype.values = function* () {
-	for (const element of this) yield element.payload;
+	for (var element of this) yield element.payload;
 };
 /**
 * forEach - Calls `callback` with the value of each ListElement.
@@ -87,9 +88,9 @@ LinkedList.prototype.values = function* () {
 		* @param {LinkedList} list	The target LinkedList.
 */
 LinkedList.prototype.forEach = function (callback) {
-	assert.function(callback, 1);
+	utils.assert.function(callback, 1);
 	var index = 0;
-	for (const value of this.values()) {
+	for (var value of this.values()) {
 		callback(value, index, this);
 		if (index > this.length) break;
 		index++;
@@ -101,10 +102,10 @@ LinkedList.prototype.forEach = function (callback) {
  * @returns {(ListElement|null)}  The found ListElement, or `null` if it was not found.
  */
 LinkedList.prototype.item = function (index) {
-	assert.number(index, 1);
+	utils.assert.number(index, 1);
 	if (this.size === 0 || index <= -1 || index + 1 > this.size) return null;
 	var loc = 0;
-	for (const element of this) {
+	for (var element of this) {
 		if (loc === index) return element;
 		loc++;
 	}
@@ -116,7 +117,7 @@ LinkedList.prototype.item = function (index) {
  * @returns {(ListElement|null)}  The found ListElement, or `null` if it was not found.
  */
 LinkedList.prototype.find = function (value) {
-	for (const element of this) {
+	for (var element of this) {
 		if (element.payload === value) return element;
 		if (element.next === this.tail) return null;
 	}
@@ -136,10 +137,10 @@ LinkedList.prototype.includes = function (value) {
  * @returns {(ListElement|null)}  The found ListElement, or `null` if it was not found.
  */
 LinkedList.prototype.getPrev = function (element) {
-	assert.argType(element instanceof this.ListElement, "ListElement", 1);
+	utils.assert.argType(element instanceof this.ListElement, "ListElement", 1);
 	if (element.parent !== this) return null;
 	if (this.double) return element.prev;
-	for (const node of this[Symbol.iterator](true)) {
+	for (var node of this[Symbol.iterator](true)) {
 		if (node.next === element) return node;
 	}
 	return null;
@@ -159,16 +160,16 @@ LinkedList.prototype.last = function () {
  */
 LinkedList.prototype.clear = function () {
 	if (this.size === 0) return;
-	for (const element of this.elements()) this.remove(element);
+	for (var element of this.elements()) this.remove(element);
 };
 /**
  * concat - Concatenates multiple LinkedLists into the callee LinkedList.
  * @param {Array} joinLists  An argument list of LinkedLists to concatenate.
  */
 LinkedList.prototype.concat = function (...joinLists) {
-	assert.argType(joinLists.every(v => v instanceof LinkedList), "LinkedList(s)", "list");
-	for (const list of joinLists) {
-		for (const element of list.elements()) this.append(element.payload);
+	utils.assert.argType(joinLists.every(v => v instanceof LinkedList), "LinkedList(s)", "list");
+	for (var list of joinLists) {
+		for (var element of list.elements()) this.append(element.payload);
 	}
 };
 /**
@@ -177,9 +178,9 @@ LinkedList.prototype.concat = function (...joinLists) {
  * @returns {(ListElement|null)}  The removed ListElement, or `null` if it was not found.
  */
 LinkedList.prototype.remove = function (element) {
-	assert.argType(element instanceof this.ListElement, "ListElement", 1);
+	utils.assert.argType(element instanceof this.ListElement, "ListElement", 1);
 	if (element.parent !== this) return null;
-	const prevElement = this.getPrev(element);
+	var prevElement = this.getPrev(element);
 	if (prevElement === null) return null;
 	prevElement.next = element.next;
 	if (this.double) element.next.prev = prevElement;
@@ -196,7 +197,7 @@ LinkedList.prototype.remove = function (element) {
  * @returns {(ListElement|null)}    The newly inserted ListElement, or `null` if the target element was not found.
  */
 LinkedList.prototype.insertAfter = function (element, newElement) {
-	assert.argType(element instanceof this.ListElement, "ListElement", 1);
+	utils.assert.argType(element instanceof this.ListElement, "ListElement", 1);
 	if (element.parent !== this) return null;
 	newElement = this.coerceElement(newElement);
 	newElement.next = element.next;
@@ -216,10 +217,10 @@ LinkedList.prototype.insertAfter = function (element, newElement) {
  * @returns {(ListElement|null)}          The newly inserted ListElement, or `null` if the target element was not found.
  */
 LinkedList.prototype.insertBefore = function (element, newElement) {
-	assert.argType(element instanceof this.ListElement, "ListElement", 1);
+	utils.assert.argType(element instanceof this.ListElement, "ListElement", 1);
 	if (element.parent !== this) return null;
 	newElement = this.coerceElement(newElement);
-	const prevElement = this.getPrev(element);
+	var prevElement = this.getPrev(element);
 	if (prevElement === null) return null;
 	this.insertAfter(prevElement, newElement);
 	return newElement;

@@ -1,4 +1,4 @@
-const LinkedList = require("./structs/LinkedList");
+var LinkedList = require("./LinkedList");
 /**
  * DoubleLinkedList - A Doubly Linked Acyclic LinkedList with elements that have `prev` links.
  * @param {Iterable} [iterable=null]  Optional iterable to populate the new DoubleLinkedList.
@@ -16,6 +16,6 @@ function DoubleLinkedList(iterable = null) {
 };
 DoubleLinkedList.prototype = Object.create(LinkedList.prototype);
 DoubleLinkedList.prototype[Symbol.toStringTag] = "DoubleLinkedList";
-// Adds ListElement to the DoubleLinkedList constructor for convenience.
+// Adds ListElement to the DoubleLinkedList varructor for convenience.
 DoubleLinkedList.ListElement = LinkedList.prototype.ListElement;
 module.exports = DoubleLinkedList;

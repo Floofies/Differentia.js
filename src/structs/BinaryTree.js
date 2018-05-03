@@ -1,3 +1,4 @@
+var utils = require('../utils');
 /**
  * BinaryTree - Order-2 Binary Tree, stores nodes by integer weight.
  * @param {Iterable} [iterable=null]  Optional iterable to populate the new BinaryTree.
@@ -10,7 +11,7 @@ function BinaryTree(iterable = null) {
 	}
 };
 BinaryTree.prototype[Symbol.iterator] = function* (bfs = false, startElement = null) {
-	const targets = [startElement !== null ? startElement : this.root];
+	var targets = [startElement !== null ? startElement : this.root];
 	var getMethod = bfs ? "shift" : "pop";
 	var element;
 	while (this.size > 0 && targets.length > 0) {
@@ -53,7 +54,7 @@ BinaryTree.prototype.dfs = function (startElement = null) {
 	* @param {TreeElement}  element
 */
 BinaryTree.prototype.forEach = function (callback) {
-	for (const element of this.values()) {
+	for (var element of this.values()) {
 		callback(element);
 	}
 };
@@ -61,7 +62,7 @@ BinaryTree.prototype.forEach = function (callback) {
  * clear - Removes all elements from the BinaryTree.
  */
 BinaryTree.prototype.clear = function () {
-	this.constructor();
+	this.varructor();
 };
 /**
  * TreeElement - BinaryTree Element
@@ -96,7 +97,7 @@ BinaryTree.prototype.coerceElement = function (value) {
 */
 BinaryTree.prototype.fromIterable = function (iterable) {
 	if (iterable === null) return;
-	assert.argType(Symbol.iterator in iterable, "iterable", 1);
+	utils.assert.argType(Symbol.iterator in iterable, "iterable", 1);
 	for (var value of iterable[Symbol.iterator]()) {
 		this.add(value);
 	}
@@ -127,7 +128,7 @@ BinaryTree.prototype.getMin = function (startElement = null) {
 	return this.findClosestWeight(-Infinity, startElement);
 };
 BinaryTree.prototype.findWeight = function (weight, startElement = null) {
-	const foundElement = this.findClosestWeight(weight, startElement);
+	var foundElement = this.findClosestWeight(weight, startElement);
 	if (foundElement !== null && foundElement.weight === weight) {
 		return foundElement;
 	}
@@ -152,7 +153,7 @@ BinaryTree.prototype.add = function (element) {
 	if (this.root === null) {
 		this.root = element;
 	} else {
-		const closestElement = this.findClosestWeight(element.weight);
+		var closestElement = this.findClosestWeight(element.weight);
 		element.parent = closestElement;
 		if (element.weight >= closestElement.weight) {
 			closestElement.right = element;
@@ -205,7 +206,7 @@ BinaryTree.prototype.delete = function (element) {
 BinaryTree.prototype.rotate = function (element, direction) {
 	var dir = direction ? "left" : "right";
 	var oppDir = direction ? "right" : "left";
-	const pivot = element[dir];
+	var pivot = element[dir];
 	element[dir] = pivot[oppDir];
 	if (element[dir] !== null) {
 		element[dir].parent = element;
