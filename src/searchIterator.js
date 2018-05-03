@@ -197,4 +197,4 @@ searchIterator.runStrategy = function (strategy, searchAlg, parameters) {
 	}
 	return returnValue;
 }
-module.exports.searchIterator = searchIterator;
+module.exports = searchIterator;
