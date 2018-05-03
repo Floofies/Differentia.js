@@ -1,5 +1,15 @@
 const utils = require("./utils");
+const searchIterator = require("./searchIterator");
+const structs = require("./structs");
 const strategies = {};
+/**
+* runCallback - Executes `state.parameters.callback` and returns whatever the callback does.
+* @param {Object} state  A reference to the state flyweight yielded by `searchIterator`.
+* @returns {any}
+*/
+function runCallback(state) {
+	return state.parameters.callback(state.currentValue, state.accessor, state.tuple.subject);
+}
 /**
 * clone - Creates a deep clone of `subject`.
 * @param  {(Object|Array)} subject               The Object/Array to clone.
@@ -200,7 +210,7 @@ strategies.forEach = {
 			callback: callback
 		});
 	},
-	main: (state) => utils.runCallback(state)
+	main: (state) => runCallback(state)
 };
 /**
 * find - Returns a value if it passes the test, otherwise returns `undefined`.
@@ -223,7 +233,7 @@ strategies.find = {
 		});
 	},
 	main: function (state) {
-		if (utils.runCllback(state)) {
+		if (runCallback(state)) {
 			return state.currentValue;
 		}
 	}
@@ -249,7 +259,7 @@ strategies.some = {
 		});
 	},
 	main: function (state) {
-		if (utils.runCllback(state)) {
+		if (runCallback(state)) {
 			return true;
 		}
 		if (state.isLast) {
@@ -278,7 +288,7 @@ strategies.every = {
 		});
 	},
 	main: function (state) {
-		if (!utils.runCllback(state)) {
+		if (!runCallback(state)) {
 			return false;
 		}
 		if (state.isLast) {
@@ -311,7 +321,7 @@ strategies.map = {
 		if (state.isContainer) {
 			strategies.clone.main(state);
 		} else {
-			state.tuple.clone[state.accessor] = utils.runCllback(state);
+			state.tuple.clone[state.accessor] = runCallback(state);
 		}
 	},
 	done: function (state) {
@@ -540,7 +550,7 @@ strategies.filter = {
 	},
 	main: function (state) {
 		strategies.paths.main(state);
-		if (!state.isContainer && utils.runCllback(state)) {
+		if (!state.isContainer && runCallback(state)) {
 			if (state.isSecond) {
 				state.pendingPaths.push([]);
 			} else if (!state.isFirst) {
