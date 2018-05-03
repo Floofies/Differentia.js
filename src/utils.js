@@ -89,14 +89,6 @@ function getContainerLength(input) {
 	}
 	throw new TypeError("The given parameter must be an Object or Array");
 }
-/**
-* runCallback - Executes `state.parameters.callback` and returns whatever the callback does.
-* @param {Object} state  A reference to the state flyweight yielded by `searchIterator`.
-* @returns {any}
-*/
-function runCallback(state) {
-	return state.parameters.callback(state.currentValue, state.accessor, state.tuple.subject);
-}
 module.exports = {
 	supportedRegExpProps,
 	assert,
