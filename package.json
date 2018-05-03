@@ -36,7 +36,7 @@
     "build": "browserify ./src/index.js -o ./dist/differentia.js -s differentia",
     "minify": "uglifyjs ./dist/differentia.js -o ./dist/differentia.js",
     "build:prod": "npm run build && npm run minify",
-    "test": "npm run build && jasmine",
+    "test": "npm run build:prod && jasmine",
     "prepublish": "npm run build:prod && npm test"
   },
   "main": "dist/differentia.js",
