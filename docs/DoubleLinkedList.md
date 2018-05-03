@@ -8,6 +8,8 @@ new CircularDoubleLinkedList( [ iterable = null ] );
 
 > Uses [ListElement](http://differentia.io/?p=ListElement) to represent the list structure.
 
+> Refer to the [LinkedList](http://differentia.io/?p=LinkedList) documentation for member methods & properties.
+
 Circular Doubly Linked List. Elements have references to previous elements, making some operations faster.
 
 ## Constructor Parameters
@@ -34,10 +36,8 @@ var seven = list.unshift(7);
 // Moves "7" to the end of the list.
 list.pushBack(seven);
 
-// Repeatedly logs 1, 2, 3, 4, 5, 6, and 7.
+// Logs 1, 2, 3, 4, 5, 6, and 7.
 for (const element of list) {
 	console.log(element.payload);
 }
 ```
-
-> Refer to the [LinkedList](http://differentia.io/?p=LinkedList) documentation for member methods & properties.
