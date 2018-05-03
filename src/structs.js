@@ -1,6 +1,15 @@
-var BinaryTree = require('./structs/BinaryTree');
-var LinkedList = require('./structs/LinkedList');
-var OffsetArray = require('./structs/OffsetArray');
+var OffsetArrayStruct = require('./structs/OffsetArray');
 
-var structs = Object.assign({}, BinaryTree, LinkedList, OffsetArray);
-module.exports = structs;
+module.exports = {
+	ArrayList: require('./structs/ArrayList'),
+	BinaryTree: require('./structs/BinaryTree'),
+	CircularDoubleLinkedList: require('./structs/CircularDoubleLinkedList'),
+	CircularLinkedList: require('./structs/CircularLinkedList'),
+	DoubleLinkedList: require('./structs/DoubleLinkedList'),
+	LinkedList: require('./structs/LinkedList'),
+	RedBlackTree: require('./structs/RedBlackTree'),
+};
+
+module.exports.OffsetArray = OffsetArrayStruct.OffsetArray;
+module.exports.Queue = OffsetArrayStruct.Queue
+module.exports.Stack = OffsetArrayStruct.Stack

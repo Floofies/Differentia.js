@@ -1,10 +1,8 @@
-var structs = {};
-
 /**
 * OffsetArray - An Array wrapper which maintains an offset view of an Array.
 * @param {Iterable} [iterable = null]  A source iterable to populate the Array with.
 */
-structs.OffsetArray = function (iterable = null) {
+function OffsetArray(iterable = null) {
 	if (iterable !== null) {
 		this.array = Array.from(iterable);
 	} else {
@@ -18,7 +16,7 @@ structs.OffsetArray = function (iterable = null) {
 * @param {Number} index
 * @returns {any}
 */
-structs.OffsetArray.prototype.item = function (index) {
+OffsetArray.prototype.item = function (index) {
 	return this.array[this.index0 + Number(index)];
 };
 /**
@@ -27,8 +25,8 @@ structs.OffsetArray.prototype.item = function (index) {
 * @param {any} value
 * @returns {Number}  The new length of the view.
 */
-structs.OffsetArray.prototype.set = function (index, value) {
-	const newIndex = this.index0 + Number(index);
+OffsetArray.prototype.set = function (index, value) {
+	var newIndex = this.index0 + Number(index);
 	if (newIndex >= this.length) {
 		this.length = newIndex + 1;
 	}
@@ -40,7 +38,7 @@ structs.OffsetArray.prototype.set = function (index, value) {
 *  If the view is empty, it will return `undefined`.
 * @returns {any}
 */
-structs.OffsetArray.prototype.shift = function () {
+OffsetArray.prototype.shift = function () {
 	if (this.length !== 0) {
 		this.length--;
 		this.index0++;
@@ -54,7 +52,7 @@ structs.OffsetArray.prototype.shift = function () {
 *  If the view is empty, it will return `undefined`.
 * @returns {any}
 */
-structs.OffsetArray.prototype.pop = function () {
+OffsetArray.prototype.pop = function () {
 	if (this.length !== 0) {
 		this.length--;
 		return this.array[this.index0 + this.length];
@@ -66,7 +64,7 @@ structs.OffsetArray.prototype.pop = function () {
 *  Returns the new length of the view.
 * @param {any} value
 */
-structs.OffsetArray.prototype.push = function (value) {
+OffsetArray.prototype.push = function (value) {
 	this.array[this.index0 + this.length] = value;
 	return ++this.length;
 };
@@ -74,19 +72,21 @@ structs.OffsetArray.prototype.push = function (value) {
 * Queue - Wraps OffsetArray, providing `OffsetArray.prototype.shift` as a `take` property.
 * @param {Iterable} [iterable = null]  A source iterable to populate the Array with.
 */
-structs.Queue = function (iterable = null) {
-	structs.OffsetArray.call(this, iterable);
-	this.take = structs.OffsetArray.prototype.shift;
+function Queue(iterable = null) {
+	OffsetArray.call(this, iterable);
+	this.take = OffsetArray.prototype.shift;
 };
-structs.Queue.prototype = structs.OffsetArray.prototype;
+Queue.prototype = OffsetArray.prototype;
 /**
 * Stack - Wraps OffsetArray, providing `OffsetArray.prototype.pop` as a `take` property.
 * @param {Iterable} [iterable = null]  A source iterable to populate the Array with.
 */
-structs.Stack = function (iterable = null) {
-	structs.OffsetArray.call(this, iterable);
-	this.take = structs.OffsetArray.prototype.pop;
+function Stack(iterable = null) {
+	OffsetArray.call(this, iterable);
+	this.take = OffsetArray.prototype.pop;
 };
-structs.Stack.prototype = structs.OffsetArray.prototype;
+Stack.prototype = OffsetArray.prototype;
 
-module.exports = structs;
+module.exports.OffsetArray = OffsetArray;
+module.exports.Queue = Queue;
+module.exports.Stack = Stack;
