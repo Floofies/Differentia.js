@@ -4,15 +4,16 @@
  * https://github.com/Floofies/Differentia.js
  */
 
-var core = require('./core');
+var searchIterator = require('./searchIterator');
+var utils = require('./utils');
 var strategies = require('./strategies');
 var structs = require('./structs');
 
 var differentia = {
-	dfs: core.dfs,
-	bfs: core.bfs,
-	getContainerLength: core.getContainerLength,
-	isContainer: core.isContainer
+	dfs: searchIterator.dfs,
+	bfs: searchIterator.bfs,
+	getContainerLength: utils.getContainerLength,
+	isContainer: utils.isContainer
 };
 
 // Automatically Reveal Strategy Interfaces
