@@ -1,4 +1,4 @@
-var utils = require('../utils');
+const utils = require('../utils');
 /**
  * BinaryTree - Order-2 Binary Tree, stores nodes by integer weight.
  * @param {Iterable} [iterable=null]  Optional iterable to populate the new BinaryTree.

@@ -26,7 +26,7 @@ OffsetArray.prototype.item = function (index) {
 * @returns {Number}  The new length of the view.
 */
 OffsetArray.prototype.set = function (index, value) {
-	var newIndex = this.index0 + Number(index);
+	const newIndex = this.index0 + Number(index);
 	if (newIndex >= this.length) {
 		this.length = newIndex + 1;
 	}

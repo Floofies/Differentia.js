@@ -1,17 +1,17 @@
-var DoubleLinkedList = require('./DoubleLinkedList');
+const DoubleLinkedList = require('./DoubleLinkedList');
 /**
  * ArrayList - A Doubly Linked Acyclic LinkedList with an Array-like interface.
  * @param {Iterable} [iterable=null]  Optional iterable to populate the new ArrayList.
  */
 function ArrayList(iterable = null) {
-	var list = new DoubleLinkedList(iterable);
-	var proxy = new Proxy(list, list.handler);
+	const list = new DoubleLinkedList(iterable);
+	const proxy = new Proxy(list, list.handler);
 	return proxy;
 };
 ArrayList.prototype = Object.create(DoubleLinkedList.prototype);
-var numberRegex = /^\d+$/;
+const numberRegex = /^\d+$/;
 ArrayList.prototype.acc = function (accessor, handler) {
-	var isSymbol = typeof accessor === "symbol";
+	const isSymbol = typeof accessor === "symbol";
 	if (!isSymbol) {
 		var int = parseInt(accessor, 10);
 	}

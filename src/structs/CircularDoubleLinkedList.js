@@ -1,4 +1,4 @@
-var LinkedList = require("./LinkedList");
+const LinkedList = require("./LinkedList");
 /**
  * CircularDoubleLinkedList - A Doubly Linked Cyclic LinkedList with elements that have `prev` links, and connected head and tail elements.
  * @param {Iterable} [iterable=null]  Optional iterable to populate the new CircularDoubleLinkedList.

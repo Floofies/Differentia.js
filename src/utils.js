@@ -1,5 +1,5 @@
 // Checks if certain RegExp props are supported.
-var supportedRegExpProps = {
+const supportedRegExpProps = {
 	sticky: "sticky" in RegExp.prototype,
 	unicode: "unicode" in RegExp.prototype,
 	flags: "flags" in RegExp.prototype
@@ -22,7 +22,7 @@ function assert(boolean, message, errorType = null) {
 }
 // Thunks to `assert` for method argument type checking.
 assert.props = function (input, props, argName) {
-	for (var prop of props[Symbol.iterator]()) {
+	for (const prop of props[Symbol.iterator]()) {
 		assert(prop in input, "Argument " + argName + " must have a \"" + prop + "\" property.", TypeError);
 	}
 };
@@ -55,7 +55,7 @@ function isObject(input) {
 * @param {any} input
 * @returns {Boolean}
 */
-var primitives = ["string", "boolean", "number", "symbol"];
+const primitives = ["string", "boolean", "number", "symbol"];
 function isPrimitive(input) {
 	return input === null || primitives.includes(typeof input);
 }

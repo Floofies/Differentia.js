@@ -1,5 +1,5 @@
-var utils = require("./utils");
-var structs = require("./structs");
+const utils = require("./utils");
+const structs = require("./structs");
 /**
 * searchIterator - An adaptable graph search algorithm
 *  Returns an Iterator usable with `next()`.
@@ -11,7 +11,7 @@ var structs = require("./structs");
 function* searchIterator(subject, targetTuples, search = null) {
 	utils.assert.container(subject, 1);
 	utils.assert.argType(search === null || (utils.isContainer(search) && utils.getContainerLength(search) > 0), "a non-empty Object or Array", 2);
-	var state = searchIterator.createIterationState();
+	const state = searchIterator.createIterationState();
 	if (search === null) {
 		search = subject;
 	}
@@ -21,7 +21,7 @@ function* searchIterator(subject, targetTuples, search = null) {
 	state.subjectRoot = subject;
 	state.searchRoot = search;
 	// Unique Node Map
-	var nodeMap = new Map();
+	const nodeMap = new Map();
 	// Add Root Tuple to Stack
 	state.targetTuples = targetTuples;
 	state.targetTuples.push({
@@ -73,9 +73,9 @@ function* searchIterator(subject, targetTuples, search = null) {
 				continue _iterate;
 			}
 			// Node has not been seen before, so traverse it
-			var nextTuple = {};
+			const nextTuple = {};
 			// Travese the Tuple's properties
-			for (var unit in state.tuple) {
+			for (const unit in state.tuple) {
 				if (
 					(
 						unit === "search"
@@ -157,9 +157,9 @@ searchIterator.runStrategy = function (strategy, searchAlg, parameters) {
 	utils.assert.object(parameters, 3);
 	utils.assert.props(parameters, ["subject", "search"], 3);
 	// Initialize search algorithm.
-	var iterator = searchAlg(parameters.subject, parameters.search);
+	const iterator = searchAlg(parameters.subject, parameters.search);
 	var iteration = iterator.next();
-	var state = iteration.value;
+	const state = iteration.value;
 	// Save parameters in a prop the strategy can see
 	state.parameters = parameters;
 	try {
@@ -169,7 +169,6 @@ searchIterator.runStrategy = function (strategy, searchAlg, parameters) {
 		}
 		var returnValue;
 		while (!iteration.done) {
-			state = iteration.value;
 			// Run `main` on every element
 			returnValue = strategy.main(state);
 			if (returnValue !== undefined) {

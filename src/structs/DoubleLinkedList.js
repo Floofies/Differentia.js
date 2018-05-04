@@ -1,4 +1,4 @@
-var LinkedList = require("./LinkedList");
+const LinkedList = require("./LinkedList");
 /**
  * DoubleLinkedList - A Doubly Linked Acyclic LinkedList with elements that have `prev` links.
  * @param {Iterable} [iterable=null]  Optional iterable to populate the new DoubleLinkedList.

@@ -1,7 +1,7 @@
-var utils = require("./utils");
-var searchIterator = require("./searchIterator");
-var structs = require("./structs");
-var strategies = {};
+const utils = require("./utils");
+const searchIterator = require("./searchIterator");
+const structs = require("./structs");
+const strategies = {};
 /**
 * runCallback - Executes `state.parameters.callback` and returns whatever the callback does.
 * @param {Object} state  A reference to the state flyweight yielded by `searchIterator`.
@@ -83,8 +83,8 @@ strategies.diff = {
 		if (!("compare" in state.tuple) && !utils.isContainer(state.tuple.compare) || !(state.accessor in state.tuple.compare)) {
 			return true;
 		}
-		var subjectProp = state.currentValue;
-		var compareProp = state.tuple.compare[state.accessor];
+		const subjectProp = state.currentValue;
+		const compareProp = state.tuple.compare[state.accessor];
 		if (((state.noIndex && state.isContainer) || utils.isContainer(subjectProp)) && utils.isContainer(compareProp)) {
 			if (subjectProp instanceof RegExp && compareProp instanceof RegExp) {
 				if (
@@ -102,14 +102,10 @@ strategies.diff = {
 				// Object index/property count does not match, they are different.
 				return true;
 			}
-		} else if (Number.isNaN(subjectProp) !== Number.isNaN(compareProp)) {
-			return true;
-		} else if (subjectProp !== compareProp) {
-			return true;
 		}
-		if (state.isLast) {
-			return false;
-		}
+		if (Number.isNaN(subjectProp) !== Number.isNaN(compareProp)) return true;
+		if (subjectProp !== compareProp) return true;
+		if (state.isLast) return false;
 	}
 };
 /**
@@ -362,12 +358,12 @@ strategies.nodePaths = {
 			state.additions--;
 		}
 		if (state.traverse) {
-			var newPath = Array.from(state.currentPath);
+			const newPath = Array.from(state.currentPath);
 			newPath.push(state.accessor);
 			state.nodePaths.push(newPath);
 			state.additions++;
 		} else if (state.isContainer && state.existing !== null) {
-			var newPath = Array.from(state.currentPath);
+			const newPath = Array.from(state.currentPath);
 			newPath.push(state.accessor);
 			state.nonTraversedNodePaths.push(newPath);
 		}
@@ -564,15 +560,15 @@ strategies.filter = {
 			return state.cloneRoot;
 		}
 		while (state.pendingPaths.length > 0) {
-			var path = state.pendingPaths.shift();
-			var nodeQueue = new structs.Queue();
+			const path = state.pendingPaths.shift();
+			const nodeQueue = new structs.Queue();
 			nodeQueue.push({
 				subject: state.subjectRoot,
 				clone: state.cloneRoot
 			});
 			while (nodeQueue.length > 0) {
-				var accessor = path.shift();
-				var tuple = nodeQueue.shift();
+				const accessor = path.shift();
+				const tuple = nodeQueue.shift();
 				if (!(accessor in tuple.clone)) {
 					if (path.length === 0) {
 						tuple.clone[accessor] = tuple.subject[accessor];
@@ -583,8 +579,8 @@ strategies.filter = {
 				if (path.length === 0) {
 					continue;
 				}
-				var nextTuple = {};
-				for (var unit in tuple) {
+				const nextTuple = {};
+				for (const unit in tuple) {
 					nextTuple[unit] = tuple[unit][accessor];
 				}
 				nodeQueue.push(nextTuple);
