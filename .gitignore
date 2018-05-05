@@ -28,5 +28,6 @@ Temporary Items
 .apdisk
 
 # Ignore built files and node_modules
-dist
+prod-build
+dev-build
 node_modules
