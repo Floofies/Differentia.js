@@ -37,10 +37,8 @@
 		"buildIndex": "src/index.js"
 	},
 	"scripts": {
-		"build": "node build.js $1",
-		"build:prod": "npm run build prod-build && cp README.md prod-build/ && cp package.json prod-build/ && cp -r src prod-build/ && cp -r spec prod-build/ && cp LICENSE prod-build/",
-		"build:dev": "npm run build dev-build && cp package.json dev-build/",
-		"test": "npm run build:prod && jasmine",
+		"build": "./build.sh",
+		"test": "npm run build && jasmine",
 		"prepublish": "npm test"
 	},
 	"main": "dist/differentia.js",
