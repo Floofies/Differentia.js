@@ -1,6 +1,0 @@
-# Ignore everything other than dist
-src
-spec
-jasmine
-docs
-SpecRunner.html
