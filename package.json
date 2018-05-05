@@ -1,48 +1,52 @@
 {
-  "name": "differentia",
-  "version": "2.0.0",
-  "description": "An Object Algorithm library for JavaScript",
-  "keywords": [
-    "objects",
-    "diff",
-    "deep",
-    "library",
-    "higher-order-functions",
-    "iterator",
-    "graph-algorithms",
-    "clone",
-    "iddfs",
-    "traverse",
-    "search-algorithm",
-    "deepfreeze",
-    "deep-search",
-    "graph-theory",
-    "graph-search"
-  ],
-  "homepage": "https://github.com/Floofies/Differentia.js#readme",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Floofies/Differentia.js.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Floofies/Differentia.js/issues"
-  },
-  "devDependencies": {
-    "browserify": "^16.2.0",
-    "jasmine": "^2.99.0",
-    "uglify-es": "github:mishoo/UglifyJS2#harmony"
-  },
-  "scripts": {
-    "build": "browserify ./src/index.js -o ./dist/differentia.js -s differentia",
-    "minify": "uglifyjs ./dist/differentia.js -o ./dist/differentia.js",
-    "build:prod": "npm run build && npm run minify",
-    "test": "npm run build:prod && jasmine",
-    "prepublish": "npm test"
-  },
-  "main": "dist/differentia.js",
-  "author": "Dani Glore",
-  "contributors": [
-    "Muthu Kumar @MKRhere"
-  ],
-  "license": "MIT"
+	"name": "differentia",
+	"version": "2.0.0",
+	"description": "An Object Algorithm library for JavaScript",
+	"keywords": [
+		"objects",
+		"diff",
+		"deep",
+		"library",
+		"higher-order-functions",
+		"iterator",
+		"graph-algorithms",
+		"clone",
+		"dfs",
+		"bfs",
+		"traverse",
+		"search-algorithm",
+		"deepfreeze",
+		"deep-search",
+		"graph-theory",
+		"graph-search"
+	],
+	"homepage": "http://differentia.io",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Floofies/Differentia.js.git"
+	},
+	"bugs": {
+		"url": "https://github.com/Floofies/Differentia.js/issues"
+	},
+	"devDependencies": {
+		"browserify": "^16.2.0",
+		"jasmine": "^2.99.0",
+		"uglify-es": "^3.3.9"
+	},
+	"config": {
+		"buildIndex": "src/index.js"
+	},
+	"scripts": {
+		"build": "node build.js $1",
+		"build:prod": "npm run build prod-build && cp README.md prod-build/ && cp package.json prod-build/ && cp -r src prod-build/ && cp -r spec prod-build/ && cp LICENSE prod-build/",
+		"build:dev": "npm run build dev-build && cp package.json dev-build/",
+		"test": "npm run build:prod && jasmine",
+		"prepublish": "npm test"
+	},
+	"main": "dist/differentia.js",
+	"author": "Dani Glore @Floofies",
+	"contributors": [
+		"Muthu Kumar @MKRhere"
+	],
+	"license": "MIT"
 }
