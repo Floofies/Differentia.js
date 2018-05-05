@@ -1,6 +1,7 @@
 if (typeof require !== "undefined") {
-	var differentia = require('../dist/differentia');
+	var differentia = require('../prod-build/dist/differentia.js');
 }
+const d = differentia;
 
 describe("differentia", function () {
 	it("should be an Object", function () {
@@ -43,8 +44,6 @@ describe("differentia", function () {
 		modules.forEach(moduleName => expect(moduleName in differentia).toBe(true));
 	});
 });
-
-const d = differentia;
 
 function createTestObject() {
 	return [
