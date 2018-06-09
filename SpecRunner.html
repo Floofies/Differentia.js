@@ -2,10 +2,15 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Jasmine Spec Runner v2.6.1</title>
+	<title>Jasmine Spec Runner v3.1.0</title>
 
 	<link rel="shortcut icon" type="image/png" href="jasmine/jasmine_favicon.png">
 	<link rel="stylesheet" href="jasmine/jasmine.css">
+
+	<!-- Fix for Jasmine 3 breaking change https://git.io/vpbZo -->
+	<script type="text/javascript">
+		if (window.location.search.length === 0) window.location.search = "?random=false";
+	</script>
 
 	<script src="jasmine/jasmine.js"></script>
 	<script src="jasmine/jasmine-html.js"></script>
@@ -15,8 +20,15 @@
 	<script src="prod-build/dist/differentia.js"></script>
 
 	<!-- include spec files here... -->
-	<script src="spec/Spec.js"></script>
-
+	<script src="spec/globalLoader.js"></script>
+	<script src="spec/testUtils.js"></script>
+	<script src="spec/module.js"></script>
+	<script src="spec/utils.js"></script>
+	<script src="spec/LinkedList.js"></script>
+	<script src="spec/BinaryTree.js"></script>
+	<script src="spec/OffsetArray.js"></script>
+	<script src="spec/searchIterator.js"></script>
+	<script src="spec/strategies.js"></script>
 </head>
 
 <body>
