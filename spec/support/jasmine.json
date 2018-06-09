@@ -1,8 +1,16 @@
 {
-  "spec_dir": "spec",
-  "spec_files": [
-    "Spec.js"
-  ],
-  "stopSpecOnExpectationFailure": false,
-  "random": false
+	"spec_dir": "spec",
+	"spec_files": [
+		"globalLoader.js",
+		"testUtils.js",
+		"module.js",
+		"utils.js",
+		"LinkedList.js",
+		"BinaryTree.js",
+		"OffsetArray.js",
+		"searchIterator.js",
+		"strategies.js"
+	],
+	"stopSpecOnExpectationFailure": false,
+	"random": false
 }
