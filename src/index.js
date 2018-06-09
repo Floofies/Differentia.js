@@ -1,24 +1,21 @@
 /**
  * Differentia.js
- * Object Algorithm & Graph Theory Library
+ * Graph Theory & Data Structure Library
  * https://github.com/Floofies/Differentia.js
+ * http://www.differentia.io
  */
-const searchIterator = require('./searchIterator');
-const utils = require('./utils');
-const strategies = require('./strategies');
-const structs = require('./structs');
-const differentia = {
-	dfs: searchIterator.dfs,
-	bfs: searchIterator.bfs,
-	getContainerLength: utils.getContainerLength,
-	isContainer: utils.isContainer
-};
+const e = module.exports;
+e.utils = require('./utils');
+e.searchIterator = require('./searchIterator');
+e.dfs = e.searchIterator.dfs;
+e.bfs = e.searchIterator.bfs;
+e.strategies = require('./strategies');
+e.structs = require('./structs');
 // Automatically Reveal Strategy Interfaces
-for (const name in strategies) {
-	differentia[name] = strategies[name].interface;
+for (const name in e.strategies) {
+	e[name] = e.strategies[name].interface;
 }
 // Automatically Reveal Data Structures
-for (const name in structs) {
-	differentia[name] = structs[name];
+for (const name in e.structs) {
+	e[name] = e.structs[name];
 }
-module.exports = differentia;
