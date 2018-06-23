@@ -24,3 +24,34 @@ describe("getContainerLength", function () {
 	});
 });
 
+describe("isObject", function () {
+	it("should return true", function () {
+		expect(d.utils.isObject({})).toEqual(true);
+	});
+
+	it("should return false", function() {
+		expect(d.utils.isObject([])).toEqual(false);
+		expect(d.utils.isObject()).toEqual(false);
+	});
+});
+
+describe("isPrimitive", function () {
+	var primitives = ["string", false, 4, Symbol("prop")];
+	it("should return true for all valid primitives", function () {
+		primitives.forEach(function (elem) {
+			expect(d.utils.isPrimitive(elem)).toEqual(true);
+		});
+	});
+});
+
+describe("createContainer", function () {
+	it('should create an array', function () {
+		var isArr = d.utils.createContainer([]);
+		expect(isArr).toEqual([]);
+	});
+
+	it('should create an object', function () {
+		var isObj = d.utils.createContainer({});
+		expect(isObj).toEqual({});
+	});
+});
