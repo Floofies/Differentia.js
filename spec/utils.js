@@ -24,6 +24,25 @@ describe("getContainerLength", function () {
 	});
 });
 
+describe("assert", function () {
+	var func = [
+		'argType',
+		'string',
+		'number',
+		'boolean',
+		'function',
+		'object',
+		'array',
+		'container'
+	];
+
+	it("should have have thunks defined on assert", function () {
+		func.forEach(function(elem, index) {
+			expect(d.utils.assert[elem]).not.toBe(undefined);
+		});
+	});
+});
+
 describe("isObject", function () {
 	it("should return true", function () {
 		expect(d.utils.isObject({})).toEqual(true);
