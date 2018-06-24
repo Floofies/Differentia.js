@@ -44,7 +44,8 @@
 	"main": "dist/differentia.js",
 	"author": "Dani Glore @Floofies",
 	"contributors": [
-		"Muthu Kumar @MKRhere"
+		"Muthu Kumar @MKRhere",
+		"@nimblefox"
 	],
 	"license": "MIT"
 }
