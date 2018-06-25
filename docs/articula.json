@@ -6,6 +6,7 @@
 	"sidebarOpen": true,
 	"pages": {
 		"Search Algorithm Iterators": {
+			"About Search Algorithm Iterators": "searchIterator/search-algorithm-iterators.md",
 			"searchIterator.dfs": "searchIterator/dfs.md",
 			"searchIterator.bfs": "searchIterator/bfs.md"
 		},
