@@ -1,42 +1,44 @@
 {
 	"title": "Differentia.js Documentation",
 	"repo": "https://github.com/Floofies/Differentia.js",
-	"home": "home",
+	"home": "home.md",
 	"sidebar": true,
 	"sidebarOpen": true,
 	"pages": {
-		"Search Algorithm Iterators": [
-			"dfs",
-			"bfs"
-		],
-		"Search Algorithm Strategies": [
-			"clone",
-			"diffClone",
-			"diff",
-			"deepFreeze",
-			"deepSeal",
-			"nodePaths",
-			"paths",
-			"findPath",
-			"findPaths",
-			"findShortestPath",
-			"diffPaths"
-		],
-		"Higher-Order Functions": [
-			"forEach",
-			"find",
-			"some",
-			"every",
-			"map",
-			"filter"
-		],
-		"Data Structures": [
-			"BinaryTree",
-			"RedBlackTree",
-			"LinkedList",
-			"CircularLinkedList",
-			"DoubleLinkedList",
-			"CircularDoubleLinkedList"
-		]
+		"Search Algorithm Iterators": {
+			"searchIterator.dfs": "searchIterator/dfs.md",
+			"searchIterator.bfs": "searchIterator/bfs.md"
+		},
+		"Search Algorithm Strategies": {
+			"clone": "strategies/clone.md",
+			"diffClone": "strategies/diffClone.md",
+			"diff": "strategies/diff.md",
+			"deepFreeze": "strategies/deepFreeze.md",
+			"deepSeal": "strategies/deepSeal.md",
+			"nodePaths": "strategies/nodePaths.md",
+			"paths": "strategies/paths.md",
+			"findPath": "strategies/findPath.md",
+			"findPaths": "strategies/findPaths.md",
+			"findShortestPath": "strategies/findShortestPath.md",
+			"diffPaths": "strategies/diffPaths.md"
+		},
+		"Higher-Order Functions": {
+			"forEach": "strategies/forEach.md",
+			"find": "strategies/find.md",
+			"some": "strategies/some.md",
+			"every": "strategies/every.md",
+			"map": "strategies/map.md",
+			"filter": "strategies/filter.md"
+		},
+		"Data Structures": {
+			"BinaryTree": "structs/BinaryTree/BinaryTree.md",
+			"BinaryTree.TreeElement": "structs/BinaryTree/TreeElement.md",
+			"RedBlackTree": "structs/RedBlackTree.md",
+			"LinkedList": "structs/LinkedList/LinkedList.md",
+			"LinkedList.ListElement": "structs/LinkedList/ListElement.md",
+			"CircularLinkedList": "structs/CircularLinkedList.md",
+			"DoubleLinkedList": "structs/DoubleLinkedList.md",
+			"CircularDoubleLinkedList": "structs/CircularDoubleLinkedList.md"
+		}
 	}
 }
