@@ -1,9 +1,5 @@
 # Search Algorithm Iterators
 
-- [Search Algorithm Iterators](http://differentia.io/?p=search-algorithm-iterators)
-  - [dfs](http://differentia.io/?p=dfs)
-  - [bfs](http://differentia.io/?p=bfs)
-
 The search iterators, `bfs` and `dfs`, are actually both the same `searchIterator` algorithm (See CONTRIBUTING.md for more details about `searchIterator`) with differing traversal scheduling data structures (Queue VS Stack).
 
 Upon calling `next()`, the search iterators expose a single state object in `value` which encapsulates the current state of iteration/traversal. The object is a flyweight and is thus mutated between every iteration/traversal; because of this, do not attempt to store or otherwise rely on values contained within it for more than one step in the iteration.
