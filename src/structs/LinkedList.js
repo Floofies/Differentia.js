@@ -11,14 +11,21 @@ function LinkedList(iterable = null) {
 	this.double = false;
 	this.circular = false;
 	this.size = 0;
-	this.fromIterable(iterable);
+	this.from(iterable);
 };
-LinkedList.prototype[Symbol.iterator] = function* (ends = false) {
-	var curElement = ends ? this.head : this.head.next;
+LinkedList.prototype[Symbol.iterator] = function* (ends = false, backwards = false) {
+	if (backwards && !this.double) throw new Error("Can't iterate backwards on a singly linked list!");
+	const direction = this.double && backwards ? "prev" : "next";
+	if (ends) {
+		var curElement = this[direction === "prev" ? "tail" : "head"]
+	} else {
+		var curElement = this[direction === "prev" ? "tail" : "head"][direction]
+	}
 	var nextElement;
 	while (curElement !== null) {
 		if (!ends && curElement === this.tail) break;
-		nextElement = curElement.next;
+		if (!ends && backwards && curElement === this.head) break;
+		nextElement = curElement[direction];
 		yield curElement;
 		curElement = nextElement;
 	}
@@ -54,10 +61,10 @@ LinkedList.prototype.coerceElement = function (value) {
 	return (value instanceof this.ListElement ? value : new this.ListElement(value));
 };
 /**
- * fromIterable - Populates the LinkedList from an iterable.
+ * from - Populates the LinkedList from an iterable.
  * @param {Iterable} iterable  The iterable to populate the LinkedList with.
  */
-LinkedList.prototype.fromIterable = function (iterable) {
+LinkedList.prototype.from = function (iterable) {
 	if (iterable === null) return;
 	utils.assert.argType((typeof iterable === "object") && Symbol.iterator in iterable, "iterable", 1);
 	var lastElement = this.head;
@@ -104,10 +111,11 @@ LinkedList.prototype.forEach = function (callback) {
 LinkedList.prototype.item = function (index) {
 	utils.assert.number(index, 1);
 	if (this.size === 0 || index <= -1 || index + 1 > this.size) return null;
-	var loc = 0;
-	for (const element of this) {
+	const backwards = this.double && (index > (this.size / 2));
+	var loc = backwards ? this.size - 1 : 0;
+	for (const element of this[Symbol.iterator](false, backwards)) {
 		if (loc === index) return element;
-		loc++;
+		backwards ? loc-- : loc++;
 	}
 	return null;
 };
@@ -144,6 +152,14 @@ LinkedList.prototype.getPrev = function (element) {
 		if (node.next === element) return node;
 	}
 	return null;
+};
+/**
+ * first - Returns the element at the beginning of the LinkedList, or `null` if the list is empty.
+ * @returns {(ListElement|null)}  The first ListElement, or `null` if the list is empty.
+ */
+LinkedList.prototype.first = function () {
+	if (this.size === 0) return null;
+	return this.head.next;
 };
 /**
  * last - Returns the element at the end of the LinkedList, or `null` if the list is empty.
@@ -274,5 +290,39 @@ LinkedList.prototype.shift = function () {
 LinkedList.prototype.pushBack = function (element) {
 	if (element.parent === this) this.remove(element);
 	this.append(element);
+};
+LinkedList.prototype.copyWithin = function (target, start = 0, end = this.size) {
+	if (target >= this.size) return;
+	var len = this.size >>> 0;
+	var relativeTarget = target >> 0;
+	var to = relativeTarget < 0 ?
+		Math.max(len + relativeTarget, 0) :
+		Math.min(relativeTarget, len);
+	var relativeStart = start >> 0;
+	var from = relativeStart < 0 ?
+		Math.max(len + relativeStart, 0) :
+		Math.min(relativeStart, len);
+	var relativeEnd = end === undefined ? len : end >> 0;
+	var final = relativeEnd < 0 ?
+		Math.max(len + relativeEnd, 0) :
+		Math.min(relativeEnd, len);
+	var count = Math.min(final - from, len - to);
+	var direction = 1;
+	if (from < to && to < (from + count)) {
+		direction = -1;
+		from += count - 1;
+		to += count - 1;
+	}
+	while (count > 0) {
+		var toElement = this.item(to);
+		if (from >= 0 && from < this.size) {
+			toElement.payload = this.item(from).payload;
+		} else {
+			this.delete(this.toElement);
+		}
+		from += direction;
+		to += direction;
+		count--;
+	}
 };
 module.exports = LinkedList;
