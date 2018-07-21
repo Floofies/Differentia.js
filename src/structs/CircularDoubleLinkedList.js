@@ -13,7 +13,7 @@ function CircularDoubleLinkedList(iterable = null) {
 	this.double = true;
 	this.circular = true;
 	this.size = 0;
-	this.fromIterable(iterable);
+	this.from(iterable);
 };
 CircularDoubleLinkedList.prototype = Object.create(LinkedList.prototype);
 CircularDoubleLinkedList.prototype[Symbol.toStringTag] = "CircularDoubleLinkedList";

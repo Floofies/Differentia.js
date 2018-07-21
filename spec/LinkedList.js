@@ -112,6 +112,14 @@ function llTests(List) {
 			loc++;
 		});
 	});
+	it("should search for an index via item", function () {
+		const list = new List([1,2,3,4,5]);
+		expect(list.item(0).payload).toBe(1);
+		expect(list.item(1).payload).toBe(2);
+		expect(list.item(2).payload).toBe(3);
+		expect(list.item(3).payload).toBe(4);
+		expect(list.item(4).payload).toBe(5);
+	});
 	it("should maintain a count of elements via size", function () {
 		const list = new List([1,2,3,4,5]);
 		expect(list.size).toBe(5);
@@ -176,6 +184,11 @@ function llTests(List) {
 		const element = list.find(3);
 		expect(element.payload).toBe(3);
 	});
+	it("should return the last element via first", function () {
+		const list = new List([1,2,3,4,5]);
+		const element = list.first();
+		expect(element.payload).toBe(1);
+	});
 	it("should return the last element via last", function () {
 		const list = new List([1,2,3,4,5]);
 		const element = list.last();
@@ -192,6 +205,20 @@ function llTests(List) {
 		const element = new List.ListElement(5);
 		
 		expect(element.payload).toBe(5);
+	});
+	it("should copy elements via copyWithin", function() {
+		const list1 = new List([1,2,3,4,5]);
+		list1.copyWithin(-2);
+		expect(global.testDiff([1,2,3,1,2], Array.from(list1).map(e => e.payload))).toBe(false);
+		const list2 = new List([1,2,3,4,5]);
+		list2.copyWithin(0, 3);
+		expect(global.testDiff([4,5,3,4,5], Array.from(list2).map(e => e.payload))).toBe(false);
+		const list3 = new List([1,2,3,4,5]);
+		list3.copyWithin(0, 3, 4);
+		expect(global.testDiff([4,2,3,4,5], Array.from(list3).map(e => e.payload))).toBe(false);
+		const list4 = new List([1,2,3,4,5]);
+		list4.copyWithin(-2, -3, -1);
+		expect(global.testDiff([1,2,3,3,4], Array.from(list4).map(e => e.payload))).toBe(false);
 	});
 }
 // Tests for DoubleLinkedList

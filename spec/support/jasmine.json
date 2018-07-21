@@ -6,7 +6,6 @@
 		"module.js",
 		"utils.js",
 		"LinkedList.js",
-		"BinaryTree.js",
 		"OffsetArray.js",
 		"searchIterator.js",
 		"strategies.js",

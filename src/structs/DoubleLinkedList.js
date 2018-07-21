@@ -12,7 +12,7 @@ function DoubleLinkedList(iterable = null) {
 	this.double = true;
 	this.circular = false;
 	this.size = 0;
-	this.fromIterable(iterable);
+	this.from(iterable);
 };
 DoubleLinkedList.prototype = Object.create(LinkedList.prototype);
 DoubleLinkedList.prototype[Symbol.toStringTag] = "DoubleLinkedList";
