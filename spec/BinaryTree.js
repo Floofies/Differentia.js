@@ -36,7 +36,3 @@ describe("BinaryTree", function () {
 		//TODO
 	});
 });
-
-describe("RedBlackTree", function () {
-	//TODO
-});
