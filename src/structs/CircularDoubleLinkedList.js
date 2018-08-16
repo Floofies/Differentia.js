@@ -17,6 +17,6 @@ function CircularDoubleLinkedList(iterable = null) {
 };
 CircularDoubleLinkedList.prototype = Object.create(LinkedList.prototype);
 CircularDoubleLinkedList.prototype[Symbol.toStringTag] = "CircularDoubleLinkedList";
-// Adds ListElement to the CircularDoubleLinkedList varructor for convenience.
+// Adds ListElement to the CircularDoubleLinkedList constructor for convenience.
 CircularDoubleLinkedList.ListElement = LinkedList.prototype.ListElement;
 module.exports = CircularDoubleLinkedList;

@@ -16,6 +16,6 @@ function DoubleLinkedList(iterable = null) {
 };
 DoubleLinkedList.prototype = Object.create(LinkedList.prototype);
 DoubleLinkedList.prototype[Symbol.toStringTag] = "DoubleLinkedList";
-// Adds ListElement to the DoubleLinkedList varructor for convenience.
+// Adds ListElement to the DoubleLinkedList constructor for convenience.
 DoubleLinkedList.ListElement = LinkedList.prototype.ListElement;
 module.exports = DoubleLinkedList;
