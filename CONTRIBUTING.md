@@ -85,7 +85,7 @@ The class is named `MyStruct`, and thus exists in a file such as this: `src/stru
 
 # :mag: Adding Search Algorithm Strategies
 
-You should probably learn how `searchIterator` works before continuing: [Read on Documentation Site](http://differentia.io/?p=searchIterator%2Fsearch-algorithm-iterators.md);
+You should learn how `searchIterator` works before continuing: [Read on Documentation Site](http://differentia.io/?p=searchIterator%2Fsearch-algorithm-iterators.md)
 
 To add an search algorithm to the library, you must use the Strategy Pattern together with `runStrategy`, which is the primary gateway for your algorithms to interact with a search iterator. Your algorithm will be tightly coupled to `searchIterator`, and you should make use of one of the many properties made available through it's shared state object. An algorithm may "steer" the search algorithm by directly mutating certain properties of `state`.
 
