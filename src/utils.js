@@ -34,6 +34,15 @@ assert.function = (input, argName) => assert.argType(typeof input === "function"
 assert.object = (input, argName) => assert.argType(isObject(input), "an Object", argName);
 assert.array = (input, argName) => assert.argType(Array.isArray(input), "an Array", argName);
 assert.container = (input, argName) => assert.argType(isContainer(input), "an Object or Array", argName);
+assert.iterable = (input, argName) => assert.argType(isIterable(input), "iterable", argName);
+/**
+* isIterable - Returns `true` if `input` either has a Symbol.iterator property, or is an Iterator Object.
+* @param {any} input
+* @returns {Boolean}
+*/
+function isIterable(input) {
+	return (typeof input) === "object" && (Symbol.iterator in input);
+}
 /**
 * isContainer - Returns `true` if `input` is an Object or Array, otherwise returns `false`.
 * @param {any} input
@@ -92,6 +101,7 @@ function getContainerLength(input) {
 module.exports = {
 	supportedRegExpProps,
 	assert,
+	isIterable,
 	isContainer,
 	isObject,
 	isPrimitive,
