@@ -216,7 +216,7 @@ console.log(greetings);
 ```
 # :blue_book: Adding Documentation
 
-To add documentation to the library, two areas require your attention: Markdown files in the `/docs` directory, and the [documentation website](http://www.dufferentia.io) which serves to display it. Additions to documentation are not required for pull requests to be accepted. New or changed documentation must match the following format:
+To add documentation to the library, two areas require your attention: Markdown files in the `/docs` directory, and the [documentation website](http://www.differentia.io) which serves to display it. Additions to documentation are not required for pull requests to be accepted. New or changed documentation must match the following format:
 
 ## Documentation Template
 
