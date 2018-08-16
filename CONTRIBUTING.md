@@ -1,45 +1,59 @@
 # :postbox: Contributing
 Contributing to the project is very easy.
-- Search algorithms are contained in the `strategies` object.
+- `searchIterator` strategies/algorithms are contained in the `strategies` object.
 - Data structures are contained in the `structs` object.
 - Unit testing is handled via Jasmine.
-- Building is handled via GNU Make.
+- Building is handled via NPM with Browserify, UglifyJS, and `build.sh` (Bash).
 
-To contribute, simply fork the `master` repository and submit a pull request containing your changes. Your changes must be clearly outlined in the description.
+To contribute, simply fork the `master` repository and submit a pull request containing your changes. Your changes must be clearly outlined in the description. Keep in mind that the stability of the source code in the `master` repository may not always be favorable.
 
-Documentation must be added/updated for every additon/change. If a pull request is submitted that lacks new/updated documentation, or contains new/updated documentation does not fit the format outlined here, then the request may be rejected for these reasons. See the Documentation section of this file for more information.
+# :hammer: Building
 
-# :hammer: Testing & Building
+The only pre-requisites are Bash, NodeJS, and NPM.
 
-Browser tests can be run by opening `SpecRunner.html` in a web browser.
+The NPM production build, which uses Browserify and UglifyJS, can be created by entering `npm run build` in Terminal.
 
-## Makefile
+Running `npm run build` creates a `prod-build` directory, copies `src` into `prod-build/src`, creates comment-less and minified versions in `prod-build/dist`, copies the Jasmine unit test Specs into `prod-build/spec`, and includes copies of `package.json` & `README.md`.
 
-> The makefile installs a local copy of `jasmine` to run tests.
+# :bug: Unit Testing
 
-> The makefile installs a local copy of `uglify-es` for beautification/minification.
+**Do not use any functions or classes provided by the `differentia` module to verify test results!**
 
-### Pre-requisites
-- Node & NPM
-- GNU Make
+Browser tests can be run by opening `SpecRunner.html` in a web browser, and uses the Browserify module located in `prod-build/dist/differentia.js`; ensure you have first run `npm run build` to create/update the module.
 
-Running `make prod` creates a `prod-build` directory, which is the production/npm release. Saves `src` into `prod-build/src`, comment-less and minified versions into `prod-build/dist`, the Jasmine unit test Spec into `prod-build/spec`. Also includes copies of `package.json`, and `README.md`.
+NodeJS tests can be run by running `npm test` or `jasmine` in Terminal, and uses the CommonJS module index located in `src/index,js`.
 
-### Makefile Options
-Build Option|Parameter
----|---
-**Run Node Tests**|`test`
-**Production Build**|`prod`
-**Remove Temp Files**|`clean`
+Unit tests are performed with Jasmine, using `describe`, `it`, and `expect` in nested order. Unit tests must be added either to an appropriate pre-existing Spec file, or a new Spec file. Typically, tests which operate similarly or on similar input data can be grouped, for example the `Queue` and `Stack` data structures are grouped with the `LinkedList` tests because `Queue` and `Stack` utilize `LinkedList` to implement their functionality.
 
-*Example Command:* `make prod test clean`
+Before tests execute, a module named `globalLoader.js` injects the Differentia library into the Jasmine `global` object, adding `differentia` and its shorthand `d` as properties. Additionally, several testing utilities are injected into the `global` object by a module named `testUtils.js`; the module also tests itself before doing so. The following utilities may be found in the `global` object:
 
-# :bug: Unit Tests
-Unit tests are performed with Jasmine, using `describe`, `it`, and `expect` in nested order. Unit tests must be added to `spec/Spec.js` at the bottom of the file.
+## `global` Object Properties
 
-The `d` namespace is supplied as a shorthand to the `differentia` module.
+- `differentia` : The Differentia library, loaded using `src/index.js`.
+- `d` : Shorthand for `differentia`.
+- `createTestObject` : Creates a complex object used for testing `searchIterator` and its strategues.
+- `testObjects` : Creates objects used for testing `searchIterator` and its strategies, sometimes utilizing `createTestObject`.
+	
+	One of several methods may be used to create test objects:
 
-There is a generic `diff` function available specifically for unit tests, in case you need to check one object tree against another. Do not use any functions or classes provided by the `differentia` module to verify test results!
+	- Multipath
+	- Linear Acylic
+	- Nested Acylic
+	- Multidimensional Acyclic
+	- Linear Cyclic
+	- Nested Cyclic
+	- Multidimensional Cyclic
+
+- `createKeyCounter` : Creates a special tracking object for `createTestObject` to store `searchIterator` node visit counts.
+- `testLength` : Returns a Number indicating how many enumerable properties are in an Object, or how many elements are in an Array.
+- `testDiff` : Compares two Object trees and returns `true` if the Objects are differet, or `false` if they are the same.
+- `supportedRegExpProps` : Lists 3 property Booleans to indicate whether specific "new" `RegExp` Object properties are supported.
+
+	- `sticky` : Set to `true` if the `sticky` property is supported.
+	- `unicode` : Set to `true` if the `unicode` property is supported.
+	- `flags` : Set to `true` if the `flags` property is supported.
+
+## Examples
 
 Here is a basic example of a `jasmine` unit test:
 
@@ -64,26 +78,16 @@ describe("getContainerLength", function () {
 });
 ```
 
-# :herb: Data Structures
-To add a data structure to the library, you must add a class constructor (usable with the `new` keyword) to the `structs` object. Your class must exist within it's own file in the `src/structs` directory, which should be named after the class. If your file contains multiple data structures which rely on each other, use the name of the class with the most dependents.
-
-## Example Data Structure Class
-Here is an example data structure constructor, showing how it is added to the `structs` object:
-```JavaScript
-structs.MyStruct = function () {
-	this.greeting = "Hello World!";
-}
-structs.MyStruct.prototype.sayGreeting = function () {
-	console.log(this.greeting);
-};
-```
+# :herb: Adding Data Structures
+To add a data structure to the library, you must add a class constructor usable with the `new` keyword. Your class must exist within it's own file in the `src/structs` directory, which should be named after the class itself.
 
 The class is named `MyStruct`, and thus exists in a file such as this: `src/structs/MyStruct.js`.
 
-# :mag: Search Algorithm Strategies
-To add an search algorithm to the library, you must use the Strategy Pattern together with `runStrategy`, which is the primary gateway for your algorithms to interact with a search iterator. Your algorithm will be tightly coupled to `searchIterator`, and you should make use of one of the many properties made available through it's shared state object. An algorithm may "steer" the search algorithm by directly mutating certain properties of `state`. See documentation for *Search Algorithm Iterators* in `README.md` for more information.
+# :mag: Adding Search Algorithm Strategies
 
-All strategies added to the `strategies` object will be automatically revealed to the end-user via their `interface` properties. Once you add a strategy, you should also include it's name in `spec/Spec.js` in the first unit test, as part of the `modules` array; the test will verify that your strategy is accessible.
+To add an search algorithm to the library, you must use the Strategy Pattern together with `runStrategy`, which is the primary gateway for your algorithms to interact with a search iterator. Your algorithm will be tightly coupled to `searchIterator`, and you should make use of one of the many properties made available through it's shared state object. An algorithm may "steer" the search algorithm by directly mutating certain properties of `state`.
+
+All strategies added to the `strategies` object will be automatically revealed to the end-user via their `interface` properties. 
 
 ## Creating a Search Algorithm Strategy Object
 A Strategy is an object with the following properties:
@@ -96,7 +100,7 @@ Property|Data Type|Description
 `done`|Function|(*Optional*) A Call-With-Current-State callback to run on the last iteration. It recieves the return value of `main` as its second argument. If this function returns something other than `undefined`, it will be returned to the user's caller; otherwise, the value returned by `main` will be returned to the user's caller.
 `error`|Function|(*Optional*) A Call-With-Current-State callback to run when an error thrown. It recieves the `Error` object as its second argument. If this function returns something other than `undefined`, it will be returned to the user's caller.
 
-`entry`, `main`, `done`, and `error` all recieve a `state` object as their first parameter, which is the iterator's state flyweight object; a single object which the iterator actively mutates per-iteration. See documentation for *Search Algorithm Iterators* in `README.md` for more information.
+`entry`, `main`, `done`, and `error` all recieve a `state` object as their first parameter, which is the iterator's state flyweight object; a single object which the iterator actively mutates per-iteration.
 
 ---
 
@@ -108,9 +112,13 @@ Your Strategy's `interface` function must call `runStrategy` if it needs to use 
 ```JavaScript
 runStrategy( strategy, searchAlg, parameters );
 ```
-An IOC wrapper for the Search Iterators. `runStrategy` advances the iterator returned by `searchAlg` and executes Call-With-Current-State functions supplied in `strategy`. The state flyweight object is passed to `strategy.entry`, which is only executed for the first element, and `strategy.main` which is executed for every element. If `strategy.main` returns something other than `undefined`, it will be returned to the caller after passing through `done`. If the iterator has reached the last element then `strategy.done` will be executed, optionally with the return value of `strategy.main` as it's second argument.
+An IOC wrapper for the Search Iterators. `runStrategy` advances the iterator returned by `searchAlg` and executes Call-With-Current-State functions supplied in `strategy`.
 
-`searchAlg` is the search algorithm iterator to use; it can be `dfs` or `bfs`, or any other Iterator.
+- The state flyweight object is passed to `strategy.entry`, which is only executed for the first element, and `strategy.main` which is executed for every element.
+- If `strategy.main` returns something other than `undefined`, it will be returned to the caller after passing through `strategy.done`.
+- If the iterator has reached the last element then `strategy.done` will be executed, optionally with the return value of `strategy.main` as it's second argument.
+- If the source code of `searchIterator` or the strategy throws an error, the `strategy.error` method will be invoked with the error object. Otherwise, the error is re-thrown by `runStrategy`.
+- `searchAlg` is the search algorithm iterator to use; it can be `dfs` or `bfs`, or any other Iterator.
 
 #### Parameters
 - **`strategy`** Object
@@ -206,7 +214,8 @@ console.log(greetings);
 ]"
 */
 ```
-# :blue_book: Documentation
+# :blue_book: Adding Documentation
+
 To add documentation to the library, two areas require your attention: Markdown files in the `/docs` directory, and the [documentation website](http://www.dufferentia.io) which serves to display it. Additions to documentation are not required for pull requests to be accepted. New or changed documentation must match the following format:
 
 ## Documentation Template
