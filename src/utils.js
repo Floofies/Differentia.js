@@ -41,7 +41,7 @@ assert.iterable = (input, argName) => assert.argType(isIterable(input), "iterabl
 * @returns {Boolean}
 */
 function isIterable(input) {
-	return (typeof input) === "object" && (Symbol.iterator in input);
+	return input !== null && ((typeof input) === "object") && (Symbol.iterator in input);
 }
 /**
 * isContainer - Returns `true` if `input` is an Object or Array, otherwise returns `false`.
