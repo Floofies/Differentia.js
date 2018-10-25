@@ -41,7 +41,7 @@
 		"test": "jasmine",
 		"prepublish": "npm test"
 	},
-	"main": "dist/differentia.js",
+	"main": "src/index.js",
 	"author": "Dani Glore @Floofies",
 	"contributors": [
 		"Muthu Kumar @MKRhere",
