@@ -13,6 +13,9 @@ function LinkedList(iterable = null) {
 	this.size = 0;
 	this.from(iterable);
 };
+LinkedList.prototype.assertElement = function (input, argName) {
+	utils.assert.argType(input instanceof this.ListElement, "ListElement", argName);
+};
 LinkedList.prototype[Symbol.iterator] = function* (ends = false, backwards = false) {
 	if (backwards && !this.double) throw new Error("Can't iterate backwards on a singly linked list!");
 	const direction = this.double && backwards ? "prev" : "next";
@@ -66,7 +69,7 @@ LinkedList.prototype.coerceElement = function (value) {
  */
 LinkedList.prototype.from = function (iterable) {
 	if (iterable === null) return;
-	utils.assert.argType((typeof iterable === "object") && Symbol.iterator in iterable, "iterable", 1);
+	utils.assert.iterable(iterable, 1);
 	var lastElement = this.head;
 	for (const value of iterable) {
 		lastElement = this.insertAfter(lastElement, value);
@@ -145,7 +148,7 @@ LinkedList.prototype.includes = function (value) {
  * @returns {(ListElement|null)}  The found ListElement, or `null` if it was not found.
  */
 LinkedList.prototype.getPrev = function (element) {
-	utils.assert.argType(element instanceof this.ListElement, "ListElement", 1);
+	this.assertElement(element, 1);
 	if (element.parent !== this) return null;
 	if (this.double) return element.prev;
 	for (const node of this[Symbol.iterator](true)) {
@@ -194,7 +197,8 @@ LinkedList.prototype.concat = function (...joinLists) {
  * @returns {(ListElement|null)}  The removed ListElement, or `null` if it was not found.
  */
 LinkedList.prototype.remove = function (element) {
-	utils.assert.argType(element instanceof this.ListElement, "ListElement", 1);
+	this.assertElement(element, 1);
+	if (this.size === 0) return null;
 	if (element.parent !== this) return null;
 	const prevElement = this.getPrev(element);
 	if (prevElement === null) return null;
@@ -213,7 +217,7 @@ LinkedList.prototype.remove = function (element) {
  * @returns {(ListElement|null)}    The newly inserted ListElement, or `null` if the target element was not found.
  */
 LinkedList.prototype.insertAfter = function (element, newElement) {
-	utils.assert.argType(element instanceof this.ListElement, "ListElement", 1);
+	this.assertElement(element, 1);
 	if (element.parent !== this) return null;
 	newElement = this.coerceElement(newElement);
 	newElement.next = element.next;
@@ -233,7 +237,7 @@ LinkedList.prototype.insertAfter = function (element, newElement) {
  * @returns {(ListElement|null)}          The newly inserted ListElement, or `null` if the target element was not found.
  */
 LinkedList.prototype.insertBefore = function (element, newElement) {
-	utils.assert.argType(element instanceof this.ListElement, "ListElement", 1);
+	this.assertElement(element, 1);
 	if (element.parent !== this) return null;
 	newElement = this.coerceElement(newElement);
 	const prevElement = this.getPrev(element);
@@ -291,6 +295,20 @@ LinkedList.prototype.pushBack = function (element) {
 	if (element.parent === this) this.remove(element);
 	this.append(element);
 };
+/*
+* CopyWithin source code was taken from:
+* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin
+*/
+/**
+ * copyWithin -  Shallow copies ListElements to another location in the same LinkedList and returns it, without modifying its size.
+ * @param {number} target                 Zero based index at which to copy the sequence to. If negative, `target` will be counted from the end.
+ *                                         If `target` is at or greater than `LinkedList.length`, nothing will be copied.
+ *                                         If `target` is positioned after start, the copied sequence will be trimmed to fit arr.length.
+ * @param {number} [start=0]              Zero based index at which to start copying elements from. If negative, `start` will be counted from the end.
+ *                                         If `start` is omitted, copyWithin will copy from the start (defaults to 0).
+ * @param {number} [end=LinkedList.size]  Zero based index at which to end copying elements from. Copies up to but not including end.
+ *                                         If negative, `end` will be counted from the end.
+ */
 LinkedList.prototype.copyWithin = function (target, start = 0, end = this.size) {
 	if (target >= this.size) return;
 	var len = this.size >>> 0;
@@ -314,7 +332,7 @@ LinkedList.prototype.copyWithin = function (target, start = 0, end = this.size) 
 		to += count - 1;
 	}
 	while (count > 0) {
-		var toElement = this.item(to);
+		const toElement = this.item(to);
 		if (from >= 0 && from < this.size) {
 			toElement.payload = this.item(from).payload;
 		} else {
@@ -324,5 +342,6 @@ LinkedList.prototype.copyWithin = function (target, start = 0, end = this.size) 
 		to += direction;
 		count--;
 	}
+	return this;
 };
 module.exports = LinkedList;

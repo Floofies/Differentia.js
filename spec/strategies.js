@@ -218,14 +218,32 @@ describe("paths", function () {
 });
 
 describe("findPath", function () {
-	it("should return the path of the input if found", function () {
+	it("should return the first found path to the input if one is found", function () {
 		var expectedPath = ["0", "address", "geo", "lng"];
 		expect(global.testDiff(d.findPath(global.testObjects["Multidimensional Acyclic"](), 81.1496), expectedPath)).toBe(false);
 		expectedPath = ["1", "company", "name"];
 		expect(global.testDiff(d.findPath(global.testObjects["Multidimensional Acyclic"](), "Deckow-Crist"), expectedPath)).toBe(false);
 	});
-	it("should return null if input is not found", function () {
+	it("should return null if a path to the input is not found", function () {
 		expect(d.findPath(global.testObjects["Multidimensional Acyclic"](), "This value does not exist!")).toBe(null);
+	})
+});
+
+describe("findPaths", function () {
+	it("should return the all paths to the input if any are found", function () {
+		var expectedPaths = [
+			["path2", "path22"],
+			["path1", "path12", "path13", "5"]
+		];
+		expect(global.testDiff(d.findPaths(global.testObjects["Multireference"](), "Hello!"), expectedPaths)).toBe(false);
+		expectedPaths = [
+			["0", "website"],
+			["1", "website"]
+		];
+		expect(global.testDiff(d.findPaths(global.testObjects["Multidimensional Cyclic"](), null), expectedPaths)).toBe(false);
+	});
+	it("should return null if a path to the input is not found", function () {
+		expect(d.findPaths(global.testObjects["Multidimensional Acyclic"](), "This value does not exist!")).toBe(null);
 	})
 });
 

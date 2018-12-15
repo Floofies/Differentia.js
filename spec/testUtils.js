@@ -92,6 +92,21 @@ testObjects["Multipath"] = () => ({
 		path22: [0, 1, 2, 3, 4]
 	}
 });
+// Useful for mapping multiple paths to the same value
+testObjects["Multireference"] = () => {
+	const obj = {
+		path1: {
+			path12: {
+				path13: [0, 1, 2, 3, 4]
+			}
+		},
+		path2: {
+			path22: "Hello!"
+		}
+	}
+	obj.path1.path12.path13[5] = obj.path2.path22;
+	return obj;
+};
 
 function createKeyCounter() {
 	var testObject = testObjects["Multidimensional Cyclic"]();

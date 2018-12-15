@@ -1,6 +1,4 @@
 - [Data Structures](http://differentia.io/?p=data-structures)
-  - [BinaryTree](http://differentia.io/?p=BinaryTree)
-  - [RedBlackTree](http://differentia.io/?p=RedBlackTree)
   - [LinkedList](http://differentia.io/?p=LinkedList)
   - [CircularLinkedList](http://differentia.io/?p=CircularLinkedList)
   - [DoubleLinkedList](http://differentia.io/?p=DoubleLinkedList)

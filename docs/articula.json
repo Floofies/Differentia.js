@@ -32,9 +32,6 @@
 			"filter": "strategies/filter.md"
 		},
 		"Data Structures": {
-			"BinaryTree": "structs/BinaryTree/BinaryTree.md",
-			"BinaryTree.TreeElement": "structs/BinaryTree/TreeElement.md",
-			"RedBlackTree": "structs/RedBlackTree.md",
 			"LinkedList": "structs/LinkedList/LinkedList.md",
 			"LinkedList.ListElement": "structs/LinkedList/ListElement.md",
 			"CircularLinkedList": "structs/CircularLinkedList.md",

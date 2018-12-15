@@ -566,13 +566,13 @@ strategies.filter = {
 		while (state.pendingPaths.length > 0) {
 			const path = state.pendingPaths.shift();
 			const nodeQueue = new structs.Queue();
-			nodeQueue.push({
+			nodeQueue.add({
 				subject: state.subjectRoot,
 				clone: state.cloneRoot
 			});
-			while (nodeQueue.length > 0) {
+			while (nodeQueue.size > 0) {
 				const accessor = path.shift();
-				const tuple = nodeQueue.shift();
+				const tuple = nodeQueue.remove();
 				if (!(accessor in tuple.clone)) {
 					if (path.length === 0) {
 						tuple.clone[accessor] = tuple.subject[accessor];
@@ -587,7 +587,7 @@ strategies.filter = {
 				for (const unit in tuple) {
 					nextTuple[unit] = tuple[unit][accessor];
 				}
-				nodeQueue.push(nextTuple);
+				nodeQueue.add(nextTuple);
 			}
 		}
 		return state.cloneRoot;

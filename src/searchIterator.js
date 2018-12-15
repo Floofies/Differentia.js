@@ -24,17 +24,17 @@ function* searchIterator(subject, targetTuples, search = null) {
 	const nodeMap = new Map();
 	// Add Root Tuple to Stack
 	state.targetTuples = targetTuples;
-	state.targetTuples.push({
+	state.targetTuples.add({
 		search: search,
 		subject: subject
 	});
 	nodeMap.set(state.searchRoot, state.targetTuples.item(0));
 	// Iterate `state.targetTuples`
-	_traverse: while (state.targetTuples.length > 0) {
+	_traverse: while (state.targetTuples.size > 0) {
 		// Traverse `search`, iterating through it's properties.
 		_iterate: for (
 			// onFirst:
-			state.tuple = state.targetTuples.take(),
+			state.tuple = state.targetTuples.remove(),
 			state.iterations = 0,
 			state.accessors = Object.keys(state.tuple.search);
 			// onEvery:
@@ -55,13 +55,13 @@ function* searchIterator(subject, targetTuples, search = null) {
 			// If the value is a container, hasn't been seen before, and has enumerables, then we can traverse it.
 			state.traverse = state.isContainer && state.existing === null && utils.getContainerLength(state.tuple.search[state.accessor]) > 0;
 			// If the value can't be traversed, `state.targetTuples` is empty, and we are on the last enumerable, then we're on the last iteration.
-			state.isLast = !state.traverse && state.iterations === state.length - 1 && state.targetTuples.length === 0;
+			state.isLast = !state.traverse && state.iterations === state.length - 1 && state.targetTuples.size === 0;
 			state.currentValue = state.tuple.subject[state.accessor];
 			try {
 				// Yield the Shared State Object
 				yield state;
 			} catch (exception) {
-				console.error("An error occured while traversing \"" + loc + "\" at node depth " + state.targetTuples.length + ":");
+				console.error("An error occured while traversing \"" + loc + "\" at node depth " + state.targetTuples.size + ":");
 				console.error(exception);
 				console.info("Node Traversal Stack:");
 				console.info(state.targetTuples);
@@ -90,7 +90,7 @@ function* searchIterator(subject, targetTuples, search = null) {
 			// Save the Tuple to `nodeMap`
 			nodeMap.set(state.tuple.search[state.accessor], nextTuple);
 			// Push the next Tuple into the stack
-			state.targetTuples.push(nextTuple);
+			state.targetTuples.add(nextTuple);
 		}
 	}
 }

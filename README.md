@@ -32,9 +32,6 @@ Differentia is a library which provides a basic suite of Graph Theory focused al
   - [map](http://differentia.io/?p=strategies/map.md)
   - [filter](http://differentia.io/?p=strategies/filter.md)
 - Data Structures
-  - [BinaryTree](http://differentia.io/?p=structs/BinaryTree/BinaryTree.md)
-  - [BinaryTree.TreeElement](http://differentia.io/?p=structs/BinaryTree/TreeElement.md)
-  - [RedBlackTree](http://differentia.io/?p=structs/RedBlackTree/RedBlackTree.md)
   - [LinkedList](http://differentia.io/?p=structs/LinkedList/LinkedList.md)
   - [LinkedList.ListElement](http://differentia.io/?p=structs/LinkedList/ListElement.md)
   - [CircularLinkedList](http://differentia.io/?p=structs/CircularLinkedList.md)
